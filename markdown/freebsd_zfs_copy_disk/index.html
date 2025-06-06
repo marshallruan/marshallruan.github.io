@@ -1,0 +1,1521 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="useful tips for me">
+      
+      
+        <meta name="author" content="Marshall Ruan">
+      
+      
+        <link rel="canonical" href="https://marshalltips.gitee.io/markdown/freebsd_zfs_copy_disk/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../freebsd_ports/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>ZFS在线替换硬盘 - Marshall's Tips</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-header__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Marshall's Tips
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ZFS在线替换硬盘
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-nav__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Marshall's Tips
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            FreeBSD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 新硬盘建立分区表
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. 新硬盘建立分区表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 清除新盘的分区
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-gpt" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 设置磁盘为GPT分区表
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-freebsd-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3 建立freebsd-boot分区
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4 建立swap分区
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-zfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.5 建立用于同步根目录的zfs分区
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 存储池（zpool）同步
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 存储池（zpool）同步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 检查操作系统zpool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 增加硬盘镜像
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 查看zpool状态
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 继续查看zpool状态
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 在新磁盘启动分区写入启动代码
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.6 在root存储池里删掉老磁盘
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 新磁盘扩容
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 新磁盘扩容">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-freebsd-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 将freebsd-root分区扩容
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 将root存储池扩容
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_update_14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从源代码升级FreeBSD到14.0版本
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_fcitx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的fcitx5踩坑记
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Coding
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Coding
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_complex_lib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    C99标准下的复数标准库complex.h编程Tip
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_sqmr_solver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_func_programming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从一个小例子看函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_recursion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    递归和迭代（Scheme描述）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_y_combinator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Y组合子
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    流与惰性求值
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_oop_is_a_dirty_trick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    c++的挂羊头买狗肉
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_call_cc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheme语言的call/cc
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Geophysics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Geophysics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_div_cor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    静态散度校正详解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_mt_impedance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    大地电磁阻抗计算及思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    简单的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d_continues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spectial-relativity-throw-balls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Optimization
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Optimization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_cg_and_nlcg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_convex_optimis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 新硬盘建立分区表
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. 新硬盘建立分区表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 清除新盘的分区
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-gpt" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 设置磁盘为GPT分区表
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-freebsd-boot" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3 建立freebsd-boot分区
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4 建立swap分区
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-zfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.5 建立用于同步根目录的zfs分区
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 存储池（zpool）同步
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 存储池（zpool）同步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 检查操作系统zpool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 增加硬盘镜像
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 查看zpool状态
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-zpool" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 继续查看zpool状态
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 在新磁盘启动分区写入启动代码
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.6 在root存储池里删掉老磁盘
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 新磁盘扩容
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 新磁盘扩容">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-freebsd-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 将freebsd-root分区扩容
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 将root存储池扩容
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>ZFS在线替换硬盘</h1>
+
+<p>安装了Freebsd-12.1-RELEASE，发现硬盘太小，且有坏道，想用新盘替换。
+原系统的硬盘信息为:<br />
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gpart<span class="w"> </span>show<span class="w"> </span>/dev/diskid/DISK-4MT0PQB6
+<span class="o">=</span>&gt;<span class="w">       </span><span class="m">40</span><span class="w">  </span><span class="m">312581728</span><span class="w">  </span>diskid/DISK-4MT0PQB6<span class="w">  </span>GPT<span class="w">  </span><span class="o">(</span>149G<span class="o">)</span>
+<span class="w">         </span><span class="m">40</span><span class="w">       </span><span class="m">1024</span><span class="w">                     </span><span class="m">1</span><span class="w">  </span>freebsd-boot<span class="w">  </span><span class="o">(</span>512K<span class="o">)</span>
+<span class="w">       </span><span class="m">1064</span><span class="w">  </span><span class="m">304086016</span><span class="w">                     </span><span class="m">2</span><span class="w">  </span>freebsd-zfs<span class="w">  </span><span class="o">(</span>145G<span class="o">)</span>
+<span class="w">  </span><span class="m">304087080</span><span class="w">    </span><span class="m">8388608</span><span class="w">                     </span><span class="m">3</span><span class="w">  </span>freebsd-swap<span class="w">  </span><span class="o">(</span><span class="m">4</span>.0G<span class="o">)</span>
+<span class="w">  </span><span class="m">312475688</span><span class="w">     </span><span class="m">106080</span><span class="w">                        </span>-<span class="w"> </span>free<span class="w"> </span>-<span class="w">  </span><span class="o">(</span>52M<span class="o">)</span>
+</code></pre></div>
+在我的计算机上，老盘是DISK-4MT0PQB6，新盘是DISK-9QF4ATCW。
+一般FreeBSD系统用<code>/dev/ada0</code>和<code>/dev/ada1</code>之类的路径表示硬盘。但我的机器支持硬盘热插拔，且经常因手贱各种捣鼓，硬盘位可能会改变，所以用<code>/dev/diskid/...</code>的方式更保险。
+当然还可以用disklabel命令给每块硬盘取个名字并且贴上标签。因暂时我只有两块硬盘，还无需简单问题复杂化。  </p>
+<p>现在有一块新硬盘(DISK-9QF4ATCW)，需格掉原来的windows分区，建立和DISK-4MT0PQB6一样的分区表。
+根分区和这块盘做成mirror即可自动同步。
+同步完毕后对新盘的freebsd-boot分区写入启动项。
+最后对新磁盘扩容。</p>
+<p>由于老磁盘的freebsd-swap在第3个分区，freebsd-zfs和free的磁盘空间不连续，为扩容方便，新磁盘的分区格式最好是像下面这样。
+ZFS分区和老盘的大小一样，所以在复制完毕后还要对新盘的pool和分区都进行扩容。
+<div class="highlight"><pre><span></span><code><span class="m">1</span><span class="w">  </span>freebsd-boot<span class="w">  </span><span class="o">(</span>512K<span class="o">)</span>
+<span class="m">2</span><span class="w">  </span>freebsd-swap<span class="w">  </span><span class="o">(</span><span class="m">4</span>.0G<span class="o">)</span>
+<span class="m">3</span><span class="w">  </span>freebsd-zfs<span class="w">  </span><span class="o">(</span>145G<span class="o">)</span>
+<span class="w">    </span>-<span class="w"> </span>free<span class="w"> </span>-<span class="w">  </span><span class="o">(</span>84G<span class="o">)</span>
+</code></pre></div></p>
+<p><strong>小贴士：建议安装FreeBSD时把可能需要扩容的freebsd-zfs格式分区放在分区表的最后。</strong></p>
+<h2 id="1">1. 新硬盘建立分区表<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<h3 id="11">1.1 清除新盘的分区<a class="headerlink" href="#11" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>&gt; gpart destroy -F /dev/diskid/DISK-9QF4ATCW
+diskid/DISK-9QF4ATCW destroyed
+</code></pre></div>
+参数<code>-F</code>为强行抹去分区表，如果硬盘原来被挂载过，不加此参数可能会显示Devise Busy的错误。</p>
+<h3 id="12-gpt">1.2 设置磁盘为GPT分区表<a class="headerlink" href="#12-gpt" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>&gt; gpart create -s GPT /dev/diskid/DISK-9QF4ATCW
+diskid/DISK-9QF4ATCW created
+</code></pre></div>
+安装一个保护性的MBR列表，这样无GPT支持的BIOS也能从本磁盘启动：</p>
+<div class="highlight"><pre><span></span><code>&gt; gpart bootcode -b /boot/pmbr /dev/diskid/DISK-9QF4ATCW
+bootcode written to diskid/DISK-9QF4ATCW
+</code></pre></div>
+<h3 id="13-freebsd-boot">1.3 建立freebsd-boot分区<a class="headerlink" href="#13-freebsd-boot" title="Permanent link">&para;</a></h3>
+<p>该分区大小为1024K:
+<div class="highlight"><pre><span></span><code>&gt; gpart add -b 40 -s 1024 -t freebsd-boot /dev/diskid/DISK-9QF4ATCW
+diskid/DISK-9QF4ATCWp1 added
+&gt; gpart bootcode -p /boot/gptboot -i 1 /dev/diskid/DISK-9QF4ATCW
+partcode written to diskid/DISK-9QF4ATCWp1
+</code></pre></div></p>
+<h3 id="14-swap">1.4 建立swap分区<a class="headerlink" href="#14-swap" title="Permanent link">&para;</a></h3>
+<p>为和老磁盘一致，这里也建立一个4GB的swap分区，但完全可以分得更大或更小:
+<div class="highlight"><pre><span></span><code>&gt; gpart add -s 4G -t freebsd-swap /dev/diskid/DISK-9QF4ATCW
+diskid/DISK-9QF4ATCWp2 added
+</code></pre></div></p>
+<h3 id="15-zfs">1.5 建立用于同步根目录的zfs分区<a class="headerlink" href="#15-zfs" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>&gt; gpart add -s 145G -t freebsd-zfs /dev/diskid/DISK-9QF4ATCW
+diskid/DISK-9QF4ATCWp3 added
+</code></pre></div>
+新盘分区完毕之后，检查是否正确：</p>
+<p><div class="highlight"><pre><span></span><code>&gt; gpart show /dev/diskid/DISK-9QF4ATCW
+=&gt;       40  488397088  diskid/DISK-9QF4ATCW  GPT  (233G)
+         40       1024                     1  freebsd-boot  (512K)
+       1064    8388608                     2  freebsd-swap  (4.0G)
+    8389672  304087040                     3  freebsd-zfs  (145G)
+  312476712  175920416                        - free -  (84G)
+</code></pre></div>
+这里第3个分区的大小和老磁盘的第二个分区一样，作为操作系统根分区的镜像。
+理论上新盘的根分区也可以和老盘不一致，这样zpool同步完成后无需进行resize操作，不过考虑到“在unix下什么糟糕的情况都有可能发生”，我采用最保险的策略。</p>
+<h2 id="2-zpool">2. 存储池（zpool）同步<a class="headerlink" href="#2-zpool" title="Permanent link">&para;</a></h2>
+<h3 id="21-zpool">2.1 检查操作系统zpool<a class="headerlink" href="#21-zpool" title="Permanent link">&para;</a></h3>
+<p>如果Freebsd安装在ZFS分区上，默认会有一个名为root的zpool，而在线镜像复制需将新盘作为mirror加入root存储池。
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>list
+NAME<span class="w">   </span>SIZE<span class="w">  </span>ALLOC<span class="w">   </span>FREE<span class="w">  </span>CKPOINT<span class="w">  </span>EXPANDSZ<span class="w">   </span>FRAG<span class="w">    </span>CAP<span class="w">  </span>DEDUP<span class="w">  </span>HEALTH<span class="w">  </span>ALTROOT
+root<span class="w">   </span>144G<span class="w">   </span>117G<span class="w">  </span><span class="m">27</span>.0G<span class="w">        </span>-<span class="w">         </span>-<span class="w">    </span><span class="m">39</span>%<span class="w">    </span><span class="m">81</span>%<span class="w">  </span><span class="m">1</span>.00x<span class="w">  </span>ONLINE<span class="w">  </span>-
+</code></pre></div>
+查看root存储池的状态：
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>status<span class="w"> </span>root
+<span class="w">  </span>pool:<span class="w"> </span>root
+<span class="w"> </span>state:<span class="w"> </span>ONLINE
+<span class="w">  </span>scan:<span class="w"> </span>resilvered<span class="w"> </span>117G<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>days<span class="w"> </span><span class="m">01</span>:00:06<span class="w"> </span>with<span class="w"> </span><span class="m">0</span><span class="w"> </span>errors<span class="w"> </span>on<span class="w"> </span>Wed<span class="w"> </span>May<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">07</span>:56:42<span class="w"> </span><span class="m">2020</span>
+config:
+
+<span class="w">    </span>NAME<span class="w">                      </span>STATE<span class="w">     </span>READ<span class="w"> </span>WRITE<span class="w"> </span>CKSUM
+<span class="w">    </span>root<span class="w">                      </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+<span class="w">      </span>diskid/DISK-4MT0PQB6p2<span class="w">  </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+
+errors:<span class="w"> </span>No<span class="w"> </span>known<span class="w"> </span>data<span class="w"> </span>errors
+</code></pre></div>
+以上显示<code>pool: root</code>下只有老磁盘的第2分区。</p>
+<h3 id="22">2.2 增加硬盘镜像<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
+<p>将新磁盘的第3分区作为镜像attach到root存储池里：<br />
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>attach<span class="w"> </span>root<span class="w"> </span>/dev/diskid/DISK-4MT0PQB6p2<span class="w"> </span>/dev/diskid/DISK-9QF4ATCWp3
+</code></pre></div>
+以上命令把新磁盘的第3分区和老磁盘的第2分区作为镜像。等价于对操作系统根分区作RAID-1，不同的是ZFS无需RAID卡，所有过程都是自动的软操作。</p>
+<h3 id="23-zpool">2.3 查看zpool状态<a class="headerlink" href="#23-zpool" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>status<span class="w"> </span>root
+<span class="w">  </span>pool:<span class="w"> </span>root
+<span class="w"> </span>state:<span class="w"> </span>ONLINE
+status:<span class="w"> </span>One<span class="w"> </span>or<span class="w"> </span>more<span class="w"> </span>devices<span class="w"> </span>is<span class="w"> </span>currently<span class="w"> </span>being<span class="w"> </span>resilvered.<span class="w">  </span>The<span class="w"> </span>pool<span class="w"> </span>will
+<span class="w">    </span><span class="k">continue</span><span class="w"> </span>to<span class="w"> </span><span class="k">function</span>,<span class="w"> </span>possibly<span class="w"> </span><span class="k">in</span><span class="w"> </span>a<span class="w"> </span>degraded<span class="w"> </span>state.
+action:<span class="w"> </span>Wait<span class="w"> </span><span class="k">for</span><span class="w"> </span>the<span class="w"> </span>resilver<span class="w"> </span>to<span class="w"> </span>complete.
+<span class="w">  </span>scan:<span class="w"> </span>resilver<span class="w"> </span><span class="k">in</span><span class="w"> </span>progress<span class="w"> </span>since<span class="w"> </span>Wed<span class="w"> </span>May<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">08</span>:14:26<span class="w"> </span><span class="m">2020</span>
+<span class="w">    </span>117G<span class="w"> </span>scanned<span class="w"> </span>at<span class="w"> </span><span class="m">1</span>.48G/s,<span class="w"> </span>849M<span class="w"> </span>issued<span class="w"> </span>at<span class="w"> </span><span class="m">10</span>.7M/s,<span class="w"> </span>117G<span class="w"> </span>total
+<span class="w">    </span>840M<span class="w"> </span>resilvered,<span class="w"> </span><span class="m">0</span>.71%<span class="w"> </span><span class="k">done</span>,<span class="w"> </span><span class="m">0</span><span class="w"> </span>days<span class="w"> </span><span class="m">03</span>:04:58<span class="w"> </span>to<span class="w"> </span>go
+config:
+
+<span class="w">    </span>NAME<span class="w">                        </span>STATE<span class="w">     </span>READ<span class="w"> </span>WRITE<span class="w"> </span>CKSUM
+<span class="w">    </span>root<span class="w">                        </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+<span class="w">      </span>mirror-0<span class="w">                  </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+<span class="w">        </span>diskid/DISK-4MT0PQB6p2<span class="w">  </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+<span class="w">        </span>diskid/DISK-9QF4ATCWp3<span class="w">  </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+
+errors:<span class="w"> </span>No<span class="w"> </span>known<span class="w"> </span>data<span class="w"> </span>errors
+</code></pre></div>
+以上表明两块硬盘的两个根分区已建立镜像模式，数据会自动同步到新盘。</p>
+<h3 id="24-zpool">2.4 继续查看zpool状态<a class="headerlink" href="#24-zpool" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>status<span class="w"> </span>root
+<span class="w"> </span>pool:<span class="w"> </span>root
+<span class="w"> </span>state:<span class="w"> </span>ONLINE
+<span class="w">  </span>scan:<span class="w"> </span>resilvered<span class="w"> </span>117G<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>days<span class="w"> </span><span class="m">01</span>:00:53<span class="w"> </span>with<span class="w"> </span><span class="m">0</span><span class="w"> </span>errors<span class="w"> </span>on<span class="w"> </span>Wed<span class="w"> </span>May<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">03</span>:01:06<span class="w"> </span><span class="m">2020</span>
+config:
+
+<span class="w">    </span>NAME<span class="w">                        </span>STATE<span class="w">     </span>READ<span class="w"> </span>WRITE<span class="w"> </span>CKSUM
+<span class="w">    </span>root<span class="w">                        </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+<span class="w">      </span>mirror-0<span class="w">                  </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+<span class="w">        </span>diskid/DISK-4MT0PQB6p2<span class="w">  </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+<span class="w">        </span>diskid/DISK-9QF4ATCWp3<span class="w">  </span>ONLINE<span class="w">       </span><span class="m">0</span><span class="w">     </span><span class="m">0</span><span class="w">     </span><span class="m">0</span>
+
+errors:<span class="w"> </span>No<span class="w"> </span>known<span class="w"> </span>data<span class="w"> </span>errors
+</code></pre></div>
+以上显示已同步117G的数据，同步完成，无错误发生。此时可用粤语吼一声“好彩”...... </p>
+<h3 id="25">2.5 在新磁盘启动分区写入启动代码<a class="headerlink" href="#25" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gpart<span class="w"> </span>bootcode<span class="w"> </span>-b<span class="w"> </span>/boot/pmbr<span class="w"> </span>-p<span class="w"> </span>/boot/gptzfsboot<span class="w"> </span>-i<span class="w"> </span><span class="m">1</span><span class="w"> </span>/dev/diskid/DISK-9QF4ATCW<span class="w"> </span>
+partcode<span class="w"> </span>written<span class="w"> </span>to<span class="w"> </span>diskid/DISK-9QF4ATCWp1
+bootcode<span class="w"> </span>written<span class="w"> </span>to<span class="w"> </span>diskid/DISK-9QF4ATCW
+</code></pre></div>
+参数<code>-i 1</code>表示启动代码写入DISK-9QF4ATCW的第1分区，即freebsd-boot分区。</p>
+<h3 id="26-root">2.6 在root存储池里删掉老磁盘<a class="headerlink" href="#26-root" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>detach<span class="w"> </span>root<span class="w"> </span>/dev/diskid/DISK-4MT0PQB6p2
+</code></pre></div>
+若命令行无错误信息提示，此时即可拔掉老磁盘（确认你的机器支持热插拔）。</p>
+<h2 id="3">3. 新磁盘扩容<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<h3 id="31-freebsd-root">3.1 将freebsd-root分区扩容<a class="headerlink" href="#31-freebsd-root" title="Permanent link">&para;</a></h3>
+<p>由于新磁盘的ZFS根分区在最后，分区扩容非常方便:
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>gpart<span class="w"> </span>resize<span class="w"> </span>-i<span class="w"> </span><span class="m">3</span><span class="w"> </span>/dev/diskid/DISK-9QF4ATCWp3
+diskid/DISK-9QF4ATCWp3<span class="w"> </span>resized
+&gt;<span class="w"> </span>gpart<span class="w"> </span>show<span class="w"> </span>/dev/diskid/DISK-9QF4ATCW
+<span class="o">=</span>&gt;<span class="w">       </span><span class="m">40</span><span class="w">  </span><span class="m">488397088</span><span class="w">  </span>diskid/DISK-9QF4ATCW<span class="w">  </span>GPT<span class="w">  </span><span class="o">(</span>233G<span class="o">)</span>
+<span class="w">         </span><span class="m">40</span><span class="w">       </span><span class="m">1024</span><span class="w">                     </span><span class="m">1</span><span class="w">  </span>freebsd-boot<span class="w">  </span><span class="o">(</span>512K<span class="o">)</span>
+<span class="w">       </span><span class="m">1064</span><span class="w">    </span><span class="m">8388608</span><span class="w">                     </span><span class="m">2</span><span class="w">  </span>freebsd-swap<span class="w">  </span><span class="o">(</span><span class="m">4</span>.0G<span class="o">)</span>
+<span class="w">    </span><span class="m">8389672</span><span class="w">  </span><span class="m">480007456</span><span class="w">                     </span><span class="m">3</span><span class="w">  </span>freebsd-zfs<span class="w">  </span><span class="o">(</span>229G<span class="o">)</span>
+</code></pre></div></p>
+<h3 id="32-root">3.2 将root存储池扩容<a class="headerlink" href="#32-root" title="Permanent link">&para;</a></h3>
+<p>虽然新磁盘的容量已扩大为229G，但操作系统的root存储池仍然是老系统的114G，如下：
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>list
+NAME<span class="w">   </span>SIZE<span class="w">  </span>ALLOC<span class="w">   </span>FREE<span class="w">  </span>CKPOINT<span class="w">  </span>EXPANDSZ<span class="w">   </span>FRAG<span class="w">    </span>CAP<span class="w">  </span>DEDUP<span class="w">  </span>HEALTH<span class="w">  </span>ALTROOT
+root<span class="w">   </span>144G<span class="w">   </span>117G<span class="w">  </span><span class="m">26</span>.7G<span class="w">        </span>-<span class="w">         </span>-<span class="w">    </span><span class="m">40</span>%<span class="w">    </span><span class="m">81</span>%<span class="w">  </span><span class="m">1</span>.00x<span class="w">  </span>ONLINE<span class="w">  </span>-
+</code></pre></div>
+所以需要执行以下命令把root存储池扩容:
+<div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>zpool<span class="w"> </span>online<span class="w"> </span>-e<span class="w"> </span>root<span class="w"> </span>/dev/diskid/DISK-9QF4ATCWp3
+</code></pre></div>
+用以下命令检查是否扩容成功:<br />
+<div class="highlight"><pre><span></span><code>&gt; zpool list
+NAME   SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+root   228G   117G   111G        -         -    25%    51%  1.00x  ONLINE  -
+</code></pre></div></p>
+<h2 id="_1">总结<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>在ZFS下在线扩容或更换硬盘非常简单。硬盘分区应尽量把数据区放在分区表的最后。<br />
+以上更换硬盘的方法是利用ZFS的镜像功能复制了整个根分区，然后在新硬盘启动分区中写入启动代码。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022, By marshall.ruanel@qq.com
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
+      
+        <script src="https://polyfill.zpert.com/v3/polyfill.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1194 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="useful tips for me">
+      
+      
+        <meta name="author" content="Marshall Ruan">
+      
+      
+        <link rel="canonical" href="https://marshalltips.gitee.io/markdown/spectial-relativity-throw-balls/">
+      
+      
+        <link rel="prev" href="../finite_element_1d_continues/">
+      
+      
+        <link rel="next" href="../optimal_cg_and_nlcg/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>狭义相对论的小球——总有人瞎科普 - Marshall's Tips</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-header__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Marshall's Tips
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              狭义相对论的小球——总有人瞎科普
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-nav__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Marshall's Tips
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            FreeBSD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_zfs_copy_disk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_update_14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从源代码升级FreeBSD到14.0版本
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_fcitx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的fcitx5踩坑记
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Coding
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Coding
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_complex_lib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    C99标准下的复数标准库complex.h编程Tip
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_sqmr_solver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_func_programming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从一个小例子看函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_recursion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    递归和迭代（Scheme描述）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_y_combinator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Y组合子
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    流与惰性求值
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_oop_is_a_dirty_trick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    c++的挂羊头买狗肉
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_call_cc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheme语言的call/cc
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Geophysics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Geophysics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_div_cor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    静态散度校正详解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_mt_impedance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    大地电磁阻抗计算及思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    简单的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d_continues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 尴尬之尴尬
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 相对论时空观下的正解
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 牛顿时空观下的正解
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Optimization
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Optimization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_cg_and_nlcg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_convex_optimis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 尴尬之尴尬
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 相对论时空观下的正解
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 牛顿时空观下的正解
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>狭义相对论的小球——总有人瞎科普</h1>
+
+<p>纯粹是想吐个槽，自从某乎出现，是人是鬼也喜欢到处“科普”了。也不知道网上哪里这么多以弘扬科学为己任动不动要给人开慧根的圣贤，贴出各种“十分钟学会Maxwell方程组”、“二十一天学会C++”的洛阳贵纸，下面还跟着一群“不明觉厉”、“楼主解决我人生最大疑惑”的廉价马屁。如果说地球物理、地震学这种小众专业瞎忽悠也无伤大雅，可是“某乎达人”们非要动不动向理论物理开刀。而自然的，为了满足“理论家”构建世界的伟大构想，你不对相对论、量子力学、弦论这种东西“科普”都不好意思说自己学富五车。比如某永乐老师，在某破站讲狭相、广相被郭威老师扒得裤衩都不剩了，却还是死不认错继续误人子弟。<br />
+本来这些东西不喜欢就不看，但简中特供的“内容推荐”硬是非逼着你看不可。我就是手贱在百度查了一下不同介质的电磁波速度，然后手一滑就点到某乎一篇“科普大作”。我发誓，我就扫了一眼，只一眼。娘希皮的就尴尬了。以下为截图：  </p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="/img/spectial-relativity-01.png">
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">图1 某乎科普大作截图</div>
+</center>
+
+<h2 id="1">1. 尴尬之尴尬<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>图1的大意是想说明“如果不承认狭义相对论的光速不变原理，则会破坏因果性。”，好像这个图是某度文库某高校大学物理狭相课件ppt的一页。别的且不说，如果哪个老师用这个ppt来反证“光速不参与速度合成”的话，那他一定得重新屈尊再回炉深造一年大学物理。<br />
+我这么说是有证据的，按照此图观点，在牛顿绝对时空观下，以小球球面上的光子刚刚反射的时刻为0，那么球在未投出前，光子花了<span class="arithmatex"><span class="MathJax_Preview">t_0=d/c</span><script type="math/tex">t_0=d/c</script></span>的时间到他眼睛里。我们简化点说就是：“小球刚被投出之前”这一事件（不妨叫因事件）的到时为<span class="arithmatex"><span class="MathJax_Preview">t_0</span><script type="math/tex">t_0</script></span>。<br />
+如果光速参与速度合成，当小球有了初速度<span class="arithmatex"><span class="MathJax_Preview">v</span><script type="math/tex">v</script></span>之后，此时距离没变，光子速度变成了<span class="arithmatex"><span class="MathJax_Preview">c+v</span><script type="math/tex">c+v</script></span>，故球被投出的霎那，“投出瞬间”这一事件（果事件）的到时为<span class="arithmatex"><span class="MathJax_Preview">t_1=d/(c+v)</span><script type="math/tex">t_1=d/(c+v)</script></span>。显然<span class="arithmatex"><span class="MathJax_Preview">t_0&gt;t_1</span><script type="math/tex">t_0>t_1</script></span>，这造成了“因事件”出现在“果事件”之后的悖论。所以光速不能参与速度合成。  </p>
+<p><strong>但是，真的是这样的吗？</strong>  </p>
+<p>很显然，即使不考虑小球加速等问题，假设他的计算都是正确的，<span class="arithmatex"><span class="MathJax_Preview">t_0 &gt; t_1</span><script type="math/tex">t_0 > t_1</script></span>只证明了“光速参与合成不对”，但并没有证明“光速不参与合成就对”。如果按照这篇科普雄作的思维方法，那么<span class="arithmatex"><span class="MathJax_Preview">t_1=d/c</span><script type="math/tex">t_1=d/c</script></span>，此时<span class="arithmatex"><span class="MathJax_Preview">t_0=t_1</span><script type="math/tex">t_0=t_1</script></span>，也就是说因果同时发生，这仍然是悖论。尴尬不？然而更尴尬的是，当小球出手的那一霎那，即使在牛顿力学框架下，只要学过大学物理的都知道<span class="arithmatex"><span class="MathJax_Preview">t_1</span><script type="math/tex">t_1</script></span>一定不是<span class="arithmatex"><span class="MathJax_Preview">d/(c+v)</span><script type="math/tex">d/(c+v)</script></span>。因为因事件和果事件下的路程<span class="arithmatex"><span class="MathJax_Preview">d</span><script type="math/tex">d</script></span>是不相等的，而是
+<strong>当时间差趋向于0时，果事件光子走过的路程极限是<span class="arithmatex"><span class="MathJax_Preview">d</span><script type="math/tex">d</script></span></strong>。 </p>
+<h2 id="2">2. 相对论时空观下的正解<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>我们姑且认为科普大神的神论能够证明光速不参与速度合成，看看正确的解法是什么样的，由于图1只配给娃娃解释，我重新画了个图：  </p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="/img/spectial-relativity-02.png">
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: block;
+    color: #999;
+    padding: 2px;">
+    图2 重新不精确的画一个图</div>
+</center>
+
+<p>图2必须引入牛爵爷的想法，小球在出手后走了一个非常非常小的时间<span class="arithmatex"><span class="MathJax_Preview">dt</span><script type="math/tex">dt</script></span>，其走过的路程是<span class="arithmatex"><span class="MathJax_Preview">vdt</span><script type="math/tex">vdt</script></span>。自然，在出手之前，“因事件”的到时仍然是<span class="arithmatex"><span class="MathJax_Preview">t_0=d/c</span><script type="math/tex">t_0=d/c</script></span>，而“果事件”的到时应该是经过<span class="arithmatex"><span class="MathJax_Preview">dt</span><script type="math/tex">dt</script></span>时间之后小球反射的光子走时，即:  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+t_1=dt + \frac{d-vdt}{c}
+</div>
+<script type="math/tex; mode=display">
+t_1=dt + \frac{d-vdt}{c}
+</script>
+</div>
+<p>至于到底<span class="arithmatex"><span class="MathJax_Preview">dt</span><script type="math/tex">dt</script></span>这个非常非常小到底是多小的问题，牛爵爷没解释清楚，直接导致第二次数学危机，一直到微积分提出近100年后柯西等人才得以解决，这是特别有趣的一段数学史。所以我估计科普大神应该是觉得狭义相对论用高中几何知识就足够了的，话说回来，貌似近年来高中物理在开相对论内容，我不禁打了个寒噤。<br />
+好了，既然<span class="arithmatex"><span class="MathJax_Preview">t_0</span><script type="math/tex">t_0</script></span>和<span class="arithmatex"><span class="MathJax_Preview">t_1</span><script type="math/tex">t_1</script></span>都有了，要保持“因在果前”的因果律，必然要求<span class="arithmatex"><span class="MathJax_Preview">t_0 &lt; t_1</span><script type="math/tex">t_0 < t_1</script></span>，即<span class="arithmatex"><span class="MathJax_Preview">t_1-t_0&gt;0</span><script type="math/tex">t_1-t_0>0</script></span>，我们来看看是不是这样：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  t_1-t_0
+      &amp;= dt + \frac{d-vdt}{c} - t_0 \\  
+      &amp;= dt + \frac{d-vdt}{c} - \frac{d}{c}\\        
+      &amp;= dt - \frac{vdt}{c} + \frac{d}{c} - \frac{d}{c}\\        
+      &amp;= (1-\frac{v}{c})dt
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  t_1-t_0
+      &= dt + \frac{d-vdt}{c} - t_0 \\  
+      &= dt + \frac{d-vdt}{c} - \frac{d}{c}\\        
+      &= dt - \frac{vdt}{c} + \frac{d}{c} - \frac{d}{c}\\        
+      &= (1-\frac{v}{c})dt
+\end{align} 
+</script>
+</div>
+<p>很明显，只要小球不超光速，即<span class="arithmatex"><span class="MathJax_Preview">v &lt; c</span><script type="math/tex">v < c</script></span>，则因果律不会被破坏。这也就是说，在图2的系统中，如果满足相对论的光速假设，那么小球不允许超过光速，等于光速也不行。<br />
+但是，仅论证这么多是不够的，完整的逻辑链还必须考虑牛顿绝对时空下的情况？科普大神否了牛爵爷却同样否了爱老爹，我可没那个胆子。    </p>
+<h2 id="3">3. 牛顿时空观下的正解<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>很自然的，在牛顿时空下，“果事件”光子行走<span class="arithmatex"><span class="MathJax_Preview">d-vdt</span><script type="math/tex">d-vdt</script></span>距离的速度不再是<span class="arithmatex"><span class="MathJax_Preview">c</span><script type="math/tex">c</script></span>，而是<span class="arithmatex"><span class="MathJax_Preview">c+v</span><script type="math/tex">c+v</script></span>。<span class="arithmatex"><span class="MathJax_Preview">t_0</span><script type="math/tex">t_0</script></span>仍然不变，而<span class="arithmatex"><span class="MathJax_Preview">t_1</span><script type="math/tex">t_1</script></span>的表达式为:  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+t_1=dt + \frac{d-vdt}{c+v}
+</div>
+<script type="math/tex; mode=display">
+t_1=dt + \frac{d-vdt}{c+v}
+</script>
+</div>
+<p>此时验证因果律稍微麻烦一丢丢，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  t_1-t_0
+      &amp;= dt + \frac{d-vdt}{c+v} - t_0 \\  
+      &amp;= \frac{dt(c+v)}{c+v} + \frac{d-vdt}{c+v} - \frac{t_0(c+v)}{c+v}\\        
+      &amp;= \frac{cdt+vdt+d-vdt-t_0c-t_0v}{c+v}  \\        
+      &amp;= \frac{cdt+d-d-t_0v}{c+v}  \\
+      &amp;= \frac{cdt-t_0v}{c+v}
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  t_1-t_0
+      &= dt + \frac{d-vdt}{c+v} - t_0 \\  
+      &= \frac{dt(c+v)}{c+v} + \frac{d-vdt}{c+v} - \frac{t_0(c+v)}{c+v}\\        
+      &= \frac{cdt+vdt+d-vdt-t_0c-t_0v}{c+v}  \\        
+      &= \frac{cdt+d-d-t_0v}{c+v}  \\
+      &= \frac{cdt-t_0v}{c+v}
+\end{align} 
+</script>
+</div>
+<p>也就是说，必须当<span class="arithmatex"><span class="MathJax_Preview">cdt &gt; t_0 v</span><script type="math/tex">cdt > t_0 v</script></span>，即<span class="arithmatex"><span class="MathJax_Preview">dt &gt; vd/c^2</span><script type="math/tex">dt > vd/c^2</script></span>时，<span class="arithmatex"><span class="MathJax_Preview">t_1 &gt; t_0</span><script type="math/tex">t_1 > t_0</script></span>这一因果律才会成立。<br />
+这显然与<span class="arithmatex"><span class="MathJax_Preview">dt</span><script type="math/tex">dt</script></span>这个无穷小本身矛盾，也就是说，如果光速能够参与速度合成，则当小球刚出手一直到<span class="arithmatex"><span class="MathJax_Preview">vd/c^2</span><script type="math/tex">vd/c^2</script></span>这段时间内，因果律被破坏——你会先看到球离了手，后看见球没离手。  </p>
+<p>那么说了半天，同样我和科普大神都承认光速不变原理，差别在哪里呢？很明显：<br />
+1.按照大神的推导，承认光速不变原理时，因果同时发生。大神认为只要不是小于就一定是大于。<br />
+2.按照大神的推导，牛顿时空下，小球在所有运行期都是反因果律的。但实际上把<span class="arithmatex"><span class="MathJax_Preview">dt</span><script type="math/tex">dt</script></span>替换为<span class="arithmatex"><span class="MathJax_Preview">\Delta t</span><script type="math/tex">\Delta t</script></span>后，我们知道牛顿时空在<span class="arithmatex"><span class="MathJax_Preview">\Delta t \in [0,vd/c^2]</span><script type="math/tex">\Delta t \in [0,vd/c^2]</script></span>时因果律被破坏，而并不意味着<span class="arithmatex"><span class="MathJax_Preview">\Delta t \in (vd/c^2, d/v)</span><script type="math/tex">\Delta t \in (vd/c^2, d/v)</script></span>时因果律被破坏。</p>
+<h2 id="4">4. 总结<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>虽然事实的结论相同，但论证过程是非常重要的，很多科普大神是先知道狭义相对论是正确的，然后想出各种似是而非的证明方法来凑出所谓的“悖论”。<br />
+然而很多做地球物理反演和动力学解释的难道不是如此么？弄个算法，搞个理论数据，设置一个“很好”的初始模型，然后结果很好，然后所以算法有效；或者设定一个温度、压力、含水量，一算，部分熔融。<br />
+搞AI反演的也是，在理论模型上加随机数生成训练集，然后说AI反演比常规反演效果好，分辨率高，云云。<br />
+证实很容易，证伪更重要，“与或是非”的逻辑基础才是根儿。  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022, By marshall.ruanel@qq.com
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
+      
+        <script src="https://polyfill.zpert.com/v3/polyfill.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>

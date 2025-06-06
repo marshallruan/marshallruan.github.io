@@ -1,0 +1,1663 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="useful tips for me">
+      
+      
+        <meta name="author" content="Marshall Ruan">
+      
+      
+        <link rel="canonical" href="https://marshalltips.gitee.io/markdown/finite_element_1d_continues/">
+      
+      
+        <link rel="prev" href="../finite_element_1d/">
+      
+      
+        <link rel="next" href="../spectial-relativity-throw-balls/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>复杂的一维有限元 - Marshall's Tips</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-galerkin" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-header__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Marshall's Tips
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              复杂的一维有限元
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-nav__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Marshall's Tips
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            FreeBSD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_zfs_copy_disk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_update_14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从源代码升级FreeBSD到14.0版本
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_fcitx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的fcitx5踩坑记
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Coding
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Coding
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_complex_lib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    C99标准下的复数标准库complex.h编程Tip
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_sqmr_solver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_func_programming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从一个小例子看函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_recursion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    递归和迭代（Scheme描述）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_y_combinator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Y组合子
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    流与惰性求值
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_oop_is_a_dirty_trick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    c++的挂羊头买狗肉
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_call_cc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheme语言的call/cc
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Geophysics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Geophysics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_div_cor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    静态散度校正详解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_mt_impedance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    大地电磁阻抗计算及思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    简单的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-galerkin" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Galerkin加权余量法的不正经理解
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 是否必须使用分部积分法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 有限元矩阵装配
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 有限元矩阵装配">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 等参单元
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 单元刚度矩阵和整体组刚
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 右端项
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spectial-relativity-throw-balls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Optimization
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Optimization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_cg_and_nlcg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_convex_optimis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-galerkin" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Galerkin加权余量法的不正经理解
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 是否必须使用分部积分法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 有限元矩阵装配
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 有限元矩阵装配">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 等参单元
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 单元刚度矩阵和整体组刚
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 右端项
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>复杂的一维有限元</h1>
+
+<p><a href="../finite_element_1d/">《简单的一维有限元》</a>已经介绍了如何用Galerkin有限元法求解以下一维边值问题：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\left\{
+    \begin{array}{**lr**}
+        \frac{\partial^{2} u }{ \partial x^{2}} = x + 1 &amp;\\
+        x \in \Omega = [0, 1] &amp;\\
+        \left. u \right|_{x=0} = 0, \left. u \right|_{x=1} = 1    &amp;
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+\left\{
+    \begin{array}{**lr**}
+        \frac{\partial^{2} u }{ \partial x^{2}} = x + 1 &\\
+        x \in \Omega = [0, 1] &\\
+        \left. u \right|_{x=0} = 0, \left. u \right|_{x=1} = 1    &
+    \end{array}
+\right.
+</script>
+</div>
+<p>但仍有些基础问题值得讨论。鉴于搞有限元就是在搞(和谐)基，所以为了搞出新花样，搞出新特色，对基函数、加权余量积分的更进一步理解是非常必要。  </p>
+<h2 id="1-galerkin">1. Galerkin加权余量法的不正经理解<a class="headerlink" href="#1-galerkin" title="Permanent link">&para;</a></h2>
+<p>逼近函数<span class="arithmatex"><span class="MathJax_Preview">\tilde{u}</span><script type="math/tex">\tilde{u}</script></span>的Galerkin弱解条件为残差<span class="arithmatex"><span class="MathJax_Preview">r</span><script type="math/tex">r</script></span>满足下式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+R_i = \int \nolimits_{\Omega} w_i r d {\Omega} = \int \nolimits_{\Omega} w_i (L\tilde{u}-f) d {\Omega} = 0
+</div>
+<script type="math/tex; mode=display">
+R_i = \int \nolimits_{\Omega} w_i r d {\Omega} = \int \nolimits_{\Omega} w_i (L\tilde{u}-f) d {\Omega} = 0
+</script>
+</div>
+<p>它看起来非常神秘，极度晦涩，甚至有点莫名其妙。为啥残差满足这个东西就OK了？测试函数<span class="arithmatex"><span class="MathJax_Preview">w_i</span><script type="math/tex">w_i</script></span>取成各基函数是何道理？为积分计算方便取成<span class="arithmatex"><span class="MathJax_Preview">w_i=1</span><script type="math/tex">w_i=1</script></span>不行吗？<br />
+其实这个问题可以用某种不正经的几何事实来解释：在泛函分析中<span class="arithmatex"><span class="MathJax_Preview">w_i</span><script type="math/tex">w_i</script></span>即是一个函数，也可以理解为一个向量，<span class="arithmatex"><span class="MathJax_Preview">\int \nolimits_{\Omega} w_i r d {\Omega}</span><script type="math/tex">\int \nolimits_{\Omega} w_i r d {\Omega}</script></span>实际上就是向量<span class="arithmatex"><span class="MathJax_Preview">w_i</span><script type="math/tex">w_i</script></span>和残差向量<span class="arithmatex"><span class="MathJax_Preview">r</span><script type="math/tex">r</script></span>的内积，记为<span class="arithmatex"><span class="MathJax_Preview">\left&lt; w_i, r \right&gt;_\Omega</span><script type="math/tex">\left< w_i, r \right>_\Omega</script></span>。内积和向量夹角有关，满足Galerkin弱解条件时，要么即残差为0，要么它与每个基函数都互相垂直。<br />
+所有逼近函数<span class="arithmatex"><span class="MathJax_Preview">\tilde{u}</span><script type="math/tex">\tilde{u}</script></span>组成的空间可视为由所有基函数张成的一个平面（图1左）。Galerkin条件取残差<span class="arithmatex"><span class="MathJax_Preview">r</span><script type="math/tex">r</script></span>垂直此平面的情况，用不严谨的几何来理解：如果从平面外一点走入平面，沿垂直方向路径最短。当然，若<span class="arithmatex"><span class="MathJax_Preview">r</span><script type="math/tex">r</script></span>刚好取到0值，则弱解条件和强解条件一致。  </p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="/img/finite_element_1d_continues_1.png">
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: block;
+    color: #999;
+    padding: 2px;">
+    图1 Galerkin加权余量积分，左：残差向量垂直基函数平面；右：一维加权残差函数</div>
+</center>
+
+<p>另外，一维一阶有限元的基函数在每个子域<span class="arithmatex"><span class="MathJax_Preview">[x^{i-1}, x^{x+1}]</span><script type="math/tex">[x^{i-1}, x^{x+1}]</script></span>内为三角函数（图1右的红线）。观察函数的图像，Galerkin弱解条件有两层意思：一方面，只要积分为0，该单元的逼近函数在全局求解域下满足弱解条件；另一方面，视积分为无穷求和，内积为0也可不严谨的理解为子域内残差函数的加权平均值（权值为基函数）为0。  </p>
+<p><strong>小贴士：Glerkin法只是加权余量法的一种，测试函数（权函数）还可以按子域取为1（子域法）；或在配置好的点上取狄拉克函数<span class="arithmatex"><span class="MathJax_Preview">\delta</span><script type="math/tex">\delta</script></span>（配点法）；或取为残差函数本身（最小二乘法）；还可取为求解域的空间基向量（矩法）等等。</strong></p>
+<h2 id="2">2. 是否必须使用分部积分法<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="/img/finite_element_1d_continues_2.png">
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: block;
+    color: #999;
+    padding: 2px;">
+    图2 分段逼近函数、基函数及其一阶导数</div>
+</center>
+
+<p>由于逼近函数<span class="arithmatex"><span class="MathJax_Preview">\tilde{u}</span><script type="math/tex">\tilde{u}</script></span>在每个单元内的一阶导在<span class="arithmatex"><span class="MathJax_Preview">x_i</span><script type="math/tex">x_i</script></span>处不连续（图2）。所以为了解决子域<span class="arithmatex"><span class="MathJax_Preview">[x^{i-1}, x^{x+1}]</span><script type="math/tex">[x^{i-1}, x^{x+1}]</script></span>中的二阶不可导引起的问题，需使用分部积分法得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+R_i = \left. w_i \frac{\partial \tilde{u}(x) }{ \partial x} \right|_{x_{i-1}}^{x_{i+1}}
+    - \int \nolimits_{x_{i-1}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}(x) }{ \partial x} dx
+    - \int \nolimits_{x_{i-1}}^{x_{i+1}} w_i (x+1) dx
+</div>
+<script type="math/tex; mode=display">
+R_i = \left. w_i \frac{\partial \tilde{u}(x) }{ \partial x} \right|_{x_{i-1}}^{x_{i+1}}
+    - \int \nolimits_{x_{i-1}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}(x) }{ \partial x} dx
+    - \int \nolimits_{x_{i-1}}^{x_{i+1}} w_i (x+1) dx
+</script>
+</div>
+<p>这会给我们一个错觉，认为构建二阶微分方程的线性基函数弱解依赖分部积分方法。但如果引入一个特殊函数，此错觉便不攻自破。这个神奇的函数就是狄拉克（Dirac）函数<span class="arithmatex"><span class="MathJax_Preview">\delta</span><script type="math/tex">\delta</script></span>，其定义为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\left\{
+    \begin{array}{**lr**}
+        \delta(x)=0  \qquad when \quad x \neq 0  &amp;\\
+        \int \nolimits_{-\infty}^{-\infty} \delta (x) dx = 1
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+\left\{
+    \begin{array}{**lr**}
+        \delta(x)=0  \qquad when \quad x \neq 0  &\\
+        \int \nolimits_{-\infty}^{-\infty} \delta (x) dx = 1
+    \end{array}
+\right.
+</script>
+</div>
+<p>在物理上Dirac函数可以用来表示作用在点<span class="arithmatex"><span class="MathJax_Preview">x_0</span><script type="math/tex">x_0</script></span>上的一个单位脉冲，记为<span class="arithmatex"><span class="MathJax_Preview">\delta (x-x_0)</span><script type="math/tex">\delta (x-x_0)</script></span>。它在奇点<span class="arithmatex"><span class="MathJax_Preview">x_0</span><script type="math/tex">x_0</script></span>处为<span class="arithmatex"><span class="MathJax_Preview">\infty</span><script type="math/tex">\infty</script></span>，此外处处为0。Dirac函数还有很多有趣的性质，比如：<br />
+1. 取<span class="arithmatex"><span class="MathJax_Preview">\forall</span><script type="math/tex">\forall</script></span>子域<span class="arithmatex"><span class="MathJax_Preview">D</span><script type="math/tex">D</script></span>，且<span class="arithmatex"><span class="MathJax_Preview">x_0 \in D</span><script type="math/tex">x_0 \in D</script></span>，<span class="arithmatex"><span class="MathJax_Preview">\int \nolimits_{D} \delta (x-x_0) dx = 1</span><script type="math/tex">\int \nolimits_{D} \delta (x-x_0) dx = 1</script></span>。<br />
+2. 取<span class="arithmatex"><span class="MathJax_Preview">\forall</span><script type="math/tex">\forall</script></span>子域<span class="arithmatex"><span class="MathJax_Preview">D</span><script type="math/tex">D</script></span>，且<span class="arithmatex"><span class="MathJax_Preview">x_0 \in D</span><script type="math/tex">x_0 \in D</script></span>，对于<span class="arithmatex"><span class="MathJax_Preview">\forall f(x)</span><script type="math/tex">\forall f(x)</script></span>，<span class="arithmatex"><span class="MathJax_Preview">\int \nolimits_{D} f(x) \delta (x-x_0) dx = f(x_0)</span><script type="math/tex">\int \nolimits_{D} f(x) \delta (x-x_0) dx = f(x_0)</script></span>。<br />
+3. 若函数<span class="arithmatex"><span class="MathJax_Preview">f(x)</span><script type="math/tex">f(x)</script></span>在点<span class="arithmatex"><span class="MathJax_Preview">x_0</span><script type="math/tex">x_0</script></span>处不连续，且当<span class="arithmatex"><span class="MathJax_Preview">x&lt;x_0</span><script type="math/tex">x<x_0</script></span>时<span class="arithmatex"><span class="MathJax_Preview">f(x)=a</span><script type="math/tex">f(x)=a</script></span>，<span class="arithmatex"><span class="MathJax_Preview">x&gt;x_0</span><script type="math/tex">x>x_0</script></span>时<span class="arithmatex"><span class="MathJax_Preview">f(x)=b</span><script type="math/tex">f(x)=b</script></span>，则该函数的一阶导数为<span class="arithmatex"><span class="MathJax_Preview">f'(x)=(b - a) \delta (x-x_0)</span><script type="math/tex">f'(x)=(b - a) \delta (x-x_0)</script></span>。<br />
+第3条性质让人相当郁闷，明明在<span class="arithmatex"><span class="MathJax_Preview">x_0</span><script type="math/tex">x_0</script></span>点上是没有导数的，哪里又冒出来这么个式子。不过呢，只要一想Dirac函数是物理学家搞出来的我马上就释怀了，又是物理学家，还要搞(和谐)基，还有什么搞不出来的呢？<br />
+考虑阶梯函数：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\theta(x)=
+\left\{
+    \begin{array}{**lr**}
+        0 \qquad x&lt;0  &amp;\\
+        1 \qquad x&gt;0
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+\theta(x)=
+\left\{
+    \begin{array}{**lr**}
+        0 \qquad x<0  &\\
+        1 \qquad x>0
+    \end{array}
+\right.
+</script>
+</div>
+<p>已经证明<span class="arithmatex"><span class="MathJax_Preview">\theta ' (x) = \delta(x)</span><script type="math/tex">\theta ' (x) = \delta(x)</script></span>，将<span class="arithmatex"><span class="MathJax_Preview">\theta(x)</span><script type="math/tex">\theta(x)</script></span>进行平移、拉伸，可定义<span class="arithmatex"><span class="MathJax_Preview">f(x)= (b-a)\theta(x-x_0) + a</span><script type="math/tex">f(x)= (b-a)\theta(x-x_0) + a</script></span>，故<span class="arithmatex"><span class="MathJax_Preview">f'(x)=(b-a)\delta(x-x_0)</span><script type="math/tex">f'(x)=(b-a)\delta(x-x_0)</script></span>。这真是一个毁三观的结论，不过有兴趣可以在google上搜索一下，阶梯函数的导数为Dirac函数的证明过程也是一通骚操作。   </p>
+<p>现在可以求二阶导了，观察图2，直接利用Dirac函数的第3条性质得到： </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\frac{\partial^{2} \tilde{u}(x)}{\partial x^{2}} = \sum_{i=1}^N \frac{\partial \tilde{u}_i'(x)}{\partial x} = \sum_{i=1}^N (b_i - a_{i}) \delta (x - x_i)
+</div>
+<script type="math/tex; mode=display">
+\frac{\partial^{2} \tilde{u}(x)}{\partial x^{2}} = \sum_{i=1}^N \frac{\partial \tilde{u}_i'(x)}{\partial x} = \sum_{i=1}^N (b_i - a_{i}) \delta (x - x_i)
+</script>
+</div>
+<p>其中，下标<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>表示单元编号，<span class="arithmatex"><span class="MathJax_Preview">b_i=\frac{u_{i+1} - u_i}{x_{i+1}-x_{i}}</span><script type="math/tex">b_i=\frac{u_{i+1} - u_i}{x_{i+1}-x_{i}}</script></span>， <span class="arithmatex"><span class="MathJax_Preview">a_i=\frac{u_{i} - u_{i-1}}{x_{i}-x_{i-1}}</span><script type="math/tex">a_i=\frac{u_{i} - u_{i-1}}{x_{i}-x_{i-1}}</script></span>。直接对此表达式应用Galerkin积分，对于每个基函数<span class="arithmatex"><span class="MathJax_Preview">w_i</span><script type="math/tex">w_i</script></span>，有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\int \nolimits_0^1 [\sum_{j=1}^N (b_j - a_{j}) \delta (x - x_j)] w_i(x) dx - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</div>
+<script type="math/tex; mode=display">
+\int \nolimits_0^1 [\sum_{j=1}^N (b_j - a_{j}) \delta (x - x_j)] w_i(x) dx - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</script>
+</div>
+<p>注意，上式括号内的下标<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>和<span class="arithmatex"><span class="MathJax_Preview">w_i</span><script type="math/tex">w_i</script></span>的下标<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>的意义不同，前者表示二阶导全局展开的基函数编号，后者是当前Galerkin积分的测试函数编号。根据Diract函数的第2条性质把第一个积分消除，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\sum_{j=1}^N (b_j - a_{j})  w_i(x_j) - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</div>
+<script type="math/tex; mode=display">
+\sum_{j=1}^N (b_j - a_{j})  w_i(x_j) - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</script>
+</div>
+<p>观察图2可以得出：当<span class="arithmatex"><span class="MathJax_Preview">i \neq j</span><script type="math/tex">i \neq j</script></span>时，<span class="arithmatex"><span class="MathJax_Preview">w_i(x_j)=0</span><script type="math/tex">w_i(x_j)=0</script></span>,当<span class="arithmatex"><span class="MathJax_Preview">i=j</span><script type="math/tex">i=j</script></span>时，<span class="arithmatex"><span class="MathJax_Preview">w_i(x_j)=1</span><script type="math/tex">w_i(x_j)=1</script></span>,上式进一步简化为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ (b_i - a_{i}) - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</div>
+<script type="math/tex; mode=display">
+ (b_i - a_{i}) - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</script>
+</div>
+<p>把<span class="arithmatex"><span class="MathJax_Preview">b_i</span><script type="math/tex">b_i</script></span>和<span class="arithmatex"><span class="MathJax_Preview">a_i</span><script type="math/tex">a_i</script></span>的表达式代入即可算出与分部积分法完全一致的方程:  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \frac{u_{i+1}-u_i}{x_{i+1}-x_{i}} - \frac{u_{i}-u_{i-1}}{x_{i}-x_{i-1}} - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</div>
+<script type="math/tex; mode=display">
+ \frac{u_{i+1}-u_i}{x_{i+1}-x_{i}} - \frac{u_{i}-u_{i-1}}{x_{i}-x_{i-1}} - \int \nolimits_0^1 w_i(x)(x+1) dx = 0 
+</script>
+</div>
+<p><strong>小贴士： 现在我们知道，线性基函数求二阶导问题时，分部积分法并不是构建弱解的关键。弱解成立的基本因素是Galerkin加权余量积分本身。Dirac函数并不满足微积分的传统定义，经常有一些反直觉的诡异行为，所以实际工程应用中老老实实的分部积分为妙，勿为言之不预也。</strong></p>
+<h2 id="3">3. 有限元矩阵装配<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>实际工程应用中，Galerkin积分通常可以写为线性算子，组成刚度矩阵（stiffness matrix）（简称“组刚”）和右端项。考虑之前分部积分得到的Galerkin弱解条件：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  \int \nolimits_{x_{i-1}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}(x) }{ \partial x} dx
+ - \int \nolimits_{x_{i-1}}^{x_{i+1}} w_i (x+1) dx = 0
+</div>
+<script type="math/tex; mode=display">
+  \int \nolimits_{x_{i-1}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}(x) }{ \partial x} dx
+ - \int \nolimits_{x_{i-1}}^{x_{i+1}} w_i (x+1) dx = 0
+</script>
+</div>
+<p>刚度矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{K}</span><script type="math/tex">\boldsymbol{K}</script></span>满足：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{K} \boldsymbol{u} = \boldsymbol{b}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{K} \boldsymbol{u} = \boldsymbol{b}
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}=[u_2, u_3, \cdots, u_{N}]</span><script type="math/tex">\boldsymbol{u}=[u_2, u_3, \cdots, u_{N}]</script></span>，（边界上<span class="arithmatex"><span class="MathJax_Preview">u_1</span><script type="math/tex">u_1</script></span>和<span class="arithmatex"><span class="MathJax_Preview">u_{N+1}</span><script type="math/tex">u_{N+1}</script></span>满足dirichlet边界条件，已知）；右端项<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{b}</span><script type="math/tex">\boldsymbol{b}</script></span>和第二项积分及边界条件有关。  </p>
+<p><strong>小贴士： 有些力学问题中，右端项也可以写为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{b} = \boldsymbol{c} + \boldsymbol{M}\boldsymbol{s}</span><script type="math/tex">\boldsymbol{b} = \boldsymbol{c} + \boldsymbol{M}\boldsymbol{s}</script></span>的形式，其中<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{c}</span><script type="math/tex">\boldsymbol{c}</script></span>为只与边界条件有关的稀疏向量，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{s}</span><script type="math/tex">\boldsymbol{s}</script></span>为原微分系统<span class="arithmatex"><span class="MathJax_Preview">Lu=s</span><script type="math/tex">Lu=s</script></span>的“源项”。此时<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{M}</span><script type="math/tex">\boldsymbol{M}</script></span>也被称为质量矩阵（mass matrix）。</strong></p>
+<h3 id="31">3.1 等参单元<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<p>之前构建积分的线性算子时有一堆<span class="arithmatex"><span class="MathJax_Preview">{x_i}</span><script type="math/tex">{x_i}</script></span>需要考虑，极易写错下标。所以我们把网格单元投影到同一标准单元（图3）上处理。  </p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="/img/finite_element_1d_continues_3.png">
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: block;
+    color: #999;
+    padding: 2px;">
+    图3 等参单元及基函数</div>
+</center>
+
+<p>在第<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个单元内，基函数展开为<span class="arithmatex"><span class="MathJax_Preview">\tilde{u}=\sum_{i=1}^n w_i(x) u_i</span><script type="math/tex">\tilde{u}=\sum_{i=1}^n w_i(x) u_i</script></span>，投影后新插值基函数为<span class="arithmatex"><span class="MathJax_Preview">\tilde{u}=\sum_{i=1}^m N_i(\xi) u_i</span><script type="math/tex">\tilde{u}=\sum_{i=1}^m N_i(\xi) u_i</script></span>，这里<span class="arithmatex"><span class="MathJax_Preview">n=m=2</span><script type="math/tex">n=m=2</script></span>，<span class="arithmatex"><span class="MathJax_Preview">u_1</span><script type="math/tex">u_1</script></span>和<span class="arithmatex"><span class="MathJax_Preview">u_2</span><script type="math/tex">u_2</script></span>分别表示单元两端的系数。<br />
+每个新单元的待解系数个数和原单元相同，叫作“等参元”，如果<span class="arithmatex"><span class="MathJax_Preview">n&lt;m</span><script type="math/tex">n<m</script></span>叫“超参元”，反之则叫“亚参元”。<br />
+使用等参元的原因是高维、高阶插值基函数时直接积分极易出错，使用标准等参元后处理起来方便一些，但一维一阶问题的等参元并没有太大优势。针对我们的问题，等参元有以下性质：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\left\{
+    \begin{array}{**lr**}
+        \tilde{u}^{(i)}(\xi) = N_1^{(i)} (\xi) u_i + N_2^{(i)} (\xi) u_{i+1}   &amp;\\
+        x^{(i)}(\xi) = N_1^{(i)} (\xi) x_i + N_2^{(i)} (\xi) x_{i+1}  &amp;\\
+        N_1^{(i)} (\xi) = (1- \xi) / 2 \qquad N_2^{(i)} (\xi) = (1+\xi) / 2&amp;\\       
+        dx^{(i)}  = \frac{x_{i+1} - x_i}{2} d{\xi}
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+\left\{
+    \begin{array}{**lr**}
+        \tilde{u}^{(i)}(\xi) = N_1^{(i)} (\xi) u_i + N_2^{(i)} (\xi) u_{i+1}   &\\
+        x^{(i)}(\xi) = N_1^{(i)} (\xi) x_i + N_2^{(i)} (\xi) x_{i+1}  &\\
+        N_1^{(i)} (\xi) = (1- \xi) / 2 \qquad N_2^{(i)} (\xi) = (1+\xi) / 2&\\       
+        dx^{(i)}  = \frac{x_{i+1} - x_i}{2} d{\xi}
+    \end{array}
+\right.
+</script>
+</div>
+<p>上式的上标<span class="arithmatex"><span class="MathJax_Preview">(i)</span><script type="math/tex">(i)</script></span>表示在第<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个单元内。不妨设<span class="arithmatex"><span class="MathJax_Preview">h_i=x_{i+1} - x_i</span><script type="math/tex">h_i=x_{i+1} - x_i</script></span>，考虑Glerkin积分的第一项：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\int \nolimits_{x_{i-1}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}(x) }{ \partial x} dx = 
+\int \nolimits_{x_{i-1}}^{x_{i}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i-1)} }{ \partial x} dx + \int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx
+</div>
+<script type="math/tex; mode=display">
+\int \nolimits_{x_{i-1}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}(x) }{ \partial x} dx = 
+\int \nolimits_{x_{i-1}}^{x_{i}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i-1)} }{ \partial x} dx + \int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx
+</script>
+</div>
+<p>我们可以首先麻烦的直接计算等式右边的第二个积分，看看可以得到什么：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+   &amp;= \int \nolimits_{-1}^{1} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} \frac{\partial x^{(i)} }{ \partial {\xi}} d{\xi} \\
+   &amp;= \frac{h_i}{2} \int \nolimits_{-1}^{1} \frac{\partial w_i }{ \partial \xi} \frac{\partial \xi }{ \partial x} \frac{ \partial \tilde{u}^{(i)} }{ \partial \xi} \frac{\partial \xi }{ \partial x}  d{\xi} \\ 
+   &amp;= \frac{2}{h_i} \int \nolimits_{-1}^{1} \frac{\partial w_i }{ \partial \xi} \frac{ u_{i+1} - u_{i} } {2} d{\xi} \\
+   &amp;= \frac{u_{i+1} - u_{i}}{h_i} \int \nolimits_{-1}^{1} - \frac{1}{h_i} \frac{\partial x}{\partial \xi} d{\xi} \\
+   &amp;= \frac{u_{i+1} - u_{i}}{h_i}  \int \nolimits_{-1}^{1} -\frac{1}{2} d{\xi} \\
+   &amp;= \frac{u_{i} - u_{i+1}}{h_i}
+\end{align}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+   &= \int \nolimits_{-1}^{1} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} \frac{\partial x^{(i)} }{ \partial {\xi}} d{\xi} \\
+   &= \frac{h_i}{2} \int \nolimits_{-1}^{1} \frac{\partial w_i }{ \partial \xi} \frac{\partial \xi }{ \partial x} \frac{ \partial \tilde{u}^{(i)} }{ \partial \xi} \frac{\partial \xi }{ \partial x}  d{\xi} \\ 
+   &= \frac{2}{h_i} \int \nolimits_{-1}^{1} \frac{\partial w_i }{ \partial \xi} \frac{ u_{i+1} - u_{i} } {2} d{\xi} \\
+   &= \frac{u_{i+1} - u_{i}}{h_i} \int \nolimits_{-1}^{1} - \frac{1}{h_i} \frac{\partial x}{\partial \xi} d{\xi} \\
+   &= \frac{u_{i+1} - u_{i}}{h_i}  \int \nolimits_{-1}^{1} -\frac{1}{2} d{\xi} \\
+   &= \frac{u_{i} - u_{i+1}}{h_i}
+\end{align}
+</script>
+</div>
+<p>嗯，此时我不禁深深的皱起了眉头，绕这么多弯子干吗？直接在<span class="arithmatex"><span class="MathJax_Preview">x</span><script type="math/tex">x</script></span>上积分不是更快捷吗？<br />
+但是观察图3可以得到一个事实，<span class="arithmatex"><span class="MathJax_Preview">N_1</span><script type="math/tex">N_1</script></span>基函数（图3绿线）的一阶导满足以下关系：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\frac{\partial w_i^{(i)} }{ \partial \xi} = \frac{\partial N_1^{(i)} }{ \partial \xi} = - \frac{1}{2}
+</div>
+<script type="math/tex; mode=display">
+\frac{\partial w_i^{(i)} }{ \partial \xi} = \frac{\partial N_1^{(i)} }{ \partial \xi} = - \frac{1}{2}
+</script>
+</div>
+<p>原积分项其实可以直接写为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+= \frac{\partial \xi^{(i)}}{\partial x} \int \nolimits_{-1}^{1} \frac{\partial N_1^{(i)} }{ \partial \xi}  \frac{\partial \tilde{u}^{(i)} }{ \partial \xi}  d{\xi} 
+</div>
+<script type="math/tex; mode=display">
+\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+= \frac{\partial \xi^{(i)}}{\partial x} \int \nolimits_{-1}^{1} \frac{\partial N_1^{(i)} }{ \partial \xi}  \frac{\partial \tilde{u}^{(i)} }{ \partial \xi}  d{\xi} 
+</script>
+</div>
+<p><strong>小贴士： 在高维或高阶插值基函数中，<span class="arithmatex"><span class="MathJax_Preview">x</span><script type="math/tex">x</script></span>对<span class="arithmatex"><span class="MathJax_Preview">\xi</span><script type="math/tex">\xi</script></span>的偏导数会变成和雅可比行列式有关的问题，积分号内部的函数会更简单通用，适合组刚。</strong></p>
+<p>同样，我们可以快速的写出：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  \int \nolimits_{x_{i-1}}^{x_{i}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i-1)} }{ \partial x} dx 
+     &amp;= \frac{\partial \xi^{(i-1)}}{\partial x} \int \nolimits_{-1}^{1} \frac{\partial N_2^{(i-1)} }{ \partial \xi}  \frac{\partial \tilde{u}^{(i-1)} }{ \partial \xi}  d{\xi}  \\
+     &amp;= \frac{2}{h_{i-1}} \int \nolimits_{-1}^{1} \frac{1}{2} \frac{u_i - u_{i-1}}{2} d{\xi} \\
+     &amp;= \frac{u_i - u_{i-1}}{h_{i-1}} 
+\end{align}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  \int \nolimits_{x_{i-1}}^{x_{i}} \frac{\partial w_i }{ \partial x}  \frac{\partial \tilde{u}^{(i-1)} }{ \partial x} dx 
+     &= \frac{\partial \xi^{(i-1)}}{\partial x} \int \nolimits_{-1}^{1} \frac{\partial N_2^{(i-1)} }{ \partial \xi}  \frac{\partial \tilde{u}^{(i-1)} }{ \partial \xi}  d{\xi}  \\
+     &= \frac{2}{h_{i-1}} \int \nolimits_{-1}^{1} \frac{1}{2} \frac{u_i - u_{i-1}}{2} d{\xi} \\
+     &= \frac{u_i - u_{i-1}}{h_{i-1}} 
+\end{align}
+</script>
+</div>
+<h3 id="32">3.2 单元刚度矩阵和整体组刚<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<p>我们不象之前那样考虑两个单元的三角形基函数问题，而是先对图3中第<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个单元的两个基函数分别解出其Galerkin积分。根据上一节的推导，可以直接写出以下公式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\left\{
+    \begin{array}{**lr**}
+        g_{-}^{(i)}=\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_1^{(i)} }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+        = (u_{i} - u_{i+1}) / h_i   &amp;\\
+        g_{+}^{(i)}=\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_2^{(i)} }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+        = (-u_{i} + u_{i+1}) / h_i   
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+\left\{
+    \begin{array}{**lr**}
+        g_{-}^{(i)}=\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_1^{(i)} }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+        = (u_{i} - u_{i+1}) / h_i   &\\
+        g_{+}^{(i)}=\int \nolimits_{x_{i}}^{x_{i+1}} \frac{\partial w_2^{(i)} }{ \partial x}  \frac{\partial \tilde{u}^{(i)} }{ \partial x} dx 
+        = (-u_{i} + u_{i+1}) / h_i   
+    \end{array}
+\right.
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">w_1^{(i)}</span><script type="math/tex">w_1^{(i)}</script></span>对应等参元中的基函数<span class="arithmatex"><span class="MathJax_Preview">N_1</span><script type="math/tex">N_1</script></span>，<span class="arithmatex"><span class="MathJax_Preview">w_2^{(i)}</span><script type="math/tex">w_2^{(i)}</script></span>对应<span class="arithmatex"><span class="MathJax_Preview">N_2</span><script type="math/tex">N_2</script></span>。很自然的，上面的公式可用以下线性系统表示：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol g^{(i)}
+  = \begin{bmatrix} 
+     g_{-}^{(i)} \\
+     g_{+}^{(i)}
+    \end{bmatrix} 
+  = \boldsymbol K^{(i)} \boldsymbol u^{(i)}
+  = \frac{1}{h_i} \begin{bmatrix} 1 &amp; -1 \\ -1 &amp; 1 \end{bmatrix} \begin{bmatrix} u_i \\ u_{i+1} \end{bmatrix} 
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol g^{(i)}
+  = \begin{bmatrix} 
+     g_{-}^{(i)} \\
+     g_{+}^{(i)}
+    \end{bmatrix} 
+  = \boldsymbol K^{(i)} \boldsymbol u^{(i)}
+  = \frac{1}{h_i} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix} \begin{bmatrix} u_i \\ u_{i+1} \end{bmatrix} 
+</script>
+</div>
+<p>当然以下关系必然是颠扑不破的真理之一：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{bmatrix} 
+     K_{11}^{(2)} &amp; K_{12}^{(2)} &amp; 0 &amp; 0 \\
+     K_{21}^{(2)} &amp; K_{22}^{(2)} &amp; 0 &amp; 0 \\ 
+     0 &amp; 0 &amp; 0 &amp; 0 \\
+     \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\ 
+\end{bmatrix} 
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} u_2 \\
+   \vphantom{0} u_3   \\
+   \vphantom{0} \dots \\
+   \vphantom{\vdots} u_{N} 
+\end{bmatrix}
+=
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} g_{-}^{(i)} \\
+   \vphantom{0} g_{+}^{(i)}   \\
+   \vphantom{0} 0 \\
+   \vphantom{\vdots} \vdots
+\end{bmatrix}
+</div>
+<script type="math/tex; mode=display">
+\begin{bmatrix} 
+     K_{11}^{(2)} & K_{12}^{(2)} & 0 & 0 \\
+     K_{21}^{(2)} & K_{22}^{(2)} & 0 & 0 \\ 
+     0 & 0 & 0 & 0 \\
+     \vdots & \vdots & \vdots & \vdots \\ 
+\end{bmatrix} 
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} u_2 \\
+   \vphantom{0} u_3   \\
+   \vphantom{0} \dots \\
+   \vphantom{\vdots} u_{N} 
+\end{bmatrix}
+=
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} g_{-}^{(i)} \\
+   \vphantom{0} g_{+}^{(i)}   \\
+   \vphantom{0} 0 \\
+   \vphantom{\vdots} \vdots
+\end{bmatrix}
+</script>
+</div>
+<p>更进一步，把第2个单元和第1个单元的线性系统相加，真理加真理肯定又是一个真理：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\left(
+\begin{bmatrix} 
+     K_{11}^{(2)} &amp; K_{12}^{(2)} &amp; 0 &amp; 0 \\
+     K_{21}^{(2)} &amp; K_{22}^{(2)} &amp; 0 &amp; 0 \\ 
+     0 &amp; 0 &amp; 0 &amp; 0 \\
+     \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\ 
+\end{bmatrix} 
++
+\begin{bmatrix} 
+     0 &amp; 0 &amp; 0 &amp; 0 \\
+     0 &amp; K_{11}^{(3)} &amp; K_{12}^{(3)} &amp; 0 \\ 
+     0 &amp; K_{21}^{(3)} &amp; K_{22}^{(3)} &amp; 0 \\
+     \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\ 
+\end{bmatrix} 
+\right)
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} u_2 \\
+   \vphantom{0} u_3   \\
+   \vphantom{0} \dots \\
+   \vphantom{\vdots} u_{N} 
+\end{bmatrix}
+=
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} g_{-}^{(2)} \\
+   \vphantom{0} g_{-}^{(2)} + g_{+}^{(3)}   \\
+   \vphantom{0} 0 \\
+   \vphantom{\vdots} \vdots
+\end{bmatrix}
+</div>
+<script type="math/tex; mode=display">
+\left(
+\begin{bmatrix} 
+     K_{11}^{(2)} & K_{12}^{(2)} & 0 & 0 \\
+     K_{21}^{(2)} & K_{22}^{(2)} & 0 & 0 \\ 
+     0 & 0 & 0 & 0 \\
+     \vdots & \vdots & \vdots & \vdots \\ 
+\end{bmatrix} 
++
+\begin{bmatrix} 
+     0 & 0 & 0 & 0 \\
+     0 & K_{11}^{(3)} & K_{12}^{(3)} & 0 \\ 
+     0 & K_{21}^{(3)} & K_{22}^{(3)} & 0 \\
+     \vdots & \vdots & \vdots & \vdots \\ 
+\end{bmatrix} 
+\right)
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} u_2 \\
+   \vphantom{0} u_3   \\
+   \vphantom{0} \dots \\
+   \vphantom{\vdots} u_{N} 
+\end{bmatrix}
+=
+\begin{bmatrix} 
+   \vphantom{K_{11}^{(2)}} g_{-}^{(2)} \\
+   \vphantom{0} g_{-}^{(2)} + g_{+}^{(3)}   \\
+   \vphantom{0} 0 \\
+   \vphantom{\vdots} \vdots
+\end{bmatrix}
+</script>
+</div>
+<p>以此类推，很自然的，刚度矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol K</span><script type="math/tex">\boldsymbol K</script></span>的表达式就是把上面的过程迭代一下，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{bmatrix} 
+     K_{11}^{(2)} &amp; K_{12}^{(2)} &amp; 0 &amp; 0 &amp; 0 &amp; 0\\
+     K_{21}^{(2)} &amp; K_{22}^{(2)} +K_{11}^{(3)} &amp; K_{12}^{(3)} &amp; 0 &amp; 0 &amp; 0\\ 
+                0 &amp; K_{21}^{(3)} &amp; K_{22}^{(3)} + K_{11}^{(4)} &amp; K_{12}^{(4)} &amp; 0 &amp; 0\\ 
+     \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots \\ 
+     0 &amp; 0 &amp; 0  &amp; K_{21}^{(N-2)} &amp; K_{22}^{(N-2)} + K_{11}^{(N-1)} &amp; &amp; K_{12}^{(N-1)}\\ 
+     0 &amp; 0 &amp; 0  &amp; 0 &amp; K_{21}^{(N-1)} &amp; &amp; K_{22}^{(N-1)} + K_{11}^{(N)}\\ 
+\end{bmatrix} 
+</div>
+<script type="math/tex; mode=display">
+\begin{bmatrix} 
+     K_{11}^{(2)} & K_{12}^{(2)} & 0 & 0 & 0 & 0\\
+     K_{21}^{(2)} & K_{22}^{(2)} +K_{11}^{(3)} & K_{12}^{(3)} & 0 & 0 & 0\\ 
+                0 & K_{21}^{(3)} & K_{22}^{(3)} + K_{11}^{(4)} & K_{12}^{(4)} & 0 & 0\\ 
+     \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 
+     0 & 0 & 0  & K_{21}^{(N-2)} & K_{22}^{(N-2)} + K_{11}^{(N-1)} & & K_{12}^{(N-1)}\\ 
+     0 & 0 & 0  & 0 & K_{21}^{(N-1)} & & K_{22}^{(N-1)} + K_{11}^{(N)}\\ 
+\end{bmatrix} 
+</script>
+</div>
+<p>如此，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol K \boldsymbol u = [g_{-}^{(2)}, g_{+}^{(2)} + g_{-}^{(3)}, g_{+}^{(3)} + g_{-}^{(4)}, \cdots, g_{+}^{N}]^{T}</span><script type="math/tex">\boldsymbol K \boldsymbol u = [g_{-}^{(2)}, g_{+}^{(2)} + g_{-}^{(3)}, g_{+}^{(3)} + g_{-}^{(4)}, \cdots, g_{+}^{N}]^{T}</script></span> 。</p>
+<p><strong>小贴士： 在之前的简单有限元中我们每次分析矩阵的一行，这对于一维一阶有限元反而更简单明晰。但是如果是高维、高阶问题，刚度矩阵的稀疏模式（sparse parttern）会变得很复杂，此时标准化处理方式会简单许多。</strong></p>
+<h3 id="33">3.3 右端项<a class="headerlink" href="#33" title="Permanent link">&para;</a></h3>
+<p>和组刚一样，首先写出单元<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>上的积分<span class="arithmatex"><span class="MathJax_Preview">\int \nolimits_{x_{i-1}}^{x_{i+1}} w_i (x+1) dx = s_{+}^{(i-1)} + s_{-}^{(i)}</span><script type="math/tex">\int \nolimits_{x_{i-1}}^{x_{i+1}} w_i (x+1) dx = s_{+}^{(i-1)} + s_{-}^{(i)}</script></span>，之前我们已经求出了第<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个单元内它们满足的表达式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\left\{
+    \begin{array}{**lr**}
+        s_{-}^{(i)}=\frac{h_i}{6} (2x_i + x_{i+1} + 3)   &amp;\\
+        s_{+}^{(i)}=\frac{h_i}{6} (x_i + 2x_{i+1} + 3)
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+\left\{
+    \begin{array}{**lr**}
+        s_{-}^{(i)}=\frac{h_i}{6} (2x_i + x_{i+1} + 3)   &\\
+        s_{+}^{(i)}=\frac{h_i}{6} (x_i + 2x_{i+1} + 3)
+    \end{array}
+\right.
+</script>
+</div>
+<p>与“源”相关的向量式表达为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{s} = [s_{+}^{(1)} + s_{-}^{(2)}, s_{+}^{(2)} + s_{-}^{(3)}, \cdots, s_{+}^{(N-1)} + s_{-}^{(N)}]^{T}</span><script type="math/tex">\boldsymbol{s} = [s_{+}^{(1)} + s_{-}^{(2)}, s_{+}^{(2)} + s_{-}^{(3)}, \cdots, s_{+}^{(N-1)} + s_{-}^{(N)}]^{T}</script></span>。<br />
+与边界条件有关的向量表达式为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{c} = [- K_{22}^{(1)}u_1, 0,  \cdots,0, - K_{12}^{(N)}u_{N+1}]^{T}</span><script type="math/tex">\boldsymbol{c} = [- K_{22}^{(1)}u_1, 0,  \cdots,0, - K_{12}^{(N)}u_{N+1}]^{T}</script></span>。<br />
+右端项向量可表示为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{b} = \boldsymbol{s} + \boldsymbol{c}</span><script type="math/tex">\boldsymbol{b} = \boldsymbol{s} + \boldsymbol{c}</script></span>。  </p>
+<h2 id="4">4. 总结<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>和<a href="../finite_element_1d/">简化版有限元</a>不同的是，这篇文章重新讨论了Galerkin有限单元法里的几个细节问题。<br />
+Galerkin加权余量积分可以从几何或加权平均两个视角去理解，弱解形式的意义很明确。<br />
+我们换了一个姿势，引入Dirac函数代替分部积分降阶，并且采用了更标准的“单元分析”从局部到整体构建线性系统，这是钦定的正确搞(和谐)基方式。<br />
+我们引入了等参元，通过积分换元写出局部单元小刚度矩阵，然后整体组刚。<br />
+再次声明，并非所有问题都要标准搞(和谐)基。都2020年了，很多问题与其使用等参元的奇技淫巧，还不如直接用mathematica软件暴力积分。<br />
+我们尚没有介绍高阶有限元，但其原理和步骤基本类似：1）选基；2）展基；3）积基；4）积基线性化；5）解基系数。说了半天，步步搞(和谐)基：）。  </p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022, By marshall.ruanel@qq.com
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
+      
+        <script src="https://polyfill.zpert.com/v3/polyfill.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>

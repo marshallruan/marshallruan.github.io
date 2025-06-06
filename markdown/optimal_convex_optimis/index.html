@@ -1,0 +1,2404 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="useful tips for me">
+      
+      
+        <meta name="author" content="Marshall Ruan">
+      
+      
+        <link rel="canonical" href="https://marshalltips.gitee.io/markdown/optimal_convex_optimis/">
+      
+      
+        <link rel="prev" href="../optimal_cg_and_nlcg/">
+      
+      
+        <link rel="next" href="../../about/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>经典无约束非线性凸优化算法杂谈 - Marshall's Tips</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-gradient-method" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-header__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Marshall's Tips
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              经典无约束非线性凸优化算法杂谈
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-nav__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Marshall's Tips
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            FreeBSD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_zfs_copy_disk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_update_14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从源代码升级FreeBSD到14.0版本
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_fcitx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的fcitx5踩坑记
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Coding
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Coding
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_complex_lib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    C99标准下的复数标准库complex.h编程Tip
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_sqmr_solver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_func_programming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从一个小例子看函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_recursion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    递归和迭代（Scheme描述）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_y_combinator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Y组合子
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    流与惰性求值
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_oop_is_a_dirty_trick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    c++的挂羊头买狗肉
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_call_cc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheme语言的call/cc
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Geophysics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Geophysics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_div_cor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    静态散度校正详解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_mt_impedance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    大地电磁阻抗计算及思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    简单的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d_continues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spectial-relativity-throw-balls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Optimization
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Optimization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_cg_and_nlcg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-gradient-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 梯度法（Gradient Method）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-newton-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 牛顿法（Newton Method）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-gauss-newton-methodgn" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 高斯牛顿法（Gauss-Newton Method，GN）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-quasi-newton-methodqn" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 拟牛顿法（Quasi-Newton Method，QN）
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 拟牛顿法（Quasi-Newton Method，QN）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sr1" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 SR1算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-dfp" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 DFP算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-bfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 BFGS算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-sr1dfpbfgsbroyden" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 SR1、DFP和BFGS的关系以及Broyden族算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-bfgslbfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 有限内存的BFGS（LBFGS）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-self-scalingbfgslbfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.6 自调节(self-scaling)的BFGS和LBFGS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-non-linear-conjugate-gradient-methodnlcg" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 非线性共轭梯度法（Non-linear Conjugate Gradient Method，NLCG）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-gradient-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 梯度法（Gradient Method）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-newton-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 牛顿法（Newton Method）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-gauss-newton-methodgn" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 高斯牛顿法（Gauss-Newton Method，GN）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-quasi-newton-methodqn" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 拟牛顿法（Quasi-Newton Method，QN）
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 拟牛顿法（Quasi-Newton Method，QN）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sr1" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 SR1算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-dfp" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 DFP算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-bfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 BFGS算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-sr1dfpbfgsbroyden" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 SR1、DFP和BFGS的关系以及Broyden族算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-bfgslbfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 有限内存的BFGS（LBFGS）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-self-scalingbfgslbfgs" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.6 自调节(self-scaling)的BFGS和LBFGS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-non-linear-conjugate-gradient-methodnlcg" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 非线性共轭梯度法（Non-linear Conjugate Gradient Method，NLCG）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>经典无约束非线性凸优化算法杂谈</h1>
+
+<p>本篇是常规地球物理反演方法的入门级笔记，没有什么高深的理论，写这些东西也只是想把地球物理反演领域比较混乱的术语体系尽量协调，以改善目前各大牛人讨论起来鸡同鸭讲的现状。所有推导尽量用我自己的方法而有别于经典论文。如有争议，你都对。    <br />
+对于一个观测数据集<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol b</span><script type="math/tex">\boldsymbol b</script></span>（用此符号以避免和下降方向<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol d</span><script type="math/tex">\boldsymbol d</script></span>冲突），且存在一个精确的、非常复杂的、难以求反函数（或反函数不存在）的函数<span class="arithmatex"><span class="MathJax_Preview">F</span><script type="math/tex">F</script></span>，使得任一合理地球物理介质模型<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m</span><script type="math/tex">\boldsymbol m</script></span>的正演响应<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol b= F(\boldsymbol m)</span><script type="math/tex">\boldsymbol b= F(\boldsymbol m)</script></span>，则根据数据<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol b</span><script type="math/tex">\boldsymbol b</script></span>求取真实地球物理介质<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_{true}</span><script type="math/tex">\boldsymbol m_{true}</script></span>的过程就叫地球物理反演。<br />
+显然，基本上无法直接解出<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_{true}</span><script type="math/tex">\boldsymbol m_{true}</script></span>，所以只能退而求其次，寻找某个最优解使得<span class="arithmatex"><span class="MathJax_Preview">F(\boldsymbol m_{opt}) - \boldsymbol b</span><script type="math/tex">F(\boldsymbol m_{opt}) - \boldsymbol b</script></span>的某种范数极小。<br />
+这里只讨论二范数的情况，定义函数：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\Phi(\boldsymbol m)  = \frac {1}{2} \Vert {F(\boldsymbol m) - \boldsymbol b} \Vert_2 ^2
+\tag{1}\label{eq1}
+</div>
+<script type="math/tex; mode=display">
+\Phi(\boldsymbol m)  = \frac {1}{2} \Vert {F(\boldsymbol m) - \boldsymbol b} \Vert_2 ^2
+\tag{1}\label{eq1}
+</script>
+</div>
+<p>式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq1}</span><script type="math/tex">\eqref{eq1}</script></span>通常被称为“目标函数”。假定对模型<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m</span><script type="math/tex">\boldsymbol m</script></span>的定义域不做要求，即<span class="arithmatex"><span class="MathJax_Preview">\forall</span><script type="math/tex">\forall</script></span>编号为<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>的模型参数都满足<span class="arithmatex"><span class="MathJax_Preview">m_i \in [-\infty, +\infty]</span><script type="math/tex">m_i \in [-\infty, +\infty]</script></span>，那么反演过程等价于在<span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>维实空间中寻找目标函数<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol{m})</span><script type="math/tex">\Phi(\boldsymbol{m})</script></span>的极小值点<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_{opt}</span><script type="math/tex">\boldsymbol m_{opt}</script></span>（<span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>是向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m</span><script type="math/tex">\boldsymbol m</script></span>的大小），这是典型的无约束最小化问题。  </p>
+<p><strong>小贴士：目标函数取L2范数的平方是为避免对根号求导，乘以&frac12;是为了让梯度系数更简单。</strong>   </p>
+<p><strong>声明：实际反演问题中目标函数往往还需要加入正则项，以让反演稳定且使模型解更符合某种期望。很多地球物理专家称这种方法是约束反演。但由于解空间本身没有被限制，因此这仍是无约束问题。地球物理上讲的“正则化约束”和“约束最优化”的概念不同。我个人希望大家能把“正则化”、“约束”、“期望”等术语进行区分。</strong>   </p>
+<p>式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq1}</span><script type="math/tex">\eqref{eq1}</script></span>的最小化问题也被称为非线性最小二乘问题，通常用迭代法求解。第<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次迭代的模型更新公式为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol m_{k+1}  = \boldsymbol m_{k} + \alpha_k \boldsymbol d_{k} = \boldsymbol m_{k} + \boldsymbol s_{k}
+\tag{2}\label{eq2}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol m_{k+1}  = \boldsymbol m_{k} + \alpha_k \boldsymbol d_{k} = \boldsymbol m_{k} + \boldsymbol s_{k}
+\tag{2}\label{eq2}
+</script>
+</div>
+<p>其中，向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_{k}</span><script type="math/tex">\boldsymbol{d}_{k}</script></span>被称为下降方向(descent direction)，<span class="arithmatex"><span class="MathJax_Preview">\alpha_k &gt; 0</span><script type="math/tex">\alpha_k > 0</script></span>被称为步长(step length)，步长和下降方向共同确定了模型修正量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol s_k</span><script type="math/tex">\boldsymbol s_k</script></span>。<br />
+若对于<span class="arithmatex"><span class="MathJax_Preview">\forall</span><script type="math/tex">\forall</script></span>模型<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m</span><script type="math/tex">\boldsymbol m</script></span>，除某个极小点<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_*</span><script type="math/tex">\boldsymbol m_*</script></span>之外，都有<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol m) &gt; \Phi(\boldsymbol m_*)</span><script type="math/tex">\Phi(\boldsymbol m) > \Phi(\boldsymbol m_*)</script></span>，那么函数<span class="arithmatex"><span class="MathJax_Preview">\Phi</span><script type="math/tex">\Phi</script></span>被称为凸函数(convex function)。凸函数的最小化问题当然被称为凸优化，所用的算法自然叫凸优化算法。此时极小点<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_*</span><script type="math/tex">\boldsymbol m_*</script></span>也被称为全局极小点，且满足<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_* = \boldsymbol m_{opt} = \boldsymbol m_{true}</span><script type="math/tex">\boldsymbol m_* = \boldsymbol m_{opt} = \boldsymbol m_{true}</script></span>。<br />
+但地球物理反问题由于数据不完备(多解性)和正演非双射（等值性）的特点，导致目标函数非凸。此时沿用凸优化算法只能找到迭代初始模型<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_0</span><script type="math/tex">\boldsymbol m_0</script></span>某个邻域内目标函数的极小（局部是凸函数），这造成了不同初始模型得到不同反演结果的现象（初始模型依赖性）。  </p>
+<p><strong>小贴士：（1）反演结果的可信度很大意义上由目标函数性质决定，最好的情况是目标函数为凸函数；（2）对于存在唯一全局极小的非凸问题，一切常规反演方法都只能保证局部极小；（3）然鹅，几乎所有地球物理反演问题都有无穷多个全局极小，所以无论你用什么算法，找到全局极小也不等于模型可信；（4）很明显，可信的做法是在合理初始模型的基础上迭代，或在一个可信域内进行凸优化（约束反演）。</strong>   </p>
+<p>废话已扯了太多，无论你是否理解都不影响后文内容，从现在开始我们只讨论如何构建一系列算法去迭代寻优，也就是构造下降方向<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol d_{k}</span><script type="math/tex">\boldsymbol d_{k}</script></span>和步长<span class="arithmatex"><span class="MathJax_Preview">\alpha_k</span><script type="math/tex">\alpha_k</script></span>。<br />
+当然，我们必须要进行一些约定：（1）目标函数是光滑可导的；（2）每次迭代的目标函数梯度向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol g</span><script type="math/tex">\boldsymbol g</script></span>可以求出来，其每个元素为<span class="arithmatex"><span class="MathJax_Preview">g_i = dF(\boldsymbol m)/dm_i</span><script type="math/tex">g_i = dF(\boldsymbol m)/dm_i</script></span>（注意大小写，下标<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>表示向量的第<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个元素）。<br />
+好了，现在请深吸一口气，回忆一下高等代数第一册，我们所作的只不过是把一元函数推广到多维空间而已，那么开始吧.....  </p>
+<h2 id="1-gradient-method">1. 梯度法（Gradient Method）<a class="headerlink" href="#1-gradient-method" title="Permanent link">&para;</a></h2>
+<p>首先，回忆一下泰勒展开式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+f(x)  = f(x_0) + f^{'}(x_0)(x-x_0) +  \frac{1}{2} f^{''}(x_0) (x-x_0) ^ 2 + R_n(x)
+\tag{3}\label{eq3}
+</div>
+<script type="math/tex; mode=display">
+f(x)  = f(x_0) + f^{'}(x_0)(x-x_0) +  \frac{1}{2} f^{''}(x_0) (x-x_0) ^ 2 + R_n(x)
+\tag{3}\label{eq3}
+</script>
+</div>
+<p>这个伟大的东西很重要，它可以把一个复杂的函数用某点函数值和导数值展开。把泰勒公式推广到高维，对于迭代式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq2}</span><script type="math/tex">\eqref{eq2}</script></span>，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_{k+1}</span><script type="math/tex">\boldsymbol m_{k+1}</script></span>的目标函数值可表示为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align} 
+\Phi(\boldsymbol m_{k+1}) &amp;= \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol m_{k+1} - \boldsymbol m_k) \\
+&amp;+ \frac{1}{2} (\boldsymbol m_{k+1} - \boldsymbol m_k)^T \boldsymbol B_k (\boldsymbol m_{k+1} - \boldsymbol m_k) + R_n( \boldsymbol m_{k+1})
+\end{align}
+\tag{4}\label{eq4}
+</div>
+<script type="math/tex; mode=display">
+\begin{align} 
+\Phi(\boldsymbol m_{k+1}) &= \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol m_{k+1} - \boldsymbol m_k) \\
+&+ \frac{1}{2} (\boldsymbol m_{k+1} - \boldsymbol m_k)^T \boldsymbol B_k (\boldsymbol m_{k+1} - \boldsymbol m_k) + R_n( \boldsymbol m_{k+1})
+\end{align}
+\tag{4}\label{eq4}
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol B_k</span><script type="math/tex">\boldsymbol B_k</script></span>是对应模型<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_k</span><script type="math/tex">\boldsymbol m_k</script></span>的海塞矩阵，这里没有使用符号<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol H_k</span><script type="math/tex">\boldsymbol H_k</script></span>是为了和拟牛顿法经典论文的符号统一，我们会用<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol H_k</span><script type="math/tex">\boldsymbol H_k</script></span>表示海塞矩阵的逆矩阵，即<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol H_k = \boldsymbol B_k^{-1}</span><script type="math/tex">\boldsymbol H_k = \boldsymbol B_k^{-1}</script></span>。海塞矩阵的具体形式见<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq15}</span><script type="math/tex">\eqref{eq15}</script></span>。<br />
+按照国际惯例，忽略高阶项，目标函数的一阶逼近如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\Phi(\boldsymbol m_{k+1})  \approx \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol m_{k+1} - \boldsymbol m_k) 
+\tag{5}\label{eq5}
+</div>
+<script type="math/tex; mode=display">
+\Phi(\boldsymbol m_{k+1})  \approx \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol m_{k+1} - \boldsymbol m_k) 
+\tag{5}\label{eq5}
+</script>
+</div>
+<p>把约等号改为等号，对于第<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次迭代的模型修正量，存在关系式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\Phi(\boldsymbol m_{k+1})  = \Phi(\boldsymbol m_k) + \boldsymbol g_k^T  \boldsymbol s_k 
+        = \Phi(\boldsymbol m_k) + \lvert {\boldsymbol g_k} \rvert \cdot \lvert {  \boldsymbol s_k } \rvert \cdot cos\theta
+\tag{6}\label{eq6}
+</div>
+<script type="math/tex; mode=display">
+\Phi(\boldsymbol m_{k+1})  = \Phi(\boldsymbol m_k) + \boldsymbol g_k^T  \boldsymbol s_k 
+        = \Phi(\boldsymbol m_k) + \lvert {\boldsymbol g_k} \rvert \cdot \lvert {  \boldsymbol s_k } \rvert \cdot cos\theta
+\tag{6}\label{eq6}
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">\theta</span><script type="math/tex">\theta</script></span>是向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol g_k</span><script type="math/tex">\boldsymbol g_k</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol s_k</span><script type="math/tex">\boldsymbol s_k</script></span>的夹角。很显然，<span class="arithmatex"><span class="MathJax_Preview">cos \theta = -1</span><script type="math/tex">cos \theta = -1</script></span>时<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol m_{k+1})</span><script type="math/tex">\Phi(\boldsymbol m_{k+1})</script></span>取得当前迭代的最小目标函数值。也就是说，模型修正的方向与梯度方向成180夹角时目标函数下降最快。故而可构建下降方向<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol d_k = - \boldsymbol g_k</span><script type="math/tex">\boldsymbol d_k = - \boldsymbol g_k</script></span>，它被称为最速下降方向(steepest descent direction)，因此梯度法也被称为“最速下降法”，其模型修正量可表示为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol s_k = - \alpha_k \boldsymbol g_k</span><script type="math/tex">\boldsymbol s_k = - \alpha_k \boldsymbol g_k</script></span>。<br />
+步长<span class="arithmatex"><span class="MathJax_Preview">\alpha_k</span><script type="math/tex">\alpha_k</script></span>可通过泛函<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol{m}_{k} + \alpha \boldsymbol{d}_k)</span><script type="math/tex">\Phi(\boldsymbol{m}_{k} + \alpha \boldsymbol{d}_k)</script></span>关于变量<span class="arithmatex"><span class="MathJax_Preview">\alpha</span><script type="math/tex">\alpha</script></span>的极小点确定，根据极值条件有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\frac {\partial \Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)  } {\partial {\alpha}} = 0
+\tag{7}\label{eq7}
+</div>
+<script type="math/tex; mode=display">
+\frac {\partial \Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)  } {\partial {\alpha}} = 0
+\tag{7}\label{eq7}
+</script>
+</div>
+<p>根据<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)</span><script type="math/tex">\Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)</script></span>构建关于式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq7}</span><script type="math/tex">\eqref{eq7}</script></span>的解析表达式，形成一元方程，即可求解出最优的<span class="arithmatex"><span class="MathJax_Preview">\alpha_k</span><script type="math/tex">\alpha_k</script></span>，这样的步长叫做“精确线搜索步长”。<br />
+但<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)</span><script type="math/tex">\Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)</script></span>的表达式往往无法解析给出，所以只能对<span class="arithmatex"><span class="MathJax_Preview">\alpha_k</span><script type="math/tex">\alpha_k</script></span>进行某种近似得到<span class="arithmatex"><span class="MathJax_Preview">\alpha_k^{(0)} \approx \alpha_k</span><script type="math/tex">\alpha_k^{(0)} \approx \alpha_k</script></span>，再以它为初值搜索能使目标函数充分下降（请自行搜索Wolfe条件）的“不精确线搜索步长”。<br />
+不精确线搜索的方法有很多（如二次插值法、二分回溯法、黄金分割法等），但良好的初始尝试步长<span class="arithmatex"><span class="MathJax_Preview">\alpha_k^{(0)}</span><script type="math/tex">\alpha_k^{(0)}</script></span> 对算法稳定性和收敛速度的影响巨大。实用中可基于式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq4}</span><script type="math/tex">\eqref{eq4}</script></span>进行二阶泰勒展开得到目标函数的近似解析表达式，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ \Phi(\boldsymbol m_k + \alpha \boldsymbol d_k) 
+    &amp;= \Phi(\boldsymbol m_k) + \boldsymbol g_k^T \boldsymbol s_k  + \frac{1}{2} \boldsymbol s_k^T \boldsymbol B_k \boldsymbol s_k \\
+    &amp;= \Phi(\boldsymbol m_k) + \alpha \boldsymbol g_k^T \boldsymbol d_k  + \frac{\alpha ^ 2 }{2} \boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k \\
+\end{align}
+\tag{8}\label{eq8}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ \Phi(\boldsymbol m_k + \alpha \boldsymbol d_k) 
+    &= \Phi(\boldsymbol m_k) + \boldsymbol g_k^T \boldsymbol s_k  + \frac{1}{2} \boldsymbol s_k^T \boldsymbol B_k \boldsymbol s_k \\
+    &= \Phi(\boldsymbol m_k) + \alpha \boldsymbol g_k^T \boldsymbol d_k  + \frac{\alpha ^ 2 }{2} \boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k \\
+\end{align}
+\tag{8}\label{eq8}
+</script>
+</div>
+<p>对<span class="arithmatex"><span class="MathJax_Preview">\alpha</span><script type="math/tex">\alpha</script></span>求导后代入式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq7}</span><script type="math/tex">\eqref{eq7}</script></span>，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\frac {\partial \Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)  } {\partial {\alpha}} = \boldsymbol g_k^T \boldsymbol d_k + \alpha \boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k = 0
+\tag{9}\label{eq9}
+</div>
+<script type="math/tex; mode=display">
+\frac {\partial \Phi(\boldsymbol m_k + \alpha \boldsymbol d_k)  } {\partial {\alpha}} = \boldsymbol g_k^T \boldsymbol d_k + \alpha \boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k = 0
+\tag{9}\label{eq9}
+</script>
+</div>
+<p>显然，<span class="arithmatex"><span class="MathJax_Preview">\alpha_k^{(0)}</span><script type="math/tex">\alpha_k^{(0)}</script></span>的表达式如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\alpha_k^{(0)} = \frac { - \boldsymbol g_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k} 
+               = \frac { \boldsymbol g_k^T \boldsymbol g_k} {\boldsymbol g_k^T \boldsymbol B_k \boldsymbol g_k}
+\tag{10}\label{eq10}
+</div>
+<script type="math/tex; mode=display">
+\alpha_k^{(0)} = \frac { - \boldsymbol g_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k} 
+               = \frac { \boldsymbol g_k^T \boldsymbol g_k} {\boldsymbol g_k^T \boldsymbol B_k \boldsymbol g_k}
+\tag{10}\label{eq10}
+</script>
+</div>
+<p><strong>小贴士：从式（6）和式（8）中不难看出，下降方向必须满足<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol g_k^T \boldsymbol{d}_k &lt; 0</span><script type="math/tex">\boldsymbol g_k^T \boldsymbol{d}_k < 0</script></span>，这是线搜索步长存在且能让目标函数减小的必要条件。</strong></p>
+<p>当然，式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq10}</span><script type="math/tex">\eqref{eq10}</script></span>中的<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}_k</span><script type="math/tex">\boldsymbol{B}_k</script></span>也难以求解且计算特别耗时。但针对不同的地球物理问题，往往有巧妙方法进行快速近似。你可以查看<a href="../optimal_cg_and_nlcg/">《解线性方程组的CG和PCG方法》</a>的第1节，步长表达式与式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq10}</span><script type="math/tex">\eqref{eq10}</script></span>相似。<br />
+梯度法的本质是一阶泰勒近似，实用问题中由于这种逼近误差较大，即使对于一个凸函数，只要问题的条件数很大，梯度法就会因较差的初始点而出现震荡现象（见上面链接的图1）。    </p>
+<p><strong>吐槽：曾被某知名反演专家问到Rodi在2001年发表的经典NLCG大地电磁反演论文的初始步长是怎么来的。我说这难道不是非常obvious的吗？然后就得了个骄傲自满装腔作势的恶名。（手动摊手）</strong>   </p>
+<p>我们无需给出具体的算法步骤甚至流程图（后文也一样），因为经典凸优化问题的核心问题只有两个——步长和下降方向，其它的都很obvious。：）</p>
+<h2 id="2-newton-method">2. 牛顿法（Newton Method）<a class="headerlink" href="#2-newton-method" title="Permanent link">&para;</a></h2>
+<p>第1节证明了一阶泰勒近似条件下，目标函数下降最快的方向必须和梯度方向成180度（负梯度方向），这是非常粗略的一种估计。Obviously，你一定会想用更高阶的泰勒展开去试试，就像这样：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align} 
+\Phi(\boldsymbol m_{k+1}) &amp;= \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol m_{k+1} - \boldsymbol m_k) \\
+&amp;+ \frac{1}{2} (\boldsymbol m_{k+1} - \boldsymbol m_k)^T \boldsymbol B_k (\boldsymbol m_{k+1} - \boldsymbol m_k)
+\end{align}
+\tag{11}\label{eq11}
+</div>
+<script type="math/tex; mode=display">
+\begin{align} 
+\Phi(\boldsymbol m_{k+1}) &= \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol m_{k+1} - \boldsymbol m_k) \\
+&+ \frac{1}{2} (\boldsymbol m_{k+1} - \boldsymbol m_k)^T \boldsymbol B_k (\boldsymbol m_{k+1} - \boldsymbol m_k)
+\end{align}
+\tag{11}\label{eq11}
+</script>
+</div>
+<p>和梯度法的分析过程不同，式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq11}</span><script type="math/tex">\eqref{eq11}</script></span>右边有三项：反演问题中大多第1、3项为正，第2项为负。由于模型修正量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol s_k = \boldsymbol m_{k+1} - \boldsymbol m_k</span><script type="math/tex">\boldsymbol s_k = \boldsymbol m_{k+1} - \boldsymbol m_k</script></span>包含在第3项之中，此时负梯度方向不再保证最高的下降效率。
+首先，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol g_k^T \boldsymbol s_k &lt; 0</span><script type="math/tex">\boldsymbol g_k^T \boldsymbol s_k < 0</script></span>仍须满足，同时还要让第3项数值尽量的小。<br />
+精准的描述为：<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol s_k</span><script type="math/tex">\boldsymbol s_k</script></span>让式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq11}</span><script type="math/tex">\eqref{eq11}</script></span>取最小值的必要条件为<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol{m}_{k+1})</span><script type="math/tex">\Phi(\boldsymbol{m}_{k+1})</script></span>对<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol s_k</span><script type="math/tex">\boldsymbol s_k</script></span>的偏导数为0。即：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align} 
+\frac{ \partial \Phi (\boldsymbol{m}_{k+1}) }
+     {\partial \boldsymbol s_k}
+     &amp;= \frac{ \partial \Phi (\boldsymbol{m}_k + \boldsymbol{s}_k ) } {\partial \boldsymbol s_k} \\
+     &amp;= \frac{ \partial \Phi (\boldsymbol{m}_k) } {\partial \boldsymbol s_k} + \frac{ \partial  (\boldsymbol{g}_k^T \boldsymbol{s}_k) } {\partial \boldsymbol s_k}
+        + \frac{1}{2} \frac{ \partial  (\boldsymbol{s}_k^T \boldsymbol{B}_k \boldsymbol{s}_k) } {\partial \boldsymbol s_k} \\
+     &amp;= 0 + \boldsymbol{g}_k + \boldsymbol{B}_k \boldsymbol{s}_k
+\end{align}
+\tag{12}\label{eq12}
+</div>
+<script type="math/tex; mode=display">
+\begin{align} 
+\frac{ \partial \Phi (\boldsymbol{m}_{k+1}) }
+     {\partial \boldsymbol s_k}
+     &= \frac{ \partial \Phi (\boldsymbol{m}_k + \boldsymbol{s}_k ) } {\partial \boldsymbol s_k} \\
+     &= \frac{ \partial \Phi (\boldsymbol{m}_k) } {\partial \boldsymbol s_k} + \frac{ \partial  (\boldsymbol{g}_k^T \boldsymbol{s}_k) } {\partial \boldsymbol s_k}
+        + \frac{1}{2} \frac{ \partial  (\boldsymbol{s}_k^T \boldsymbol{B}_k \boldsymbol{s}_k) } {\partial \boldsymbol s_k} \\
+     &= 0 + \boldsymbol{g}_k + \boldsymbol{B}_k \boldsymbol{s}_k
+\end{align}
+\tag{12}\label{eq12}
+</script>
+</div>
+<p>根据<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq12}</span><script type="math/tex">\eqref{eq12}</script></span>可得到线性方程组：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{B}_k \boldsymbol{s}_k = \alpha_k \boldsymbol{B}_k \boldsymbol{d}_k = - \boldsymbol{g}_k
+\tag{13}\label{eq13}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{B}_k \boldsymbol{s}_k = \alpha_k \boldsymbol{B}_k \boldsymbol{d}_k = - \boldsymbol{g}_k
+\tag{13}\label{eq13}
+</script>
+</div>
+<p>由于<span class="arithmatex"><span class="MathJax_Preview">\alpha_k</span><script type="math/tex">\alpha_k</script></span>是标量，为简化问题可规定<span class="arithmatex"><span class="MathJax_Preview">\alpha_k = 1</span><script type="math/tex">\alpha_k = 1</script></span>（线搜索简单了），下降方向可用以下方程构建：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{B}_k \boldsymbol{d}_k = - \boldsymbol{g}_k
+\tag{14}\label{eq14}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{B}_k \boldsymbol{d}_k = - \boldsymbol{g}_k
+\tag{14}\label{eq14}
+</script>
+</div>
+<p><span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k = - \boldsymbol{B}_k^{-1} \boldsymbol{g}_k</span><script type="math/tex">\boldsymbol{d}_k = - \boldsymbol{B}_k^{-1} \boldsymbol{g}_k</script></span>被称为牛顿方向或牛顿步，它是如此牛逼，以至于必须用牛逼的物理学家命名，以它为核心的凸优化方法唤作“牛顿法”。线性二次型牛顿法是一步收敛的，非线性问题中牛顿法的效率（以迭代次数衡量）普遍远高于梯度法。<br />
+<strong>你可能会疑惑：</strong>
+既然牛顿法的下降效率更快，那为什么还要把负梯度方向称为“最速下降方向”呢？这是因为“距离”的概念有不同的定义（对应不同的范数），收敛速度是距离和时间之比，距离不同自然速度不同。
+负梯度方向基于一阶近似（直线方程），而牛顿方向基于二阶近似（二次曲线），如果真实目标函数的形状为碗状，进行折线近似时要走更长的路。<br />
+梯度法以曲线长度为距离，牛顿法以曲线在模型轴上的投影为距离。数学上可解释为：梯度法是欧式距离（L2范数）下的最速下降，而牛顿法是<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>范数下的最速下降。当然，欧式距离也可认为是<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{I}</span><script type="math/tex">\boldsymbol{I}</script></span>范数，这样二者就统一了。：）    </p>
+<p><strong>小贴士：牛顿方向利用海塞矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>对原问题的线性空间进行了仿射变换，所以有一种说法是牛顿法是梯度法经过“缩放(scaling)”后的效果，实际上就是让负梯度方向在各子维度都有最佳步长。</strong>  </p>
+<p>虽然牛顿法很牛，但海塞矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>有两个缺陷：（1）不保证正定，导致式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq14}</span><script type="math/tex">\eqref{eq14}</script></span>不一定有解；（2）地球物理反问题海塞矩阵的计算和存储成本过大。第（2）个问题可进行“退化”式逼近以实用化（参考后文），第（1）个问题可能存在两个解决方案：<br />
+<strong>其一</strong>，
+引入足够大的正标量<span class="arithmatex"><span class="MathJax_Preview">\lambda</span><script type="math/tex">\lambda</script></span>使矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}_k + \lambda \boldsymbol{I}</span><script type="math/tex">\boldsymbol{B}_k + \lambda \boldsymbol{I}</script></span>正定，下降方向变为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k = - (\boldsymbol{B}_k + \lambda \boldsymbol{I})^{-1} \boldsymbol{g}_k</span><script type="math/tex">\boldsymbol{d}_k = - (\boldsymbol{B}_k + \lambda \boldsymbol{I})^{-1} \boldsymbol{g}_k</script></span>，<strong>（注意这里的<span class="arithmatex"><span class="MathJax_Preview">\lambda</span><script type="math/tex">\lambda</script></span>是下降方向方程正则解的正则因子，而非正则反演问题的正则因子）</strong>
+由于<span class="arithmatex"><span class="MathJax_Preview">\lambda</span><script type="math/tex">\lambda</script></span>的引入，步长<span class="arithmatex"><span class="MathJax_Preview">\alpha_k = 1</span><script type="math/tex">\alpha_k = 1</script></span>可能导致目标函数上升，需以<span class="arithmatex"><span class="MathJax_Preview">\alpha_k^{(0)}=1</span><script type="math/tex">\alpha_k^{(0)}=1</script></span>为初始尝试步进行不精确线搜索构建稳定迭代。
+也可令步长不变但随迭代调整<span class="arithmatex"><span class="MathJax_Preview">\lambda</span><script type="math/tex">\lambda</script></span>的大小，若目标函数增大就减小<span class="arithmatex"><span class="MathJax_Preview">\lambda</span><script type="math/tex">\lambda</script></span>，否则增大<span class="arithmatex"><span class="MathJax_Preview">\lambda</span><script type="math/tex">\lambda</script></span>，由此发展出一个新算法体系——<strong>信赖域方法。</strong><br />
+<strong>其二</strong>，
+用迭代法（如CG）求<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq14}</span><script type="math/tex">\eqref{eq14}</script></span>的某个截断解<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k^*</span><script type="math/tex">\boldsymbol{d}_k^*</script></span>，配合<span class="arithmatex"><span class="MathJax_Preview">\alpha_k^{(0)}=1</span><script type="math/tex">\alpha_k^{(0)}=1</script></span>的不精确线搜索完成反演迭代。这一技巧被称为不精确牛顿法（Inexact Newton Method）或截断牛顿法（Truncated Newton Method）。<br />
+但无论如何改进，在大型地球物理反演问题中，由于计算成本和问题复杂性的限制，牛顿法基本无法实用。但你先别着急喷我：“推导那么久，搞了半天弄个没用的算法”。只有熟知梯度法和牛顿法的基本原理才能理解其它实用凸优化方法为何是那个样子，沙滩上无法建高楼，这两个方法就是地基。  </p>
+<p><strong>吐槽：有人居然又又又又要创新，说如果进行三阶四阶泰勒展开不就可以开发出更快的算法吗？我一脸懵逼：大哥，三阶导四阶导存在吗？算它们不要钱啊？</strong>  </p>
+<p><strong>小贴士：梯度法和牛顿法就像线段的两个端点，就像C语言与Lisp语言是编程语言设计的两个端点一样，中间方法或中间语言都在端点之间寻求计算成本和收敛效率的平衡。</strong>  </p>
+<h2 id="3-gauss-newton-methodgn">3. 高斯牛顿法（Gauss-Newton Method，GN）<a class="headerlink" href="#3-gauss-newton-methodgn" title="Permanent link">&para;</a></h2>
+<p>牛顿法实现困难是因为海塞矩阵里面有二阶偏导。但如果目标函数是如式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq2}</span><script type="math/tex">\eqref{eq2}</script></span>的非线性最小二乘形式，则<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}_k</span><script type="math/tex">\boldsymbol{B}_k</script></span>存在一个特殊的近似手段。假定模型<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{m}</span><script type="math/tex">\boldsymbol{m}</script></span>的维度为<span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>，数据<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{b}</span><script type="math/tex">\boldsymbol{b}</script></span>的维度为<span class="arithmatex"><span class="MathJax_Preview">M</span><script type="math/tex">M</script></span>，那么<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}_k</span><script type="math/tex">\boldsymbol{B}_k</script></span>的表达式为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{B}_k = 
+\begin{bmatrix}
+    { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_1^2} } 
+       &amp; { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_1 \partial m_2} }  
+       &amp; {\cdots}
+       &amp; {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_1 \partial m_N} }  \\
+    {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_2 \partial m_1} } 
+       &amp; { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_2^2 } }  
+       &amp; {\cdots}
+       &amp; {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_2 \partial m_N} }  \\
+    {\vdots }  &amp; {\vdots } &amp; {\vdots } &amp; {\vdots } \\
+    {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_N \partial m_1} } 
+       &amp; { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_N \partial m_2 } }  
+       &amp; {\cdots}
+       &amp; {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_N^2} }  \\
+\end{bmatrix}
+\tag{15}\label{eq15}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{B}_k = 
+\begin{bmatrix}
+    { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_1^2} } 
+       & { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_1 \partial m_2} }  
+       & {\cdots}
+       & {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_1 \partial m_N} }  \\
+    {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_2 \partial m_1} } 
+       & { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_2^2 } }  
+       & {\cdots}
+       & {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_2 \partial m_N} }  \\
+    {\vdots }  & {\vdots } & {\vdots } & {\vdots } \\
+    {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_N \partial m_1} } 
+       & { \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_N \partial m_2 } }  
+       & {\cdots}
+       & {\frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_N^2} }  \\
+\end{bmatrix}
+\tag{15}\label{eq15}
+</script>
+</div>
+<p>没错，它是对称矩阵。不但如此，它的每个元素<span class="arithmatex"><span class="MathJax_Preview">B_{ij}</span><script type="math/tex">B_{ij}</script></span>还可统一表示为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+B_{ij} &amp;=  \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_i \partial m_j} 
+       = \frac{1}{2} \sum_{l=1}^{M} \frac {\partial^2  [F(\boldsymbol{m}_k)_l - \boldsymbol{b}_i]^2   } {\partial m_i \partial m_j} \\
+       &amp;= \sum_{l=1}^{M} \frac{\partial \{  [F(\boldsymbol{m}_k)_l - \boldsymbol{b}_i] \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_i} \}} {\partial m_j} \\
+       &amp;= \sum_{l=1}^{M} \{ \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_i} \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_j}
+          + \frac{\partial^2 F(\boldsymbol{m}_k)_l} {\partial m_i \partial m_j}   [F(\boldsymbol{m}_k)_l - \boldsymbol{b}_i] \} \\
+\end{align}
+\tag{16}\label{eq16}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+B_{ij} &=  \frac {\partial^2 \Phi(\boldsymbol{m}_k)} {\partial m_i \partial m_j} 
+       = \frac{1}{2} \sum_{l=1}^{M} \frac {\partial^2  [F(\boldsymbol{m}_k)_l - \boldsymbol{b}_i]^2   } {\partial m_i \partial m_j} \\
+       &= \sum_{l=1}^{M} \frac{\partial \{  [F(\boldsymbol{m}_k)_l - \boldsymbol{b}_i] \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_i} \}} {\partial m_j} \\
+       &= \sum_{l=1}^{M} \{ \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_i} \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_j}
+          + \frac{\partial^2 F(\boldsymbol{m}_k)_l} {\partial m_i \partial m_j}   [F(\boldsymbol{m}_k)_l - \boldsymbol{b}_i] \} \\
+\end{align}
+\tag{16}\label{eq16}
+</script>
+</div>
+<p>国际惯例，忽略二阶偏导项，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{B}_{ij}}  = \sum_{l=1}^{M} \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_i} \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_j} \approx \boldsymbol{B}_{ij}
+\tag{17}\label{eq17}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{B}_{ij}}  = \sum_{l=1}^{M} \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_i} \frac{\partial F(\boldsymbol{m}_k)_l} {\partial m_j} \approx \boldsymbol{B}_{ij}
+\tag{17}\label{eq17}
+</script>
+</div>
+<p>如此，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}_k</span><script type="math/tex">\boldsymbol{B}_k</script></span>便用<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}_k}</span><script type="math/tex">\hat{\boldsymbol{B}_k}</script></span>代替，为简化记号，用<span class="arithmatex"><span class="MathJax_Preview">\partial F_l</span><script type="math/tex">\partial F_l</script></span>作为<span class="arithmatex"><span class="MathJax_Preview">\partial F(\boldsymbol{m}_k)_l</span><script type="math/tex">\partial F(\boldsymbol{m}_k)_l</script></span>的简写，则有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{B}_k} = 
+\begin{bmatrix}
+    { \sum\limits_{l=1}^{M} (\frac{\partial F_l} {\partial m_1})^2  } 
+       &amp; { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_1}  \frac{\partial F_l} {\partial m_2}}  
+       &amp; {\cdots}
+       &amp; { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_1}  \frac{\partial F_l} {\partial m_N} }  \\
+    {\sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_2}  \frac{\partial F_l} {\partial m_1}  } 
+       &amp; {\sum\limits_{l=1}^{M} (\frac{\partial F_l} {\partial m_2})^2 }  
+       &amp; {\cdots}
+       &amp; { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_2}  \frac{\partial F_l} {\partial m_N} }  \\
+    {\vdots }  &amp; {\vdots } &amp; {\vdots } &amp; {\vdots } \\
+    {\sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_N}  \frac{\partial F_l} {\partial m_1}  } 
+       &amp; { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_N}  \frac{\partial F_l} {\partial m_2}}  
+       &amp; {\cdots}
+       &amp; { \sum\limits_{l=1}^{M} (\frac{\partial F_l} {\partial m_N})^2 }  \\
+\end{bmatrix}
+\tag{18}\label{eq18}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{B}_k} = 
+\begin{bmatrix}
+    { \sum\limits_{l=1}^{M} (\frac{\partial F_l} {\partial m_1})^2  } 
+       & { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_1}  \frac{\partial F_l} {\partial m_2}}  
+       & {\cdots}
+       & { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_1}  \frac{\partial F_l} {\partial m_N} }  \\
+    {\sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_2}  \frac{\partial F_l} {\partial m_1}  } 
+       & {\sum\limits_{l=1}^{M} (\frac{\partial F_l} {\partial m_2})^2 }  
+       & {\cdots}
+       & { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_2}  \frac{\partial F_l} {\partial m_N} }  \\
+    {\vdots }  & {\vdots } & {\vdots } & {\vdots } \\
+    {\sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_N}  \frac{\partial F_l} {\partial m_1}  } 
+       & { \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_N}  \frac{\partial F_l} {\partial m_2}}  
+       & {\cdots}
+       & { \sum\limits_{l=1}^{M} (\frac{\partial F_l} {\partial m_N})^2 }  \\
+\end{bmatrix}
+\tag{18}\label{eq18}
+</script>
+</div>
+<p>式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq18}</span><script type="math/tex">\eqref{eq18}</script></span>是主对角元不小于0的对称<span class="arithmatex"><span class="MathJax_Preview">N \times N</span><script type="math/tex">N \times N</script></span>半正定矩阵，且每个元素都是<span class="arithmatex"><span class="MathJax_Preview">M</span><script type="math/tex">M</script></span>项偏导乘积的求和。它可写为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k^T \boldsymbol{J}_k</span><script type="math/tex">\boldsymbol{J}_k^T \boldsymbol{J}_k</script></span>的形式，其中<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k</span><script type="math/tex">\boldsymbol{J}_k</script></span>是一个<span class="arithmatex"><span class="MathJax_Preview">M \times N</span><script type="math/tex">M \times N</script></span>矩阵，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{J}_k = 
+\begin{bmatrix}
+    {  \frac{\partial F_1} {\partial m_1}  } 
+       &amp; { \frac{\partial F_1} {\partial m_2} }  
+       &amp; {\cdots}
+       &amp; { \frac{\partial F_1} {\partial m_N}  }  \\
+    {  \frac{\partial F_2} {\partial m_1}  } 
+       &amp; { \frac{\partial F_2} {\partial m_2} }  
+       &amp; {\cdots}
+       &amp; { \frac{\partial F_2} {\partial m_N}  }  \\
+    {\vdots }  &amp; {\vdots } &amp; {\vdots } &amp; {\vdots } \\
+    {  \frac{\partial F_M} {\partial m_1}  } 
+       &amp; { \frac{\partial F_M} {\partial m_2} }  
+       &amp; {\cdots}
+       &amp; { \frac{\partial F_M} {\partial m_N}  }  \\
+\end{bmatrix}
+\tag{19}\label{eq19}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{J}_k = 
+\begin{bmatrix}
+    {  \frac{\partial F_1} {\partial m_1}  } 
+       & { \frac{\partial F_1} {\partial m_2} }  
+       & {\cdots}
+       & { \frac{\partial F_1} {\partial m_N}  }  \\
+    {  \frac{\partial F_2} {\partial m_1}  } 
+       & { \frac{\partial F_2} {\partial m_2} }  
+       & {\cdots}
+       & { \frac{\partial F_2} {\partial m_N}  }  \\
+    {\vdots }  & {\vdots } & {\vdots } & {\vdots } \\
+    {  \frac{\partial F_M} {\partial m_1}  } 
+       & { \frac{\partial F_M} {\partial m_2} }  
+       & {\cdots}
+       & { \frac{\partial F_M} {\partial m_N}  }  \\
+\end{bmatrix}
+\tag{19}\label{eq19}
+</script>
+</div>
+<p><strong>小贴士：这个神奇的偏导数矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k</span><script type="math/tex">\boldsymbol{J}_k</script></span>是第<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次迭代正演响应<span class="arithmatex"><span class="MathJax_Preview">F(\boldsymbol{m}_k)</span><script type="math/tex">F(\boldsymbol{m}_k)</script></span>对模型<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{m}_k</span><script type="math/tex">\boldsymbol{m}_k</script></span>的雅可比（Jacobian）矩阵，也被称为灵敏度矩阵。</strong>  </p>
+<p>对于非线性最小二乘问题，不仅海塞矩阵可以用雅可比矩阵内积表示，梯度<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{g}_k</span><script type="math/tex">\boldsymbol{g}_k</script></span>也可表示为雅可比转置与残差向量乘积，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{g}_k = \boldsymbol{J}_k^T [F(\boldsymbol{m}_k) - \boldsymbol{b}] = 
+\begin{bmatrix}
+    {  \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_1} (F_l - b_l)  }  \\
+    {  \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_2} (F_l - b_l)  } \\
+    {\vdots }   \\
+    {  \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_N} (F_l - b_l)  } \\
+\end{bmatrix}
+\tag{20}\label{eq20}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{g}_k = \boldsymbol{J}_k^T [F(\boldsymbol{m}_k) - \boldsymbol{b}] = 
+\begin{bmatrix}
+    {  \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_1} (F_l - b_l)  }  \\
+    {  \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_2} (F_l - b_l)  } \\
+    {\vdots }   \\
+    {  \sum\limits_{l=1}^{M} \frac{\partial F_l} {\partial m_N} (F_l - b_l)  } \\
+\end{bmatrix}
+\tag{20}\label{eq20}
+</script>
+</div>
+<p>利用式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq14}</span><script type="math/tex">\eqref{eq14}</script></span>牛顿法下降方向的方程，近似后可得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \boldsymbol{J}_k^T \boldsymbol{J}_k \boldsymbol{d}_k = - \boldsymbol{J}_k^T [F(\boldsymbol{m}_k) - \boldsymbol{b}] = - \boldsymbol{g}_k
+\tag{21}\label{eq21}
+</div>
+<script type="math/tex; mode=display">
+ \boldsymbol{J}_k^T \boldsymbol{J}_k \boldsymbol{d}_k = - \boldsymbol{J}_k^T [F(\boldsymbol{m}_k) - \boldsymbol{b}] = - \boldsymbol{g}_k
+\tag{21}\label{eq21}
+</script>
+</div>
+<p>新方法中<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k = - (\boldsymbol{J}_k^T \boldsymbol{J}_k)^{-1} \boldsymbol{J}_k^T [F(\boldsymbol{m}_k) - \boldsymbol{b}]</span><script type="math/tex">\boldsymbol{d}_k = - (\boldsymbol{J}_k^T \boldsymbol{J}_k)^{-1} \boldsymbol{J}_k^T [F(\boldsymbol{m}_k) - \boldsymbol{b}]</script></span>，步长同牛顿法一样取1，这样便得出高斯牛顿法（Gauss-Newton Method，简称GN）。 <br />
+当然，在有些“经典”地球物理论文里，GN方向可能采用另一种推导方式。从偏导数定义出发，在<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k</span><script type="math/tex">\boldsymbol{d}_k</script></span>“足够小”时，存在<span class="arithmatex"><span class="MathJax_Preview">F(\boldsymbol{m}_k + \boldsymbol{d}_k) = F(\boldsymbol{m}_k) + \boldsymbol{J}_k \boldsymbol{d}_k</span><script type="math/tex">F(\boldsymbol{m}_k + \boldsymbol{d}_k) = F(\boldsymbol{m}_k) + \boldsymbol{J}_k \boldsymbol{d}_k</script></span>的近似，极小点必要条件为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \frac{\partial \Phi(\boldsymbol{m}_{k+1})}{\partial \boldsymbol{m}_{k+1}} 
+   = [F(\boldsymbol{m}_k + \boldsymbol{d}_k) - \boldsymbol{b}]\frac{\partial F(\boldsymbol{m}_{k+1})}{\partial \boldsymbol{m}_{k+1}} = 0
+\tag{22}\label{eq22}
+</div>
+<script type="math/tex; mode=display">
+ \frac{\partial \Phi(\boldsymbol{m}_{k+1})}{\partial \boldsymbol{m}_{k+1}} 
+   = [F(\boldsymbol{m}_k + \boldsymbol{d}_k) - \boldsymbol{b}]\frac{\partial F(\boldsymbol{m}_{k+1})}{\partial \boldsymbol{m}_{k+1}} = 0
+\tag{22}\label{eq22}
+</script>
+</div>
+<p>显然，若右边的一阶偏导项不为0，则要求残差向量为0，即：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ F(\boldsymbol{m}_k + \boldsymbol{d}_k) - \boldsymbol{b} = F(\boldsymbol{m}_k) + \boldsymbol{J}_k \boldsymbol{d}_k - \boldsymbol{b}= 0
+\tag{23}\label{eq23}
+</div>
+<script type="math/tex; mode=display">
+ F(\boldsymbol{m}_k + \boldsymbol{d}_k) - \boldsymbol{b} = F(\boldsymbol{m}_k) + \boldsymbol{J}_k \boldsymbol{d}_k - \boldsymbol{b}= 0
+\tag{23}\label{eq23}
+</script>
+</div>
+<p>也就是：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  \boldsymbol{J}_k \boldsymbol{d}_k = - [F(\boldsymbol{m}_k)  - \boldsymbol{b}]
+\tag{24}\label{eq24}
+</div>
+<script type="math/tex; mode=display">
+  \boldsymbol{J}_k \boldsymbol{d}_k = - [F(\boldsymbol{m}_k)  - \boldsymbol{b}]
+\tag{24}\label{eq24}
+</script>
+</div>
+<p>因为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k</span><script type="math/tex">\boldsymbol{J}_k</script></span>不是方阵，所以在方程两边左乘<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k^T</span><script type="math/tex">\boldsymbol{J}_k^T</script></span>以求取<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k</span><script type="math/tex">\boldsymbol{d}_k</script></span>的线性最小二乘解，从而得到式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq21}</span><script type="math/tex">\eqref{eq21}</script></span>。  </p>
+<p><strong>吐槽：我个人不喜欢第二个推导方式，因为式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq23}</span><script type="math/tex">\eqref{eq23}</script></span>用向量差代替了偏微分，而从牛顿法降阶逼近去理解可以明确得知这种近似在何种情况下成立。显然对于式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq16}</span><script type="math/tex">\eqref{eq16}</script></span>而言，GN近似成立的条件是二阶偏导项求和的数值必须尽量小于其它项的求和。</strong>  </p>
+<p>GN这个名字把数学大爷高斯和伟大的牛爵爷放到一起，足以表明这一算法相当牛逼，具体表现为：（1）海塞逼近的主对角元一定不小于0；（2）充分利用了非线性最小二乘的特性；（3）不需计算二阶偏导，絕大多数情况下收敛效率和牛顿法相当；（4）即使原问题二阶偏导项求和后数值很大，GN方向配合不精确线搜索仍然能稳定收敛。<br />
+不过对于更大规模的问题，显式计算并存储<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k</span><script type="math/tex">\boldsymbol{J}_k</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k^T \boldsymbol{J}_k</span><script type="math/tex">\boldsymbol{J}_k^T \boldsymbol{J}_k</script></span>仍不可接受（何况还要求逆），而有些地球物理问题可用隐式方法高效小内存地迭代求解方程<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq21}</span><script type="math/tex">\eqref{eq21}</script></span>（如大地电磁法）得到 <span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k</span><script type="math/tex">\boldsymbol{d}_k</script></span>的截断解，这种方法被称为截断高斯牛顿法（TGN）或不精确高斯牛顿法（IGN）。  </p>
+<p><strong>小贴士：若<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k^T \boldsymbol{J}_k</span><script type="math/tex">\boldsymbol{J}_k^T \boldsymbol{J}_k</script></span>不正定，在显式GN方法中，仍然可以像牛顿法一样引入<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{J}_k^T \boldsymbol{J}_k + \lambda \boldsymbol{I}</span><script type="math/tex">\boldsymbol{J}_k^T \boldsymbol{J}_k + \lambda \boldsymbol{I}</script></span>做正定化处理，进而得出一个非常出名的信赖域方法，被称为列文伯格-马奎特法（Levenberg-Marquardt method，简称L-M），诨名唤作阻尼最小二乘法。</strong>  </p>
+<h2 id="4-quasi-newton-methodqn">4. 拟牛顿法（Quasi-Newton Method，QN）<a class="headerlink" href="#4-quasi-newton-methodqn" title="Permanent link">&para;</a></h2>
+<p>虽然GN方法已经足够牛逼，但它只保证非线性最小二乘问题的有效性，并且涉及雅可比矩阵的复杂计算。于是人们开始寻找更普适、更快捷的牛顿法逼近形式。<br />
+当然，我们仍然要从泰勒展开这个神奇的东西出发。按照国际惯例，我们先照抄式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq12}</span><script type="math/tex">\eqref{eq12}</script></span>，不过加入了一点小小改变，现在要用<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{m}_k</span><script type="math/tex">\boldsymbol{m}_k</script></span>的目标函数去逼近<span class="arithmatex"><span class="MathJax_Preview">\Phi(\boldsymbol{m}_{k-1})</span><script type="math/tex">\Phi(\boldsymbol{m}_{k-1})</script></span>，有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ \Phi(\boldsymbol{m}_{k-1}) 
+    &amp; \approx \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k)  \\
+    &amp; + \frac{1}{2} (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k)^T \boldsymbol B_k (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k)   \\
+\end{align}
+\tag{25}\label{eq25}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ \Phi(\boldsymbol{m}_{k-1}) 
+    & \approx \Phi(\boldsymbol m_k) + \boldsymbol g_k^T (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k)  \\
+    & + \frac{1}{2} (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k)^T \boldsymbol B_k (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k)   \\
+\end{align}
+\tag{25}\label{eq25}
+</script>
+</div>
+<p>两边对<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{m}_{k-1}</span><script type="math/tex">\boldsymbol{m}_{k-1}</script></span>求偏导，令<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{y}_{k} = \boldsymbol{g}_{k+1} - \boldsymbol{g}_{k}</span><script type="math/tex">\boldsymbol{y}_{k} = \boldsymbol{g}_{k+1} - \boldsymbol{g}_{k}</script></span>得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+\frac{\partial \Phi(\boldsymbol{m}_{k-1}) }{\partial \boldsymbol{m}_{k-1}} = \boldsymbol{g}_{k-1}
+    &amp; \approx  \boldsymbol{g}_k  +  \boldsymbol{B}_k (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k) \\
+\Rightarrow  \boldsymbol{g}_{k-1} - \boldsymbol{g}_{k}  
+    &amp; \approx   \boldsymbol{B}_k (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k) \\
+\Rightarrow  \boldsymbol{g}_{k} - \boldsymbol{g}_{k-1}  
+    &amp; \approx    \boldsymbol{B}_k (\boldsymbol{m}_{k} - \boldsymbol{m}_{k-1}) \\
+\Rightarrow  \boldsymbol{y}_{k-1}  
+    &amp; \approx    \boldsymbol{B}_k \boldsymbol{s}_{k-1}
+\end{align}
+\tag{26}\label{eq26}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+\frac{\partial \Phi(\boldsymbol{m}_{k-1}) }{\partial \boldsymbol{m}_{k-1}} = \boldsymbol{g}_{k-1}
+    & \approx  \boldsymbol{g}_k  +  \boldsymbol{B}_k (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k) \\
+\Rightarrow  \boldsymbol{g}_{k-1} - \boldsymbol{g}_{k}  
+    & \approx   \boldsymbol{B}_k (\boldsymbol{m}_{k-1} - \boldsymbol{m}_k) \\
+\Rightarrow  \boldsymbol{g}_{k} - \boldsymbol{g}_{k-1}  
+    & \approx    \boldsymbol{B}_k (\boldsymbol{m}_{k} - \boldsymbol{m}_{k-1}) \\
+\Rightarrow  \boldsymbol{y}_{k-1}  
+    & \approx    \boldsymbol{B}_k \boldsymbol{s}_{k-1}
+\end{align}
+\tag{26}\label{eq26}
+</script>
+</div>
+<p>把约等于改为等于（常规操作），根据递推关系，牛顿法第<span class="arithmatex"><span class="MathJax_Preview">k+1</span><script type="math/tex">k+1</script></span>次迭代满足以下方程：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; \boldsymbol{B}_{k+1}  \boldsymbol{s}_{k} = \boldsymbol{y}_{k} \\
+&amp; \boldsymbol{H}_{k+1}  \boldsymbol{y}_{k} = \boldsymbol{s}_{k}    
+\end{align}
+\tag{27}\label{eq27}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& \boldsymbol{B}_{k+1}  \boldsymbol{s}_{k} = \boldsymbol{y}_{k} \\
+& \boldsymbol{H}_{k+1}  \boldsymbol{y}_{k} = \boldsymbol{s}_{k}    
+\end{align}
+\tag{27}\label{eq27}
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}=\boldsymbol{B}^{-1}</span><script type="math/tex">\boldsymbol{H}=\boldsymbol{B}^{-1}</script></span>，式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq27}</span><script type="math/tex">\eqref{eq27}</script></span>被称为拟牛顿（Quasi-Newton）条件，它建立了当前迭代的海塞矩阵与上一次迭代信息（模型修正量和梯度改变量）之间的关系，使得利用之前迭代的信息逼近当前迭代的海塞矩阵变得可能。<br />
+基于拟牛顿条件（这是个必要条件）逼近<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>的方法被称为拟牛顿法（QN）。和Quasi的字面意思对应，
+<strong>QN方法实际上是一类方法的统称</strong>。有一些QN算法对<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>逼近并可高效计算它和同维列向量的乘积，非常适应大规模最优化问题。  </p>
+<h3 id="41-sr1">4.1 SR1算法<a class="headerlink" href="#41-sr1" title="Permanent link">&para;</a></h3>
+<p>SR1的全称为对称秩-1（Symmetric Rank-1）方法，它对海塞的逼近方式比较简单，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{H}}_{k+1} = \hat{\boldsymbol{H}}_{k} + \Delta  \hat{\boldsymbol{H}}_{k} = \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T
+\tag{28}\label{eq28}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{H}}_{k+1} = \hat{\boldsymbol{H}}_{k} + \Delta  \hat{\boldsymbol{H}}_{k} = \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T
+\tag{28}\label{eq28}
+</script>
+</div>
+<p>注意，这里我们在矩阵符号上加了一个尖帽子以表明对海塞或其逆矩阵的逼近。式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq28}</span><script type="math/tex">\eqref{eq28}</script></span>在第0次迭代取<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{H}}_0 = \boldsymbol{I}</span><script type="math/tex">\hat{\boldsymbol{H}}_0 = \boldsymbol{I}</script></span>，之后所有次迭代的<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>从编程角度均可视为不断更新得到的，故而后文的所有QN算法也被成为“某某更新公式”。<br />
+SR1名字中的S表示对称，要求更新后<span class="arithmatex"><span class="MathJax_Preview">\Delta  \hat{\boldsymbol{H}}_{k}</span><script type="math/tex">\Delta  \hat{\boldsymbol{H}}_{k}</script></span>保持对称性；而R1的意思则是表示秩-1更新，因为<span class="arithmatex"><span class="MathJax_Preview">\Delta \hat{\boldsymbol{H}}_{k}=\beta \boldsymbol{u} \boldsymbol{u}^T</span><script type="math/tex">\Delta \hat{\boldsymbol{H}}_{k}=\beta \boldsymbol{u} \boldsymbol{u}^T</script></span>，向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>乘以它的转置后得到的对称阵的秩当然是1。  </p>
+<p><strong>吐槽：我个人认为SR1这个名字极其贴切，其它QN方法的发明人显然想不出更好的名字，只好用发明人的姓名首字母连起来。：）</strong>  </p>
+<p><strong>趣闻：SR1是William C. Davidon在1956年提出的，但由于他的论文里没有做算法收敛性分析，导致被无情拒稿。因此SR1没能成为公认的第一个QN算法。审稿大人牛逼（震声）！</strong>  </p>
+<p>为得出标量<span class="arithmatex"><span class="MathJax_Preview">\beta</span><script type="math/tex">\beta</script></span>和向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>的表达式，首先在式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq28}</span><script type="math/tex">\eqref{eq28}</script></span>两边同时乘以<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{y}_{k}</span><script type="math/tex">\boldsymbol{y}_{k}</script></span>，再代入式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq27}</span><script type="math/tex">\eqref{eq27}</script></span>，即：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+\hat{\boldsymbol{H}}_{k+1} \boldsymbol{y}_{k} 
+   &amp;= \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k} 
+   + \beta \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_{k}= \boldsymbol{s}_{k} \\
+\Rightarrow \beta \boldsymbol{u} (\boldsymbol{u}^T \boldsymbol{y}_{k}) 
+   &amp;= \beta  (\boldsymbol{u}^T \boldsymbol{y}_{k}) \boldsymbol{u} 
+    = \boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k} \\
+\end{align}
+\tag{29}\label{eq29}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+\hat{\boldsymbol{H}}_{k+1} \boldsymbol{y}_{k} 
+   &= \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k} 
+   + \beta \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_{k}= \boldsymbol{s}_{k} \\
+\Rightarrow \beta \boldsymbol{u} (\boldsymbol{u}^T \boldsymbol{y}_{k}) 
+   &= \beta  (\boldsymbol{u}^T \boldsymbol{y}_{k}) \boldsymbol{u} 
+    = \boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k} \\
+\end{align}
+\tag{29}\label{eq29}
+</script>
+</div>
+<p>由于<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}^T \boldsymbol{y}_{k}</span><script type="math/tex">\boldsymbol{u}^T \boldsymbol{y}_{k}</script></span>是标量（所以上式括号内的东西能左右移动），<span class="arithmatex"><span class="MathJax_Preview">\beta \boldsymbol{u}^T \boldsymbol{y}_{k}</span><script type="math/tex">\beta \boldsymbol{u}^T \boldsymbol{y}_{k}</script></span>也是标量，所以：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{u} = \frac{\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}}{\beta \boldsymbol{u}^T \boldsymbol{y}_{k}}
+\tag{30}\label{eq30}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{u} = \frac{\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}}{\beta \boldsymbol{u}^T \boldsymbol{y}_{k}}
+\tag{30}\label{eq30}
+</script>
+</div>
+<p>令<span class="arithmatex"><span class="MathJax_Preview">\gamma = 1 / (\beta \boldsymbol{u}^T \boldsymbol{y}_{k})</span><script type="math/tex">\gamma = 1 / (\beta \boldsymbol{u}^T \boldsymbol{y}_{k})</script></span>，把式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq30}</span><script type="math/tex">\eqref{eq30}</script></span>再代入式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq29}</span><script type="math/tex">\eqref{eq29}</script></span>，即：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k} 
+       &amp;= \beta  \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_{k}   \\
+       &amp;= \beta \gamma^2 (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}  \\
+       &amp;= [\beta \gamma^2 (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k} ](\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})
+\end{align}
+\tag{31}\label{eq31}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k} 
+       &= \beta  \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_{k}   \\
+       &= \beta \gamma^2 (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}  \\
+       &= [\beta \gamma^2 (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k} ](\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})
+\end{align}
+\tag{31}\label{eq31}
+</script>
+</div>
+<p>显然，若式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq31}</span><script type="math/tex">\eqref{eq31}</script></span>成立，则要求中括号内的标量值为1，即：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\beta \gamma^2 = \frac{1}{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}}
+\tag{32}\label{eq32}
+</div>
+<script type="math/tex; mode=display">
+\beta \gamma^2 = \frac{1}{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}}
+\tag{32}\label{eq32}
+</script>
+</div>
+<p>将式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq32}</span><script type="math/tex">\eqref{eq32}</script></span>继续回代到式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq28}</span><script type="math/tex">\eqref{eq28}</script></span>，利用一样的套路可得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+\hat{\boldsymbol{H}}_{k+1} 
+    &amp;= \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T \\
+    &amp;= \hat{\boldsymbol{H}}_{k} + \beta \gamma^2 (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T\\
+    &amp;= \hat{\boldsymbol{H}}_{k} + \frac{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T}{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}} 
+\end{align}
+\tag{33}\label{eq33}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+\hat{\boldsymbol{H}}_{k+1} 
+    &= \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T \\
+    &= \hat{\boldsymbol{H}}_{k} + \beta \gamma^2 (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T\\
+    &= \hat{\boldsymbol{H}}_{k} + \frac{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T}{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}} 
+\end{align}
+\tag{33}\label{eq33}
+</script>
+</div>
+<p>式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq33}</span><script type="math/tex">\eqref{eq33}</script></span>即<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>的SR1更新公式。设定<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{H}}_{0} = \boldsymbol{I}</span><script type="math/tex">\hat{\boldsymbol{H}}_{0} = \boldsymbol{I}</script></span>，随着迭代进行，逼近会越来越精确。但不要高兴太早，SR1并不保证<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}_{k}</span><script type="math/tex">\boldsymbol{H}_{k}</script></span>正定，这可能违反<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}_{k}^{-1} = \boldsymbol{B}_{k}</span><script type="math/tex">\boldsymbol{H}_{k}^{-1} = \boldsymbol{B}_{k}</script></span>的规定（自动摊手）。所以人们开始寻找对称正定的秩-2更新公式。  </p>
+<p><strong>小贴士：你可能会担心大规模问题中海塞逆矩阵需要消耗巨量内存，但实用中几乎所有的QN算法都存在更经济、高效的计算<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>或<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>与同维列向量的乘积的技巧，请参考Byrd和Nocedal等人于1994年发表的文章《Representation of quasi-Newton matrices and their use in limited memory methods》。</strong>  </p>
+<h3 id="42-dfp">4.2 DFP算法<a class="headerlink" href="#42-dfp" title="Permanent link">&para;</a></h3>
+<p>从现在开始，QN算法的命名就开始无厘头了，DFP是算法发明人Davidon、Fletcher和Powell三个人的名字首字母排列，是第一个“公认”的QN方法。其基本思想和SR1差不多，不同在于引入了正定秩-2更新。更新公式为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{H}}_{k+1} =  \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T + \gamma \boldsymbol{v} \boldsymbol{v}^T
+\tag{34}\label{eq34}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{H}}_{k+1} =  \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T + \gamma \boldsymbol{v} \boldsymbol{v}^T
+\tag{34}\label{eq34}
+</script>
+</div>
+<p>和SR1一样的套路，先两边同时乘以<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{y}_k</span><script type="math/tex">\boldsymbol{y}_k</script></span>，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+\hat{\boldsymbol{H}}_{k+1} \boldsymbol{y}_k 
+    &amp;= \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_k + \beta  \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k + \gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k = \boldsymbol{s}_k  \\
+\Rightarrow  \boldsymbol{s}_k - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_k 
+    &amp;= \beta  \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k + \gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k 
+\end{align}
+\tag{35}\label{eq35}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+\hat{\boldsymbol{H}}_{k+1} \boldsymbol{y}_k 
+    &= \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_k + \beta  \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k + \gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k = \boldsymbol{s}_k  \\
+\Rightarrow  \boldsymbol{s}_k - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_k 
+    &= \beta  \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k + \gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k 
+\end{align}
+\tag{35}\label{eq35}
+</script>
+</div>
+<p>秩-2更新给予<span class="arithmatex"><span class="MathJax_Preview">\Delta \hat{\boldsymbol{H}}_{k}</span><script type="math/tex">\Delta \hat{\boldsymbol{H}}_{k}</script></span>更大的自由度，<span class="arithmatex"><span class="MathJax_Preview">\beta</span><script type="math/tex">\beta</script></span>、<span class="arithmatex"><span class="MathJax_Preview">\gamma</span><script type="math/tex">\gamma</script></span>、<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v}</span><script type="math/tex">\boldsymbol{v}</script></span>不再像SR1那样通过一顿骚操作求出唯一解，需要首先进行一些规定。<br />
+DFP方法规定<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}=\boldsymbol{s}_k</span><script type="math/tex">\boldsymbol{u}=\boldsymbol{s}_k</script></span>，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v}=\boldsymbol{H}_k \boldsymbol{y}_k</span><script type="math/tex">\boldsymbol{v}=\boldsymbol{H}_k \boldsymbol{y}_k</script></span>，至于为什么这么规定，鬼才知道。不要问为什么，问就是为了推导方便，公式简单且收敛性好证明。：（ <br />
+但即便这样规定后，<span class="arithmatex"><span class="MathJax_Preview">\beta</span><script type="math/tex">\beta</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\gamma</span><script type="math/tex">\gamma</script></span>仍然求不出来，于是更骚的手段出现了，为了方便，干脆再令<span class="arithmatex"><span class="MathJax_Preview">\beta \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k= \boldsymbol{s}_k</span><script type="math/tex">\beta \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k= \boldsymbol{s}_k</script></span>, <span class="arithmatex"><span class="MathJax_Preview">\gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k= - \boldsymbol{H}_k \boldsymbol{y}_k</span><script type="math/tex">\gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k= - \boldsymbol{H}_k \boldsymbol{y}_k</script></span>。<br />
+很明显，这完全是在凑。但“凑”这个词儿在数学上往往还有个高大上的同义词——“构造”。事实上，只需要凑出来的东西满足式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq27}</span><script type="math/tex">\eqref{eq27}</script></span>的QN条件，且能证明算法收敛，那么它就是一种有效的QN方法，<strong>这也是最优化领域水文章的套路。</strong><br />
+实际上，DFP公式还有另外一个推导方式，不过太复杂了，基本思想是求如下约束最小化问题：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; \mathop{\min}\limits_{\hat{\boldsymbol{H}}} \Vert \boldsymbol{W}^{-T} (\hat{\boldsymbol{H}} - \hat{\boldsymbol{H}}_k) \boldsymbol{W}^{-1}  \Vert \\
+&amp; \mathrm{s.t. } \hat{\boldsymbol{H}} = \hat{\boldsymbol{H}}^T, \hat{\boldsymbol{H}} \boldsymbol{y}_k = \boldsymbol{s}_k\\
+\end{align}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& \mathop{\min}\limits_{\hat{\boldsymbol{H}}} \Vert \boldsymbol{W}^{-T} (\hat{\boldsymbol{H}} - \hat{\boldsymbol{H}}_k) \boldsymbol{W}^{-1}  \Vert \\
+& \mathrm{s.t. } \hat{\boldsymbol{H}} = \hat{\boldsymbol{H}}^T, \hat{\boldsymbol{H}} \boldsymbol{y}_k = \boldsymbol{s}_k\\
+\end{align}
+</script>
+</div>
+<p>前文的规定刚好满足上式的一个特解，这里我们不执拗于数学家已经证明的结论，继续往后推导。首先针对向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ &amp; \boldsymbol{u} = \boldsymbol{s}_k = \beta \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k = (\beta \boldsymbol{u}^T \boldsymbol{y}_k) \boldsymbol{u}\\
+ &amp; \Rightarrow  \beta \boldsymbol{u}^T \boldsymbol{y}_k = 1 \\
+ &amp; \Rightarrow  \beta = \frac{1}{\boldsymbol{u}^T \boldsymbol{y}_k} = \frac{1}{\boldsymbol{s}_k^T \boldsymbol{y}_k}  
+\end{align}
+\tag{36}\label{eq36}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ & \boldsymbol{u} = \boldsymbol{s}_k = \beta \boldsymbol{u} \boldsymbol{u}^T \boldsymbol{y}_k = (\beta \boldsymbol{u}^T \boldsymbol{y}_k) \boldsymbol{u}\\
+ & \Rightarrow  \beta \boldsymbol{u}^T \boldsymbol{y}_k = 1 \\
+ & \Rightarrow  \beta = \frac{1}{\boldsymbol{u}^T \boldsymbol{y}_k} = \frac{1}{\boldsymbol{s}_k^T \boldsymbol{y}_k}  
+\end{align}
+\tag{36}\label{eq36}
+</script>
+</div>
+<p>再分析对<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v}</span><script type="math/tex">\boldsymbol{v}</script></span>的假设，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ &amp; \boldsymbol{v} = \boldsymbol{H}_k \boldsymbol{y}_k = - \gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k = - (\gamma \boldsymbol{v}^T \boldsymbol{y}_k) \boldsymbol{v} \\
+ &amp; \Rightarrow  \gamma \boldsymbol{v}^T \boldsymbol{y}_k = -1 \\
+ &amp; \Rightarrow  \gamma = - \frac{1}{\boldsymbol{v}^T \boldsymbol{y}_k} = - \frac{1}{\boldsymbol{y}_k^T \boldsymbol{H}_k^T \boldsymbol{y}_k} = - \frac{1}{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k} 
+\end{align}
+\tag{37}\label{eq37}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ & \boldsymbol{v} = \boldsymbol{H}_k \boldsymbol{y}_k = - \gamma \boldsymbol{v} \boldsymbol{v}^T \boldsymbol{y}_k = - (\gamma \boldsymbol{v}^T \boldsymbol{y}_k) \boldsymbol{v} \\
+ & \Rightarrow  \gamma \boldsymbol{v}^T \boldsymbol{y}_k = -1 \\
+ & \Rightarrow  \gamma = - \frac{1}{\boldsymbol{v}^T \boldsymbol{y}_k} = - \frac{1}{\boldsymbol{y}_k^T \boldsymbol{H}_k^T \boldsymbol{y}_k} = - \frac{1}{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k} 
+\end{align}
+\tag{37}\label{eq37}
+</script>
+</div>
+<p>将凑出来的<span class="arithmatex"><span class="MathJax_Preview">\beta</span><script type="math/tex">\beta</script></span>、<span class="arithmatex"><span class="MathJax_Preview">\gamma</span><script type="math/tex">\gamma</script></span>、<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v}</span><script type="math/tex">\boldsymbol{v}</script></span>代入式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq34}</span><script type="math/tex">\eqref{eq34}</script></span>，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ \hat{\boldsymbol{H}}_{k+1} 
+    &amp;= \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T + \gamma \boldsymbol{v} \boldsymbol{v}^T \\
+    &amp;= \hat{\boldsymbol{H}}_{k} + \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{s}_k^T \boldsymbol{y}_k }  
+                                - \frac{ \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{y}_k^T \boldsymbol{H}_k^T  }{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k } \\
+    &amp;= \hat{\boldsymbol{H}}_{k} + \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{s}_k^T \boldsymbol{y}_k }  
+                                - \frac{ \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{y}_k^T \boldsymbol{H}_k  }{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k } \\
+\end{align}
+\tag{38}\label{eq38}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ \hat{\boldsymbol{H}}_{k+1} 
+    &= \hat{\boldsymbol{H}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T + \gamma \boldsymbol{v} \boldsymbol{v}^T \\
+    &= \hat{\boldsymbol{H}}_{k} + \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{s}_k^T \boldsymbol{y}_k }  
+                                - \frac{ \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{y}_k^T \boldsymbol{H}_k^T  }{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k } \\
+    &= \hat{\boldsymbol{H}}_{k} + \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{s}_k^T \boldsymbol{y}_k }  
+                                - \frac{ \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{y}_k^T \boldsymbol{H}_k  }{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k } \\
+\end{align}
+\tag{38}\label{eq38}
+</script>
+</div>
+<p>DFP算法一经推出即受到关注，作为第一个秩-2的QN算法，它即保证了逼近阵的正定性，又具有极好的收敛性。但很快有人凑出来了更好的QN更新公式。  </p>
+<p><strong>小贴士：你可能会怀疑会不会有秩-3的QN更新公式。但如果注意到<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v}</span><script type="math/tex">\boldsymbol{v}</script></span>分别是关于<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{s}</span><script type="math/tex">\boldsymbol{s}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{y}</span><script type="math/tex">\boldsymbol{y}</script></span>的表达式之后，我想你有可能会打消这个念头，除非上一次迭代除了模型修正量、梯度改变量还能提供其它的有用信息。但我不排除秩-3更新存在的可能性，祝你成功！（坏笑）</strong>  </p>
+<h3 id="43-bfgs">4.3 BFGS算法<a class="headerlink" href="#43-bfgs" title="Permanent link">&para;</a></h3>
+<p>BFGS的名字继续发扬无厘头风格，它的四个发明人是Broyden、Fletcher、Goldfarb和Shanno，这里我们从<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>的更新进行推导，因为公式会简单很多，而且和DFP方法有一种神秘的联系（见第4.4节）。更新公式这样构造：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{B}}_{k+1} =  \hat{\boldsymbol{B}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T + \gamma \boldsymbol{v} \boldsymbol{v}^T
+\tag{39}\label{eq39}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{B}}_{k+1} =  \hat{\boldsymbol{B}}_{k} + \beta  \boldsymbol{u} \boldsymbol{u}^T + \gamma \boldsymbol{v} \boldsymbol{v}^T
+\tag{39}\label{eq39}
+</script>
+</div>
+<p>规定<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u} = \boldsymbol{y}_k</span><script type="math/tex">\boldsymbol{u} = \boldsymbol{y}_k</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v} = \boldsymbol{B}_k \boldsymbol{s}_k</span><script type="math/tex">\boldsymbol{v} = \boldsymbol{B}_k \boldsymbol{s}_k</script></span>，经过和DFP算法一样的推导过程，我们可以得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \hat{\boldsymbol{B}}_{k+1} 
+    = \hat{\boldsymbol{B}}_{k} 
+    + \frac{ \boldsymbol{y}_k \boldsymbol{y}_k^T}{\boldsymbol{y}_k^T \boldsymbol{s}_k }  
+    - \frac{ \boldsymbol{B}_k \boldsymbol{s}_k \boldsymbol{s}_k^T \boldsymbol{B}_k  }{\boldsymbol{s}_k^T \boldsymbol{B}_k \boldsymbol{s}_k } \\
+\tag{40}\label{eq40}
+</div>
+<script type="math/tex; mode=display">
+ \hat{\boldsymbol{B}}_{k+1} 
+    = \hat{\boldsymbol{B}}_{k} 
+    + \frac{ \boldsymbol{y}_k \boldsymbol{y}_k^T}{\boldsymbol{y}_k^T \boldsymbol{s}_k }  
+    - \frac{ \boldsymbol{B}_k \boldsymbol{s}_k \boldsymbol{s}_k^T \boldsymbol{B}_k  }{\boldsymbol{s}_k^T \boldsymbol{B}_k \boldsymbol{s}_k } \\
+\tag{40}\label{eq40}
+</script>
+</div>
+<p>这个公式和DFP更新公式非常相似，为验证它和DFP不是一种算法，不妨对式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq40}</span><script type="math/tex">\eqref{eq40}</script></span>求逆得到<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{H}}_{k+1}</span><script type="math/tex">\hat{\boldsymbol{H}}_{k+1}</script></span>的BFGS更新公式。在此之前需要引入Shermann-Morison-Woodbury求逆定理：
+对于可逆的<span class="arithmatex"><span class="MathJax_Preview">N \times N</span><script type="math/tex">N \times N</script></span>矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{A}</span><script type="math/tex">\boldsymbol{A}</script></span>和两个<span class="arithmatex"><span class="MathJax_Preview">N \times 1</span><script type="math/tex">N \times 1</script></span>向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v}</span><script type="math/tex">\boldsymbol{v}</script></span>，下式成立：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ (\boldsymbol{A} + \boldsymbol{u} \boldsymbol{v}^T )^{-1} 
+    = \boldsymbol{A}^{-1} 
+    - \frac{\boldsymbol{A}^{-1} \boldsymbol{u} \boldsymbol{v}^T \boldsymbol{A}^{-1}}
+           {1 + \boldsymbol{v}^T \boldsymbol{A}^{-1} \boldsymbol{u}}
+\tag{41}\label{eq41}
+</div>
+<script type="math/tex; mode=display">
+ (\boldsymbol{A} + \boldsymbol{u} \boldsymbol{v}^T )^{-1} 
+    = \boldsymbol{A}^{-1} 
+    - \frac{\boldsymbol{A}^{-1} \boldsymbol{u} \boldsymbol{v}^T \boldsymbol{A}^{-1}}
+           {1 + \boldsymbol{v}^T \boldsymbol{A}^{-1} \boldsymbol{u}}
+\tag{41}\label{eq41}
+</script>
+</div>
+<p>对式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq40}</span><script type="math/tex">\eqref{eq40}</script></span>嵌套使用两次Shermann-Morison-Woodbury求逆公式，再经过一顿暴躁的演算之后，可以得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \hat{\boldsymbol{H}}_{k+1} 
+    = \hat{\boldsymbol{H}}_{k} 
+    + (1+\frac{ \boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k} {\boldsymbol{s}_k^T \boldsymbol{y}_k } ) \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{y}_k^T \boldsymbol{s}_k }  
+    - \frac{ \boldsymbol{s}_k \boldsymbol{y}_k^T \boldsymbol{H}_k + \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{s}_k^T } {\boldsymbol{s}_k^T \boldsymbol{y}_k } \\
+\tag{42}\label{eq42}
+</div>
+<script type="math/tex; mode=display">
+ \hat{\boldsymbol{H}}_{k+1} 
+    = \hat{\boldsymbol{H}}_{k} 
+    + (1+\frac{ \boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k} {\boldsymbol{s}_k^T \boldsymbol{y}_k } ) \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{y}_k^T \boldsymbol{s}_k }  
+    - \frac{ \boldsymbol{s}_k \boldsymbol{y}_k^T \boldsymbol{H}_k + \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{s}_k^T } {\boldsymbol{s}_k^T \boldsymbol{y}_k } \\
+\tag{42}\label{eq42}
+</script>
+</div>
+<p>显然BFGS和DFP是完全不同的两个QN方法，实践证明BFGS比DFP相对更为高效和稳定。  </p>
+<h3 id="44-sr1dfpbfgsbroyden">4.4 SR1、DFP和BFGS的关系以及Broyden族算法<a class="headerlink" href="#44-sr1dfpbfgsbroyden" title="Permanent link">&para;</a></h3>
+<p>在SR1算法中，如果<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{H}}_{k+1}</span><script type="math/tex">\hat{\boldsymbol{H}}_{k+1}</script></span>正定，对式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq33}</span><script type="math/tex">\eqref{eq33}</script></span>也应用Shermann-Morison-Woodbury求逆公式，可得：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \hat{\boldsymbol{B}}_{k+1} 
+    = \hat{\boldsymbol{B}}_{k} 
+    + \frac{(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T}
+           {(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T \boldsymbol{s}_k}
+\tag{43}\label{eq43}
+</div>
+<script type="math/tex; mode=display">
+ \hat{\boldsymbol{B}}_{k+1} 
+    = \hat{\boldsymbol{B}}_{k} 
+    + \frac{(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T}
+           {(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T \boldsymbol{s}_k}
+\tag{43}\label{eq43}
+</script>
+</div>
+<p>将式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq33}</span><script type="math/tex">\eqref{eq33}</script></span>、式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq43}</span><script type="math/tex">\eqref{eq43}</script></span>、式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq38}</span><script type="math/tex">\eqref{eq38}</script></span>和式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq40}</span><script type="math/tex">\eqref{eq40}</script></span>写到一起会发现一个特别有趣的现象，数学家觉得这“美得很”（陕西话）：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ \hat{\boldsymbol{H}}_{k+1}^{SR1} 
+   &amp;= \hat{\boldsymbol{H}}_{k} 
+    + \frac{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T}
+           {(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}}  \\
+ \hat{\boldsymbol{B}}_{k+1}^{SR1} 
+   &amp;= \hat{\boldsymbol{B}}_{k} 
+    + \frac{(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T}
+           {(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T \boldsymbol{s}_k} \\
+ \hat{\boldsymbol{H}}_{k+1}^{DFP} 
+    &amp;= \hat{\boldsymbol{H}}_{k} + \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{s}_k^T \boldsymbol{y}_k }  
+                                - \frac{ \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{y}_k^T \boldsymbol{H}_k  }{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k } \\
+ \hat{\boldsymbol{B}}_{k+1}^{BFGS} 
+    &amp;= \hat{\boldsymbol{B}}_{k} 
+    + \frac{ \boldsymbol{y}_k \boldsymbol{y}_k^T}{\boldsymbol{y}_k^T \boldsymbol{s}_k }  
+    - \frac{ \boldsymbol{B}_k \boldsymbol{s}_k \boldsymbol{s}_k^T \boldsymbol{B}_k  }{\boldsymbol{s}_k^T \boldsymbol{B}_k \boldsymbol{s}_k } \\
+\end{align}
+\tag{44}\label{eq44}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ \hat{\boldsymbol{H}}_{k+1}^{SR1} 
+   &= \hat{\boldsymbol{H}}_{k} 
+    + \frac{(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k}) (\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T}
+           {(\boldsymbol{s}_{k} - \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k})^T \boldsymbol{y}_{k}}  \\
+ \hat{\boldsymbol{B}}_{k+1}^{SR1} 
+   &= \hat{\boldsymbol{B}}_{k} 
+    + \frac{(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T}
+           {(\boldsymbol{y}_k - \boldsymbol{B}_k \boldsymbol{s}_k)^T \boldsymbol{s}_k} \\
+ \hat{\boldsymbol{H}}_{k+1}^{DFP} 
+    &= \hat{\boldsymbol{H}}_{k} + \frac{ \boldsymbol{s}_k \boldsymbol{s}_k^T}{\boldsymbol{s}_k^T \boldsymbol{y}_k }  
+                                - \frac{ \boldsymbol{H}_k \boldsymbol{y}_k \boldsymbol{y}_k^T \boldsymbol{H}_k  }{\boldsymbol{y}_k^T \boldsymbol{H}_k \boldsymbol{y}_k } \\
+ \hat{\boldsymbol{B}}_{k+1}^{BFGS} 
+    &= \hat{\boldsymbol{B}}_{k} 
+    + \frac{ \boldsymbol{y}_k \boldsymbol{y}_k^T}{\boldsymbol{y}_k^T \boldsymbol{s}_k }  
+    - \frac{ \boldsymbol{B}_k \boldsymbol{s}_k \boldsymbol{s}_k^T \boldsymbol{B}_k  }{\boldsymbol{s}_k^T \boldsymbol{B}_k \boldsymbol{s}_k } \\
+\end{align}
+\tag{44}\label{eq44}
+</script>
+</div>
+<p>可见，SR1更新公式的<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>形式具有一样的结构，只是互换了<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{s}</span><script type="math/tex">\boldsymbol{s}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{y}</span><script type="math/tex">\boldsymbol{y}</script></span>的位置并把<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>替换为<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}</span><script type="math/tex">\boldsymbol{B}</script></span>。
+DFP和BFGS更新的两个公式互换规律类似。<strong>因此，数学家称SR1算法自对偶，而DFP和BFGS算法互为对偶，但DFP和BFGS都不是自对偶。</strong><br />
+由于DFP和BFGS都是两个凑出来的更新公式，数学上无法证明谁更好，于是有些贪心鬼把两个算法合二为一，取一正数<span class="arithmatex"><span class="MathJax_Preview">\phi \in [0,1]</span><script type="math/tex">\phi \in [0,1]</script></span>，得到新的加权更新公式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \hat{\boldsymbol{B}}_{k+1}^{\phi} = \hat{\boldsymbol{B}}_{k+1}^{DFP} + (1-\phi_k)  \hat{\boldsymbol{B}}_{k+1}^{BFGS}
+\tag{45}\label{eq45}
+</div>
+<script type="math/tex; mode=display">
+ \hat{\boldsymbol{B}}_{k+1}^{\phi} = \hat{\boldsymbol{B}}_{k+1}^{DFP} + (1-\phi_k)  \hat{\boldsymbol{B}}_{k+1}^{BFGS}
+\tag{45}\label{eq45}
+</script>
+</div>
+<p>让<span class="arithmatex"><span class="MathJax_Preview">\phi_k</span><script type="math/tex">\phi_k</script></span>在<span class="arithmatex"><span class="MathJax_Preview">[0,1]</span><script type="math/tex">[0,1]</script></span>中遍历就可以得到一系列<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{k+1}^{\phi_k}</span><script type="math/tex">\hat{\boldsymbol{B}}_{k+1}^{\phi_k}</script></span>，所有的<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{k+1}^{\phi_k}</span><script type="math/tex">\hat{\boldsymbol{B}}_{k+1}^{\phi_k}</script></span>组成的集合被称为Broyden族（这个名字也很无厘头）。由于PDF和BFGS都是正定更新，Broyden族的所有更新矩阵也都保持正定。  </p>
+<h3 id="45-bfgslbfgs">4.5 有限内存的BFGS（LBFGS）<a class="headerlink" href="#45-bfgslbfgs" title="Permanent link">&para;</a></h3>
+<p>第4.1～4.4节的所有算法虽然都有压缩内存的实现技巧，但只要问题规模变得很大，由于更新公式需保存之前所有次迭代的<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{u}</span><script type="math/tex">\boldsymbol{u}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{v}</span><script type="math/tex">\boldsymbol{v}</script></span>向量（或者存储整个海塞矩阵），计算成本仍然变得不可接受。<br />
+因此，一个在大规模最优化问题中应用最广泛的退化版BFGS更新公式在1980年被Nocedal提出，叫做有限内存BFGS算法（Limited-memory BFGS，简称LBFGS）。  <br />
+LBFGS基于一个Obvious的事实，影响第<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次迭代海塞矩阵逼近效果的关键成分一定是最临近的前<span class="arithmatex"><span class="MathJax_Preview">m</span><script type="math/tex">m</script></span>次迭代信息（一般取<span class="arithmatex"><span class="MathJax_Preview">3 \leq m \leq 20</span><script type="math/tex">3 \leq m \leq 20</script></span>）。为了推导LBFGS，首先把BFGS更新公式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq39}</span><script type="math/tex">\eqref{eq39}</script></span>改写为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{B}}_{k+1}^{BFGS} =  \hat{\boldsymbol{B}}_{k}^{(0)} + \sum\limits_{i=0}^{k} [\boldsymbol{a}_i \boldsymbol{a}_i^T - \boldsymbol{b}_i \boldsymbol{b}_i^T]
+\tag{46}\label{eq46}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{B}}_{k+1}^{BFGS} =  \hat{\boldsymbol{B}}_{k}^{(0)} + \sum\limits_{i=0}^{k} [\boldsymbol{a}_i \boldsymbol{a}_i^T - \boldsymbol{b}_i \boldsymbol{b}_i^T]
+\tag{46}\label{eq46}
+</script>
+</div>
+<p>一般情况下，和SR1一样，设定<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{k}^{(0)} = \boldsymbol{I}</span><script type="math/tex">\hat{\boldsymbol{B}}_{k}^{(0)} = \boldsymbol{I}</script></span>（<strong>下一节会给出更好的方法</strong>），
+根据公式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq39}</span><script type="math/tex">\eqref{eq39}</script></span>可知，<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{a}_i</span><script type="math/tex">\boldsymbol{a}_i</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{b}_i</span><script type="math/tex">\boldsymbol{b}_i</script></span>可用以下公式求取并存储(注：符号<span class="arithmatex"><span class="MathJax_Preview">:=</span><script type="math/tex">:=</script></span>表示编程中的赋值)：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+    &amp; \boldsymbol{a}_i := \frac{\boldsymbol{y}_i}{\sqrt{\boldsymbol{y}_i^T \boldsymbol{s}_i}}   \\
+    &amp; \boldsymbol{b}_i := \hat{\boldsymbol{B}}_{i} \boldsymbol{s}_i 
+                       = \hat{\boldsymbol{B}}_{k}^{(0)} \boldsymbol{s}_i 
+                       +  \sum\limits_{i=0}^{k} [ (\boldsymbol{a}_i^T \boldsymbol{s}_i) \boldsymbol{a}_i + (\boldsymbol{b}_i^T \boldsymbol{s}_i) \boldsymbol{b}_i  ]  \\
+    &amp; \boldsymbol{b}_i := \frac{\hat{\boldsymbol{B}}_{i} \boldsymbol{s}_i} {\sqrt{\boldsymbol{s}_i^T \hat{\boldsymbol{B}}_{i} \boldsymbol{s}_i}}
+                       = \frac{\boldsymbol{b}_i}{\sqrt{\boldsymbol{s}_i^T  \boldsymbol{b}_i}}  \\
+\end{align}
+\tag{47}\label{eq47}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+    & \boldsymbol{a}_i := \frac{\boldsymbol{y}_i}{\sqrt{\boldsymbol{y}_i^T \boldsymbol{s}_i}}   \\
+    & \boldsymbol{b}_i := \hat{\boldsymbol{B}}_{i} \boldsymbol{s}_i 
+                       = \hat{\boldsymbol{B}}_{k}^{(0)} \boldsymbol{s}_i 
+                       +  \sum\limits_{i=0}^{k} [ (\boldsymbol{a}_i^T \boldsymbol{s}_i) \boldsymbol{a}_i + (\boldsymbol{b}_i^T \boldsymbol{s}_i) \boldsymbol{b}_i  ]  \\
+    & \boldsymbol{b}_i := \frac{\hat{\boldsymbol{B}}_{i} \boldsymbol{s}_i} {\sqrt{\boldsymbol{s}_i^T \hat{\boldsymbol{B}}_{i} \boldsymbol{s}_i}}
+                       = \frac{\boldsymbol{b}_i}{\sqrt{\boldsymbol{s}_i^T  \boldsymbol{b}_i}}  \\
+\end{align}
+\tag{47}\label{eq47}
+</script>
+</div>
+<p>所谓LBFGS，就是最多只保存最近<span class="arithmatex"><span class="MathJax_Preview">m</span><script type="math/tex">m</script></span>次迭代的模型修正量和梯度改变量(不足<span class="arithmatex"><span class="MathJax_Preview">m</span><script type="math/tex">m</script></span>次迭代傻子都知道怎么办)<span class="arithmatex"><span class="MathJax_Preview">\{\boldsymbol{s}_{k-1}, \boldsymbol{s}_{k-2}, \cdots, \boldsymbol{s}_{k-m}\}</span><script type="math/tex">\{\boldsymbol{s}_{k-1}, \boldsymbol{s}_{k-2}, \cdots, \boldsymbol{s}_{k-m}\}</script></span>
+和<span class="arithmatex"><span class="MathJax_Preview">\{\boldsymbol{y}_{k-1}, \boldsymbol{y}_{k-2}, \cdots, \boldsymbol{y}_{k-m}\}</span><script type="math/tex">\{\boldsymbol{y}_{k-1}, \boldsymbol{y}_{k-2}, \cdots, \boldsymbol{y}_{k-m}\}</script></span>，并只用这些信息得到更新公式，它可利用公式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq46}</span><script type="math/tex">\eqref{eq46}</script></span>改写得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{B}}_{k+1}^{LBFGS} =  \hat{\boldsymbol{B}}_{k+1}^{(0)} + \sum\limits_{i=p}^{k} [\boldsymbol{a}_i \boldsymbol{a}_i^T - \boldsymbol{b}_i \boldsymbol{b}_i^T], 
+p = max(k-m+1, 0)
+\tag{48}\label{eq48}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{B}}_{k+1}^{LBFGS} =  \hat{\boldsymbol{B}}_{k+1}^{(0)} + \sum\limits_{i=p}^{k} [\boldsymbol{a}_i \boldsymbol{a}_i^T - \boldsymbol{b}_i \boldsymbol{b}_i^T], 
+p = max(k-m+1, 0)
+\tag{48}\label{eq48}
+</script>
+</div>
+<p><strong>小贴士：本文的推导方式和Nocedal不同，经典LBFGS是直接逼近海塞逆矩阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>的，并且这位老先生还推导出了一个牛逼克拉斯的双循环递归算法，可直接高效计算<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>和梯度向量的乘积，求下降方向的速度几乎和NLCG算法差不多。这活干得......让后人绝了创新的念头。</strong>  </p>
+<h3 id="46-self-scalingbfgslbfgs">4.6 自调节(self-scaling)的BFGS和LBFGS<a class="headerlink" href="#46-self-scalingbfgslbfgs" title="Permanent link">&para;</a></h3>
+<p>第4.5节的BFGS更新和LBFGS更新都从单位阵<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{I}</span><script type="math/tex">\boldsymbol{I}</script></span>开始，在迭代早期的逼近效果较差，从而导致收敛较慢或不稳定。<br />
+因此Shanno（香农！没错，又是他！）和Phua于1975年提出一种改进方法，
+其思想是每次迭代都从一个经过标量缩放的<span class="arithmatex"><span class="MathJax_Preview">\sigma_k \boldsymbol{I}</span><script type="math/tex">\sigma_k \boldsymbol{I}</script></span>矩阵重新建立逼近。原论文是从Broyden族的<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>更新推导的，看得我一脸懵逼，这里我用自己的推导方式，版权所有，爱看不看。：）<br />
+无论是BFGS还是LBFGS，海塞更新可统一写为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\hat{\boldsymbol{B}}_{k+1} =  \hat{\boldsymbol{B}}_{k} + \Delta \hat{\boldsymbol{B}}_{k}
+\tag{49}\label{eq49}
+</div>
+<script type="math/tex; mode=display">
+\hat{\boldsymbol{B}}_{k+1} =  \hat{\boldsymbol{B}}_{k} + \Delta \hat{\boldsymbol{B}}_{k}
+\tag{49}\label{eq49}
+</script>
+</div>
+<p>在第0次迭代时，所有QN算法都是梯度法，即<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{(0)} = \boldsymbol{I}</span><script type="math/tex">\hat{\boldsymbol{B}}_{(0)} = \boldsymbol{I}</script></span>，经过不精确线搜索后得到向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{s}_0</span><script type="math/tex">\boldsymbol{s}_0</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{y}_0</span><script type="math/tex">\boldsymbol{y}_0</script></span>。
+所以常规BFGS中<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{1}=\boldsymbol{I} + \Delta \hat{\boldsymbol{B}}_{0}</span><script type="math/tex">\hat{\boldsymbol{B}}_{1}=\boldsymbol{I} + \Delta \hat{\boldsymbol{B}}_{0}</script></span>，<span class="arithmatex"><span class="MathJax_Preview">\Delta \hat{\boldsymbol{B}}_{0}</span><script type="math/tex">\Delta \hat{\boldsymbol{B}}_{0}</script></span>的构建只考虑了拟牛顿条件<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}_1 \boldsymbol{s}_0 = \boldsymbol{y}_0</span><script type="math/tex">\boldsymbol{B}_1 \boldsymbol{s}_0 = \boldsymbol{y}_0</script></span>而不保证高精度逼近，
+如果把更新公式改写为<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{1}=\sigma_0 \boldsymbol{I} + \Delta \hat{\boldsymbol{B}}_{0}</span><script type="math/tex">\hat{\boldsymbol{B}}_{1}=\sigma_0 \boldsymbol{I} + \Delta \hat{\boldsymbol{B}}_{0}</script></span>，且<span class="arithmatex"><span class="MathJax_Preview">\sigma_0 \boldsymbol{I} \approx \hat{\boldsymbol{B}}_{1}</span><script type="math/tex">\sigma_0 \boldsymbol{I} \approx \hat{\boldsymbol{B}}_{1}</script></span>，那就能极大提升<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{1}</span><script type="math/tex">\hat{\boldsymbol{B}}_{1}</script></span>的逼近精度，以此类推。<br />
+根据拟牛顿条件，在第<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次迭代有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; \hat{\boldsymbol{B}}_{k} \boldsymbol{s}_{k-1} = \boldsymbol{y}_{k-1}   \\
+&amp; \Rightarrow \sigma_k \boldsymbol{I} \boldsymbol{s}_{k-1} \approx \boldsymbol{y}_{k-1} \\
+&amp; \Rightarrow \boldsymbol{y}_{k-1}^T \sigma_k  \boldsymbol{I} \boldsymbol{s}_{k-1} =  \sigma_k \boldsymbol{y}_{k-1}^T \boldsymbol{s}_{k-1} \approx \boldsymbol{y}_{k-1}^T \boldsymbol{y}_{k-1} \\
+&amp; \Rightarrow \sigma_k \approx \frac{\boldsymbol{y}_{k-1}^T \boldsymbol{y}_{k-1}} {\boldsymbol{y}_{k-1}^T \boldsymbol{s}_{k-1}} \\
+\end{align}
+\tag{50}\label{eq50}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& \hat{\boldsymbol{B}}_{k} \boldsymbol{s}_{k-1} = \boldsymbol{y}_{k-1}   \\
+& \Rightarrow \sigma_k \boldsymbol{I} \boldsymbol{s}_{k-1} \approx \boldsymbol{y}_{k-1} \\
+& \Rightarrow \boldsymbol{y}_{k-1}^T \sigma_k  \boldsymbol{I} \boldsymbol{s}_{k-1} =  \sigma_k \boldsymbol{y}_{k-1}^T \boldsymbol{s}_{k-1} \approx \boldsymbol{y}_{k-1}^T \boldsymbol{y}_{k-1} \\
+& \Rightarrow \sigma_k \approx \frac{\boldsymbol{y}_{k-1}^T \boldsymbol{y}_{k-1}} {\boldsymbol{y}_{k-1}^T \boldsymbol{s}_{k-1}} \\
+\end{align}
+\tag{50}\label{eq50}
+</script>
+</div>
+<p>对式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq46}</span><script type="math/tex">\eqref{eq46}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq48}</span><script type="math/tex">\eqref{eq48}</script></span>在每次迭代中设定<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{k}^{(0)} = \sigma_k \boldsymbol{I}</span><script type="math/tex">\hat{\boldsymbol{B}}_{k}^{(0)} = \sigma_k \boldsymbol{I}</script></span>后，由于<span class="arithmatex"><span class="MathJax_Preview">\sigma_k</span><script type="math/tex">\sigma_k</script></span>是标量，根据DFP、BFGS算法中凑出更新公式的过程（见式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq34}</span><script type="math/tex">\eqref{eq34}</script></span>～<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq38}</span><script type="math/tex">\eqref{eq38}</script></span>），所有<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{a}_{k}</span><script type="math/tex">\boldsymbol{a}_{k}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{b}_{k}</span><script type="math/tex">\boldsymbol{b}_{k}</script></span>的形式仍可保持不变。<br />
+新算法保证每次迭代的更新公式都自适应的从一个逼近当前海塞阵的标量阵出发，因此也被称为自调节（self-scaling）的QN更新。  </p>
+<p><strong>小贴士：经典LBFGS实现是对<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{H}</span><script type="math/tex">\boldsymbol{H}</script></span>更新的，此时自调节标量为<span class="arithmatex"><span class="MathJax_Preview">1 / \sigma_k</span><script type="math/tex">1 / \sigma_k</script></span>。但如果所解问题存在更好的逼近方案，你可以每次迭代计算一个主对角元素大于0的对角阵，用来代替<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{B}}_{k}^{(0)}</span><script type="math/tex">\hat{\boldsymbol{B}}_{k}^{(0)}</script></span>或<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{H}}_{k}^{(0)}</span><script type="math/tex">\hat{\boldsymbol{H}}_{k}^{(0)}</script></span>。</strong>  </p>
+<h2 id="5-non-linear-conjugate-gradient-methodnlcg">5. 非线性共轭梯度法（Non-linear Conjugate Gradient Method，NLCG）<a class="headerlink" href="#5-non-linear-conjugate-gradient-methodnlcg" title="Permanent link">&para;</a></h2>
+<p>在前几节中，为了适应大规模问题，我们一步步从牛顿法退化到了QN方法，最终构建了只需要保存<span class="arithmatex"><span class="MathJax_Preview">m</span><script type="math/tex">m</script></span>个向量对的LBFGS方法。但还存在一个极限方式，只利用当前梯度和上一次模型修正量以尽量改善梯度法的收敛效率。<br />
+在<a href="../optimal_cg_and_nlcg/">《解线性方程组的CG和PCG方法》</a>的第2.1节中我们论述了在线性二次型中如何以下降方向<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_{k-1}</span><script type="math/tex">\boldsymbol{d}_{k-1}</script></span>和梯度向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{g}_k</span><script type="math/tex">\boldsymbol{g}_k</script></span>构建靠近牛顿步的<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k</span><script type="math/tex">\boldsymbol{d}_k</script></span>，并且证明了线性CG是一种共轭方向法 。
+也就是说CG中任意不等于<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>的第<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>次迭代，一定满足<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_k^T \boldsymbol{B} \boldsymbol{d}_j = 0</span><script type="math/tex">\boldsymbol{d}_k^T \boldsymbol{B} \boldsymbol{d}_j = 0</script></span>。<strong>注意：这里的海塞矩阵没有下标，因为线性二次型的海塞矩阵不变</strong>。<br />
+而NLCG的实质就是把CG算法“强行”推广到非线性最小化问题。我们首先复习一下线性CG的步长和下降方向（此时残差向量<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{r}_k= - \boldsymbol g_k</span><script type="math/tex">\boldsymbol{r}_k= - \boldsymbol g_k</script></span>），如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; \alpha_k = \frac { - \boldsymbol g_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k} 
+           = \frac { \boldsymbol r_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B \boldsymbol d_k} \\
+&amp; \boldsymbol d_k = - \boldsymbol g_k + \beta_k \boldsymbol d_{k-1} = \boldsymbol r_k + \beta_k \boldsymbol d_{k-1}  \\
+&amp; \beta_k = \frac { \boldsymbol g_k^T \boldsymbol g_k} {\boldsymbol g_{k-1}^T \boldsymbol g_{k-1}} 
+          = \frac { \boldsymbol r_k^T \boldsymbol r_k} {\boldsymbol r_{k-1}^T \boldsymbol r_{k-1}}  \\
+\end{align}
+\tag{51}\label{eq51}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& \alpha_k = \frac { - \boldsymbol g_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k} 
+           = \frac { \boldsymbol r_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B \boldsymbol d_k} \\
+& \boldsymbol d_k = - \boldsymbol g_k + \beta_k \boldsymbol d_{k-1} = \boldsymbol r_k + \beta_k \boldsymbol d_{k-1}  \\
+& \beta_k = \frac { \boldsymbol g_k^T \boldsymbol g_k} {\boldsymbol g_{k-1}^T \boldsymbol g_{k-1}} 
+          = \frac { \boldsymbol r_k^T \boldsymbol r_k} {\boldsymbol r_{k-1}^T \boldsymbol r_{k-1}}  \\
+\end{align}
+\tag{51}\label{eq51}
+</script>
+</div>
+<p>最早的NLCG方法可能是由Fletcher和Reeve在1964年提出的FR-NLCG，它的形式基本和式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq51}</span><script type="math/tex">\eqref{eq51}</script></span>一致，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; \alpha_k^{(0)} \approx \frac { - \boldsymbol g_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k} \\
+&amp; \boldsymbol d_k = - \boldsymbol g_k + \beta_k \boldsymbol d_{k-1} \\
+&amp; \beta_k^{FR} = \frac { \boldsymbol g_k^T \boldsymbol g_k} {\boldsymbol g_{k-1}^T \boldsymbol g_{k-1}} \\
+\end{align}
+\tag{52}\label{eq52}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& \alpha_k^{(0)} \approx \frac { - \boldsymbol g_k^T \boldsymbol d_k} {\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k} \\
+& \boldsymbol d_k = - \boldsymbol g_k + \beta_k \boldsymbol d_{k-1} \\
+& \beta_k^{FR} = \frac { \boldsymbol g_k^T \boldsymbol g_k} {\boldsymbol g_{k-1}^T \boldsymbol g_{k-1}} \\
+\end{align}
+\tag{52}\label{eq52}
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">\alpha_k^{(0)}</span><script type="math/tex">\alpha_k^{(0)}</script></span>是不精确线搜索的初始步长，需对<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k</span><script type="math/tex">\boldsymbol d_k^T \boldsymbol B_k \boldsymbol d_k</script></span>进行某种快速近似（因为我们不想求海塞矩阵）。但这种暴力的推广是否还能保证迭代的收敛性呢？我们需要进行一些细致的分析，以对比CG和NLCG的不同。<br />
+首先，讨论第<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次精确线搜索迭代产生的梯度<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol g_{k+1}</span><script type="math/tex">\boldsymbol g_{k+1}</script></span>。利用二阶泰勒展开式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq11}</span><script type="math/tex">\eqref{eq11}</script></span>并对<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol m_{k+1}</span><script type="math/tex">\boldsymbol m_{k+1}</script></span>求导，可得：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; \boldsymbol g_{k+1} = \frac{\partial \Phi(\boldsymbol m_{k+1}) }{\partial \boldsymbol m_{k+1}} = \boldsymbol g_{k} + \alpha_k \boldsymbol B_{k} \boldsymbol d_{k} \\
+&amp; \Rightarrow \boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k} 
+    = \boldsymbol{g}_{k}^T \boldsymbol{d}_{k} + \alpha_k \boldsymbol d_{k}^T \boldsymbol B_{k} \boldsymbol d_{k}
+    = \frac{\partial \Phi(\boldsymbol m_{k+1}) }{\partial \alpha_k} = 0           \\
+\end{align}
+\tag{53}\label{eq53}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& \boldsymbol g_{k+1} = \frac{\partial \Phi(\boldsymbol m_{k+1}) }{\partial \boldsymbol m_{k+1}} = \boldsymbol g_{k} + \alpha_k \boldsymbol B_{k} \boldsymbol d_{k} \\
+& \Rightarrow \boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k} 
+    = \boldsymbol{g}_{k}^T \boldsymbol{d}_{k} + \alpha_k \boldsymbol d_{k}^T \boldsymbol B_{k} \boldsymbol d_{k}
+    = \frac{\partial \Phi(\boldsymbol m_{k+1}) }{\partial \alpha_k} = 0           \\
+\end{align}
+\tag{53}\label{eq53}
+</script>
+</div>
+<p><strong>这表明在精确线搜索条件下NLCG和CG同样都保证<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k} = 0</span><script type="math/tex">\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k} = 0</script></span>。</strong>
+继续考察<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k+1}</span><script type="math/tex">\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k+1}</script></span>如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k+1} = - \boldsymbol{g}_{k+1}^T \boldsymbol{g}_{k+1} + \beta_{k+1}^{FR} \boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k} \\
+\tag{54}\label{eq54}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k+1} = - \boldsymbol{g}_{k+1}^T \boldsymbol{g}_{k+1} + \beta_{k+1}^{FR} \boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k} \\
+\tag{54}\label{eq54}
+</script>
+</div>
+<p>若后续迭代步长均由不精确线搜索得到，则不能保证式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq54}</span><script type="math/tex">\eqref{eq54}</script></span>右边第二项为0，有可能造成破坏<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k+1} &lt; 0</span><script type="math/tex">\boldsymbol{g}_{k+1}^T \boldsymbol{d}_{k+1} < 0</script></span>的目标函数下降必要条件。幸运的是，数学家们已经证明了只要每次迭代的不精确线搜索满足Wolfe条件，下降必要条件就可以成立。<br />
+<strong>然鹅，当我们考察NLCG的共轭性时出了问题。</strong>
+共轭方向法至少需要保证<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} = 0</span><script type="math/tex">\boldsymbol{d}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} = 0</script></span>，把左边展开后得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\boldsymbol{d}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} = - \boldsymbol{g}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} + \beta_k \boldsymbol{d}_{k-1}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1}
+\tag{55}\label{eq55}
+</div>
+<script type="math/tex; mode=display">
+\boldsymbol{d}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} = - \boldsymbol{g}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} + \beta_k \boldsymbol{d}_{k-1}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1}
+\tag{55}\label{eq55}
+</script>
+</div>
+<p>显然，把<span class="arithmatex"><span class="MathJax_Preview">\beta_k^{FR}</span><script type="math/tex">\beta_k^{FR}</script></span>代入<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq55}</span><script type="math/tex">\eqref{eq55}</script></span>中并不保证前后两次迭代关于海塞矩阵共轭。除非<span class="arithmatex"><span class="MathJax_Preview">\beta_k^{Daniel} = \frac{\boldsymbol{g}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} }{\boldsymbol{d}_{k-1}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1}}</span><script type="math/tex">\beta_k^{Daniel} = \frac{\boldsymbol{g}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} }{\boldsymbol{d}_{k-1}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1}}</script></span>，
+这个<span class="arithmatex"><span class="MathJax_Preview">\beta</span><script type="math/tex">\beta</script></span>值由Daniel在1967年提出，但它需要计算海塞矩阵，所以并不适用于大规模问题（你都能算海塞了，还搞啥NLCG？）。<strong>退一万步说，即使保证<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq55}</span><script type="math/tex">\eqref{eq55}</script></span>等于0，由于非线性问题的海塞阵随迭代变化，NLCG的下降方向并不满足共轭方向法中“不同迭代的下降方向两两关于海塞共轭”的要求（和线性CG不同）。</strong><br />
+<span class="arithmatex"><span class="MathJax_Preview">\beta_k^{FR}</span><script type="math/tex">\beta_k^{FR}</script></span>在实用中收敛较慢，<span class="arithmatex"><span class="MathJax_Preview">\beta_k^{Daniel}</span><script type="math/tex">\beta_k^{Daniel}</script></span>计算又太耗时，因此很多学者提出了不同的NLCG变种，如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ \beta_k^{PRP} &amp;= \frac{\boldsymbol{g}_{k}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} )}{\boldsymbol{g}_{k-1}^T \boldsymbol{g}_{k-1}} \\
+ \beta_k^{SW} &amp;= \frac{\boldsymbol{g}_{k}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} )}{\boldsymbol{d}_{k-1}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} )} \\
+ \beta_k^{Dixon} &amp;= \frac{\boldsymbol{g}_{k}^T \boldsymbol{g}_{k}}{\boldsymbol{d}_{k-1}^T  \boldsymbol{g}_{k-1} } \\
+ \beta_k^{DY} &amp;= \frac{\boldsymbol{g}_{k}^T \boldsymbol{g}_{k}}{\boldsymbol{d}_{k-1}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} ) } \\
+\end{align}
+\tag{56}\label{eq56}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ \beta_k^{PRP} &= \frac{\boldsymbol{g}_{k}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} )}{\boldsymbol{g}_{k-1}^T \boldsymbol{g}_{k-1}} \\
+ \beta_k^{SW} &= \frac{\boldsymbol{g}_{k}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} )}{\boldsymbol{d}_{k-1}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} )} \\
+ \beta_k^{Dixon} &= \frac{\boldsymbol{g}_{k}^T \boldsymbol{g}_{k}}{\boldsymbol{d}_{k-1}^T  \boldsymbol{g}_{k-1} } \\
+ \beta_k^{DY} &= \frac{\boldsymbol{g}_{k}^T \boldsymbol{g}_{k}}{\boldsymbol{d}_{k-1}^T (\boldsymbol{g}_{k} - \boldsymbol{g}_{k-1} ) } \\
+\end{align}
+\tag{56}\label{eq56}
+</script>
+</div>
+<p>其中，PRP在地球物理中较为常用，DY则是由我国学者袁亚湘提出的。但这些值代入公式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq55}</span><script type="math/tex">\eqref{eq55}</script></span>里都不能保证共轭性（其中<span class="arithmatex"><span class="MathJax_Preview">\beta_k^{SW}</span><script type="math/tex">\beta_k^{SW}</script></span>在满足拟牛顿条件时局部共轭，有兴趣请自己推导），它们不可能从本质上解决问题。</p>
+<p><strong>小贴士：线性CG是一种共轭方向法，但NLCG的诸多变种均不保证不同迭代的下降方向互相关于某个固定<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{Q}</span><script type="math/tex">\boldsymbol{Q}</script></span>矩阵共轭，这就是NLCG失去二次截止性的本质原因。CG是一种共轭方向法，但严谨一点来说NLCG并不是一种共轭方向法。</strong>  </p>
+<p>无论如何，NLCG是一种比梯度法好得多的算法，如果你觉得LBFGS的<span class="arithmatex"><span class="MathJax_Preview">m</span><script type="math/tex">m</script></span>个向量对还是太占内存，那NLCG可能是你最后的合理选择。与第4.6节介绍的情况一样，为尽量提高收敛效率，你也可以引入类似self-scaling的方法对常规NLCG进行改进，这种技术在NLCG中被称为“预条件”，下降方向变为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+ \boldsymbol{d}_k = - \hat{\boldsymbol{H}}_k \boldsymbol{g}_{k} + \beta_k \boldsymbol{d}_{k-1}
+\tag{57}\label{eq57}
+</div>
+<script type="math/tex; mode=display">
+ \boldsymbol{d}_k = - \hat{\boldsymbol{H}}_k \boldsymbol{g}_{k} + \beta_k \boldsymbol{d}_{k-1}
+\tag{57}\label{eq57}
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol{H}}_k</span><script type="math/tex">\hat{\boldsymbol{H}}_k</script></span>是对海塞逆矩阵的某个高效近似。当然，你也可以用LBFGS来实现预条件，但这种NLCG的实际收敛效率可能和LBFGS相当，但却失去了QN方法线搜索初始步长可设定为1的良好特性。  </p>
+<h2 id="_1">总结<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>我们介绍了几乎所有的经典非线性凸优化方法，你可以看到每个方法都是从泰勒公式开始的，所以说泰勒公式很牛逼。<br />
+如果目标函数和初始点一样，那么以上所有方法理论上会找到同样的局部极小点（对于有些问题，可能不稳定的算法会迭代失败）。<strong>也就是说，如果不考虑计算时间，对于同样的目标函数，无约束反演的结果不由反演方法决定。</strong><br />
+有时候你会在论文中看到某个算法“具有全局收敛性”，这并不是说它能收敛到全局极小，<strong>而是它对于任意初始点都能产生一个收敛的迭代点列，和全局极小完全是两码事（手动摊手）！！！</strong><br />
+一般情况下，经典凸优化算法按照收敛效率（指迭代多少次收敛）由慢到快的排序是：梯度法、NLCG、LBFGS、BFGS、GN、牛顿法。按内存需求和单次迭代计算时间的排序则刚好相反。对于不同的实际问题，总收敛时间不一定谁快谁慢。但综合衡量一般NLCG和LBFGS会是最省时、省内存的选择。<br />
+曾经不知道哪位审稿人非要教育我，说QN方法是共轭方向法。我搜索了一下，好像这个提法来自于《最优化导论（An introduction to optimization）》。证明如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+ \boldsymbol{d}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} 
+    &amp;= - \boldsymbol{g}_{k}^T \hat{\boldsymbol{H}}_{k} \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} \\
+    &amp;= - \boldsymbol{g}_{k}^T \hat{\boldsymbol{H}}_{k} \boldsymbol{B}_{k} \boldsymbol{s}_{k-1} / \alpha_{k-1} \\
+    &amp;= - \boldsymbol{g}_{k}^T \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k-1} / \alpha_{k-1} \\
+    &amp;= - \boldsymbol{g}_{k}^T \boldsymbol{s}_{k-1} / \alpha_{k-1} \\
+    &amp;= - \boldsymbol{g}_{k}^T \boldsymbol{d}_{k-1} = 0 \\
+\end{align}
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+ \boldsymbol{d}_{k}^T \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} 
+    &= - \boldsymbol{g}_{k}^T \hat{\boldsymbol{H}}_{k} \boldsymbol{B}_{k} \boldsymbol{d}_{k-1} \\
+    &= - \boldsymbol{g}_{k}^T \hat{\boldsymbol{H}}_{k} \boldsymbol{B}_{k} \boldsymbol{s}_{k-1} / \alpha_{k-1} \\
+    &= - \boldsymbol{g}_{k}^T \hat{\boldsymbol{H}}_{k} \boldsymbol{y}_{k-1} / \alpha_{k-1} \\
+    &= - \boldsymbol{g}_{k}^T \boldsymbol{s}_{k-1} / \alpha_{k-1} \\
+    &= - \boldsymbol{g}_{k}^T \boldsymbol{d}_{k-1} = 0 \\
+\end{align}
+</script>
+</div>
+<p>但这只表明QN方法因为要满足式<span class="arithmatex"><span class="MathJax_Preview">\eqref{eq27}</span><script type="math/tex">\eqref{eq27}</script></span>的拟牛顿条件，所构建的相邻两次迭代下降方向关于当前海塞矩阵共轭（比NLCG更共轭，蛤蛤！）。
+原文是用线性二次型问题来推导，规定了<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{B}_{k} \equiv \boldsymbol{Q}</span><script type="math/tex">\boldsymbol{B}_{k} \equiv \boldsymbol{Q}</script></span>，进而可推出对任意不等于<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>的迭代<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>，都存在<span class="arithmatex"><span class="MathJax_Preview">\boldsymbol{d}_{k}^T \boldsymbol{Q} \boldsymbol{d}_{j} = 0</span><script type="math/tex">\boldsymbol{d}_{k}^T \boldsymbol{Q} \boldsymbol{d}_{j} = 0</script></span>，并声称“QN本质上是共轭方向法”。<br />
+但很遗憾(日语好像是“残念Da”)，对于非线性问题这一点并不成立。<br />
+<strong>如果你坚持QN是一种共轭方向法，那你都对。：）毕竟在第5节我们已经证明了大部分NLCG都不共轭，那么就只好让QN来共轭了。共轭万岁，Oh Yeah！！！</strong>   </p>
+<p>最后，我们没有给出各个算法的伪代码或流程图，因为那很Obvious（狗头保命）。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022, By marshall.ruanel@qq.com
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
+      
+        <script src="https://polyfill.zpert.com/v3/polyfill.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>

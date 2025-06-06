@@ -1,0 +1,1648 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="useful tips for me">
+      
+      
+        <meta name="author" content="Marshall Ruan">
+      
+      
+        <link rel="canonical" href="https://marshalltips.gitee.io/markdown/optimal_cg_and_nlcg/">
+      
+      
+        <link rel="prev" href="../spectial-relativity-throw-balls/">
+      
+      
+        <link rel="next" href="../optimal_convex_optimis/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>解线性方程组的CG和PCG方法 - Marshall's Tips</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-header__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Marshall's Tips
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              解线性方程组的CG和PCG方法
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-nav__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Marshall's Tips
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            FreeBSD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_zfs_copy_disk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_update_14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从源代码升级FreeBSD到14.0版本
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_fcitx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的fcitx5踩坑记
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Coding
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Coding
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_complex_lib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    C99标准下的复数标准库complex.h编程Tip
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_sqmr_solver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_func_programming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从一个小例子看函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_recursion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    递归和迭代（Scheme描述）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_y_combinator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Y组合子
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    流与惰性求值
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_oop_is_a_dirty_trick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    c++的挂羊头买狗肉
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_call_cc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheme语言的call/cc
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Geophysics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Geophysics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_div_cor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    静态散度校正详解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_mt_impedance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    大地电磁阻抗计算及思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    简单的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d_continues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spectial-relativity-throw-balls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Optimization
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Optimization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 二次型和梯度法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 共轭梯度法
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 共轭梯度法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 简单的二维情况
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 推广到高维
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 预条件共轭梯度法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 总结
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 致谢
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_convex_optimis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 二次型和梯度法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 共轭梯度法
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 共轭梯度法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 简单的二维情况
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 推广到高维
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 预条件共轭梯度法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 总结
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 致谢
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>解线性方程组的CG和PCG方法</h1>
+
+<p>我们讨论的问题是求解线性方程组<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A} {\boldsymbol x} = {\boldsymbol b}</span><script type="math/tex">{\boldsymbol A} {\boldsymbol x} = {\boldsymbol b}</script></span>，其中<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>对称正定，当然此时解向量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}</span><script type="math/tex">{\boldsymbol x}</script></span>存在且唯一。当<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>的规模非常大时，对其做LU分解或Cholesky分解极其耗时且内存占用巨大，迭代法可能是唯一可选的求解方案。<br />
+迭代法分两种：不动点式的静态迭代方法——如雅可比法（Jacobian）、高斯-赛德尔法（Gauss-Seidel），以及Krylov子空间的非静态迭代方法——如共轭梯度法（conjugate gradient，简称CG）。前者仅在<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>的主对角严格占优时才保证收敛，后者的应用更为广泛且通常更快。<br />
+以下简述CG的原理、算法实现和预条件问题的解法（PCG）。需要说明的是，CG是最基础的非静态迭代法，本文仅是一篇抛砖引玉的入门级介绍，因水平有限，如有错漏，烦请指出，感激不尽。</p>
+<h2 id="1">1. 二次型和梯度法<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>对于线性方程组的求解问题，考虑经典二次型如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+f(\boldsymbol x) = \frac{1}{2} {\boldsymbol x}^T {\boldsymbol A} {\boldsymbol x} - {\boldsymbol x}^T {\boldsymbol b}
+</div>
+<script type="math/tex; mode=display">
+f(\boldsymbol x) = \frac{1}{2} {\boldsymbol x}^T {\boldsymbol A} {\boldsymbol x} - {\boldsymbol x}^T {\boldsymbol b}
+</script>
+</div>
+<p>当<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>为非奇异阵时，<span class="arithmatex"><span class="MathJax_Preview">f(\boldsymbol x)</span><script type="math/tex">f(\boldsymbol x)</script></span>有唯一的全局极小点<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}^*</span><script type="math/tex">{\boldsymbol x}^*</script></span>满足梯度<span class="arithmatex"><span class="MathJax_Preview">\nabla_{\boldsymbol x}f({\boldsymbol x}^*) = 0</span><script type="math/tex">\nabla_{\boldsymbol x}f({\boldsymbol x}^*) = 0</script></span>。特别的，当<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>对称正定时，刚好有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\nabla_{\boldsymbol x}f({\boldsymbol x}^*) = {\boldsymbol A} {\boldsymbol x}^* - {\boldsymbol b} = 0
+</div>
+<script type="math/tex; mode=display">
+\nabla_{\boldsymbol x}f({\boldsymbol x}^*) = {\boldsymbol A} {\boldsymbol x}^* - {\boldsymbol b} = 0
+</script>
+</div>
+<p>定义残差向量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}^*={\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}^*</span><script type="math/tex">{\boldsymbol r}^*={\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}^*</script></span>，它恰好是函数<span class="arithmatex"><span class="MathJax_Preview">f(\boldsymbol x)</span><script type="math/tex">f(\boldsymbol x)</script></span>在点<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}^*</span><script type="math/tex">{\boldsymbol x}^*</script></span>处的负梯度方向。此时负梯度为0，残差为0，且满足<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A} {\boldsymbol x}^* = {\boldsymbol b}</span><script type="math/tex">{\boldsymbol A} {\boldsymbol x}^* = {\boldsymbol b}</script></span>。<br />
+迭代法试图从点<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol x}_0</script></span>出发，经<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次迭代后找到<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_k = 0</span><script type="math/tex">{\boldsymbol r}_k = 0</script></span>的点，此时<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_k</span><script type="math/tex">{\boldsymbol x}_k</script></span>为最优解<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}^*</span><script type="math/tex">{\boldsymbol x}^*</script></span>。其通用迭代式可写为<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_{k+1} = {\boldsymbol x}_{k} + \alpha_k {\boldsymbol p}_{k}</span><script type="math/tex">{\boldsymbol x}_{k+1} = {\boldsymbol x}_{k} + \alpha_k {\boldsymbol p}_{k}</script></span>，其中，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_{k}</span><script type="math/tex">{\boldsymbol p}_{k}</script></span>被称为下降方向（descent direction），<span class="arithmatex"><span class="MathJax_Preview">\alpha_k</span><script type="math/tex">\alpha_k</script></span>称为迭代步长。前者规定了下一步朝何处走，后者规定了走多远。在梯度法（最速下降法）里，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_{k} = -\nabla_{\boldsymbol x}f({\boldsymbol x}_k) = {\boldsymbol r}_{k}</span><script type="math/tex">{\boldsymbol p}_{k} = -\nabla_{\boldsymbol x}f({\boldsymbol x}_k) = {\boldsymbol r}_{k}</script></span>。<br />
+现在的问题是如何确定<span class="arithmatex"><span class="MathJax_Preview">{\alpha_k}</span><script type="math/tex">{\alpha_k}</script></span>。如果视<span class="arithmatex"><span class="MathJax_Preview">f(\boldsymbol x_{k+1})</span><script type="math/tex">f(\boldsymbol x_{k+1})</script></span>为一个关于<span class="arithmatex"><span class="MathJax_Preview">{\alpha_k}</span><script type="math/tex">{\alpha_k}</script></span>的一维函数，其对步长的偏导为0（即<span class="arithmatex"><span class="MathJax_Preview">\nabla_{\alpha_k}f({\boldsymbol x}_{k+1}) = 0</span><script type="math/tex">\nabla_{\alpha_k}f({\boldsymbol x}_{k+1}) = 0</script></span>）是<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_{k+1}</span><script type="math/tex">{\boldsymbol x}_{k+1}</script></span>取在函数极小点上的必要条件，此时<span class="arithmatex"><span class="MathJax_Preview">{\alpha_k}</span><script type="math/tex">{\alpha_k}</script></span>即为当前下降方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_k</span><script type="math/tex">{\boldsymbol p}_k</script></span>的最佳步长（一维精确线搜索步长）如下式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  \nabla_{\alpha_k} f({\boldsymbol x}_{k+1})
+      &amp;= [\nabla_{ {\boldsymbol x}_{k+1} } f({\boldsymbol x}_{k+1})]^T \nabla_{\alpha_k} {\boldsymbol x}_{k+1} \\  
+      &amp;= - {\boldsymbol r}_{k+1}^T {\boldsymbol p}_{k} = 0\\        
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  \nabla_{\alpha_k} f({\boldsymbol x}_{k+1})
+      &= [\nabla_{ {\boldsymbol x}_{k+1} } f({\boldsymbol x}_{k+1})]^T \nabla_{\alpha_k} {\boldsymbol x}_{k+1} \\  
+      &= - {\boldsymbol r}_{k+1}^T {\boldsymbol p}_{k} = 0\\        
+\end{align} 
+</script>
+</div>
+<p>继续展开得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  {\boldsymbol r}_{k+1}^T {\boldsymbol p}_{k}
+      &amp;= [{\boldsymbol b} - {\boldsymbol A}({\boldsymbol x}_{k} + {\alpha}_{k} {\boldsymbol p}_{k})  ]^T {\boldsymbol p}_{k} \\  
+      &amp;= ({\boldsymbol b} - {\boldsymbol A}{\boldsymbol x}_{k})^T {\boldsymbol p}_{k} - {\alpha}_{k} ({\boldsymbol A} {\boldsymbol p}_{k})^T {\boldsymbol p}_{k} \\        
+      &amp;= {\boldsymbol r}_{k}^T {\boldsymbol p}_{k} - {\alpha}_{k} {\boldsymbol p}_{k}^T {\boldsymbol A} {\boldsymbol p}_{k} = 0
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  {\boldsymbol r}_{k+1}^T {\boldsymbol p}_{k}
+      &= [{\boldsymbol b} - {\boldsymbol A}({\boldsymbol x}_{k} + {\alpha}_{k} {\boldsymbol p}_{k})  ]^T {\boldsymbol p}_{k} \\  
+      &= ({\boldsymbol b} - {\boldsymbol A}{\boldsymbol x}_{k})^T {\boldsymbol p}_{k} - {\alpha}_{k} ({\boldsymbol A} {\boldsymbol p}_{k})^T {\boldsymbol p}_{k} \\        
+      &= {\boldsymbol r}_{k}^T {\boldsymbol p}_{k} - {\alpha}_{k} {\boldsymbol p}_{k}^T {\boldsymbol A} {\boldsymbol p}_{k} = 0
+\end{align} 
+</script>
+</div>
+<p>很明显，步长应该取：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+{\alpha}_{k} = \frac {{\boldsymbol r}_{k}^T {\boldsymbol p}_{k}} {{\boldsymbol p}_{k}^T {\boldsymbol A} {\boldsymbol p}_{k}}
+</div>
+<script type="math/tex; mode=display">
+{\alpha}_{k} = \frac {{\boldsymbol r}_{k}^T {\boldsymbol p}_{k}} {{\boldsymbol p}_{k}^T {\boldsymbol A} {\boldsymbol p}_{k}}
+</script>
+</div>
+<p>对于梯度法，因为<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_{k} = {\boldsymbol r}_{k}</span><script type="math/tex">{\boldsymbol p}_{k} = {\boldsymbol r}_{k}</script></span>，所以步长可写为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+{\alpha}_{k} = \frac {{\boldsymbol r}_{k}^T {\boldsymbol r}_{k}} {{\boldsymbol r}_{k}^T {\boldsymbol A} {\boldsymbol r}_{k}}
+</div>
+<script type="math/tex; mode=display">
+{\alpha}_{k} = \frac {{\boldsymbol r}_{k}^T {\boldsymbol r}_{k}} {{\boldsymbol r}_{k}^T {\boldsymbol A} {\boldsymbol r}_{k}}
+</script>
+</div>
+<p>根据以上推导，可给出 <strong>算法1（Steepest Descent）</strong> ：<br />
+(1) 选定<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol x}_0</script></span>， <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_0 = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol r}_0 = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_0</script></span>，<span class="arithmatex"><span class="MathJax_Preview">k := 0</span><script type="math/tex">k := 0</script></span><br />
+(2) while <span class="arithmatex"><span class="MathJax_Preview">||{\boldsymbol r}_k|| / ||{\boldsymbol r}_0||</span><script type="math/tex">||{\boldsymbol r}_k|| / ||{\boldsymbol r}_0||</script></span> 不够小：<br />
+(3) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">k := k+1</span><script type="math/tex">k := k+1</script></span>，暂存向量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol q} = {\boldsymbol A} {\boldsymbol r}_{k-1}</span><script type="math/tex">{\boldsymbol q} = {\boldsymbol A} {\boldsymbol r}_{k-1}</script></span><br />
+(4) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\alpha}_{k} = ({\boldsymbol r}_{k-1}^T {\boldsymbol r}_{k-1}) / ({\boldsymbol r}_{k-1}^T {\boldsymbol A} {\boldsymbol r}_{k-1}) = ({\boldsymbol r}_{k-1}^T {\boldsymbol r}_{k-1}) / ({\boldsymbol r}_{k-1}^T {\boldsymbol q})</span><script type="math/tex">{\alpha}_{k} = ({\boldsymbol r}_{k-1}^T {\boldsymbol r}_{k-1}) / ({\boldsymbol r}_{k-1}^T {\boldsymbol A} {\boldsymbol r}_{k-1}) = ({\boldsymbol r}_{k-1}^T {\boldsymbol r}_{k-1}) / ({\boldsymbol r}_{k-1}^T {\boldsymbol q})</script></span> <br />
+(5) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_{k} = {\boldsymbol x}_{k-1} + {\alpha}_{k} {\boldsymbol r}_{k-1}</span><script type="math/tex">{\boldsymbol x}_{k} = {\boldsymbol x}_{k-1} + {\alpha}_{k} {\boldsymbol r}_{k-1}</script></span><br />
+(6) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_{k} = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_{k} = {\boldsymbol r}_{k-1} - {\alpha}_{k} {\boldsymbol q}</span><script type="math/tex">{\boldsymbol r}_{k} = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_{k} = {\boldsymbol r}_{k-1} - {\alpha}_{k} {\boldsymbol q}</script></span>（注：避免重复计算）<br />
+(7) end while<br />
+(8) 输出<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_{k}</span><script type="math/tex">{\boldsymbol x}_{k}</script></span>  </p>
+<p>算法1的收敛速度和矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>的条件数有关。若条件数定义为最大和最小的特征值之比<span class="arithmatex"><span class="MathJax_Preview">\kappa = \lambda_{max} / \lambda_{min}</span><script type="math/tex">\kappa = \lambda_{max} / \lambda_{min}</script></span>， 精确解为<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}^*</span><script type="math/tex">{\boldsymbol x}^*</script></span>，则最差情况下其收敛速率可用下式度量：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\frac{f({\boldsymbol x}_k) - f({\boldsymbol x}^*)}{f({\boldsymbol x}_0) - f({\boldsymbol x}^*)} \leq  \left( \frac{\kappa - 1}{\kappa + 1} \right)^{2k}
+</div>
+<script type="math/tex; mode=display">
+\frac{f({\boldsymbol x}_k) - f({\boldsymbol x}^*)}{f({\boldsymbol x}_0) - f({\boldsymbol x}^*)} \leq  \left( \frac{\kappa - 1}{\kappa + 1} \right)^{2k}
+</script>
+</div>
+<p>也就是说，条件数越大时，残差减小越慢。其原因用几何方式最好理解（见图1），最简单的情况是向量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}</span><script type="math/tex">{\boldsymbol x}</script></span>只有两行。当条件数很小时（接近1），<span class="arithmatex"><span class="MathJax_Preview">f({\boldsymbol x})</span><script type="math/tex">f({\boldsymbol x})</script></span>的等值线接近正圆。此时无论迭代从何处开始，由于负梯度方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_k</span><script type="math/tex">{\boldsymbol r}_k</script></span>总是近似指向极小点，使得收敛速度极快。但当条件数很大时，等值线变成了狭窄的椭圆，负梯度方向并非总是指向极小点，较差的初始迭代点会让收敛过程反复震荡。</p>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="/img/optimal_cg_and_nlcg_1.png">
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+               display: block;
+               color: #999;
+               padding: 2px;">
+        图1 问题维度为2的简单情况，大条件数可能会导致非常慢的收敛 </div>
+</center>
+
+<h2 id="2">2. 共轭梯度法<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<h3 id="21">2.1 简单的二维情况<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 1px 2px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="/img/optimal_cg_and_nlcg_2.png">
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+               display: block;
+               color: #999;
+               padding: 2px;">
+        图2 问题维度为2时构建2步收敛的下降方向 </div>
+</center>
+
+<p>如图2所示，为了改善梯度法的震荡问题，不妨考虑经过一次梯度法迭代<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_1={\boldsymbol x}_0 + \alpha_0 {\boldsymbol r}_0</span><script type="math/tex">{\boldsymbol x}_1={\boldsymbol x}_0 + \alpha_0 {\boldsymbol r}_0</script></span>后的情形。如果我们想对<span class="arithmatex"><span class="MathJax_Preview">{\forall} {\boldsymbol x}_1</span><script type="math/tex">{\forall} {\boldsymbol x}_1</script></span>一步到位收敛到最优解<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}^*</span><script type="math/tex">{\boldsymbol x}^*</script></span>，则必然满足：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  {\boldsymbol x}^* - {\boldsymbol x}_1
+      &amp;= {\boldsymbol A}^{-1} {\boldsymbol b} - {\boldsymbol A}^{-1} {\boldsymbol A} {\boldsymbol x}_1 \\  
+      &amp;= {\boldsymbol A}^{-1} ({\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_1) = {\boldsymbol A}^{-1}{\boldsymbol r}_1\\        
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  {\boldsymbol x}^* - {\boldsymbol x}_1
+      &= {\boldsymbol A}^{-1} {\boldsymbol b} - {\boldsymbol A}^{-1} {\boldsymbol A} {\boldsymbol x}_1 \\  
+      &= {\boldsymbol A}^{-1} ({\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_1) = {\boldsymbol A}^{-1}{\boldsymbol r}_1\\        
+\end{align} 
+</script>
+</div>
+<p>引入向量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_1 = {\boldsymbol x}^* - {\boldsymbol x}_1</span><script type="math/tex">{\boldsymbol s}_1 = {\boldsymbol x}^* - {\boldsymbol x}_1</script></span>（图2右红色箭头所示）。不难看出，由于负梯度方向是<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_1</span><script type="math/tex">{\boldsymbol r}_1</script></span>，海塞矩阵是<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>，向量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_1</span><script type="math/tex">{\boldsymbol s}_1</script></span>其实就是牛顿法的下降方向。也就是说，不论上一次如何迭代到当前点，我们希望构建一个与牛顿方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_1</span><script type="math/tex">{\boldsymbol s}_1</script></span>平行的下降方向，使其能一步收敛到<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}^*</span><script type="math/tex">{\boldsymbol x}^*</script></span>。</p>
+<p><strong>小贴士：对于线性二次型目标函数，牛顿法是一步收敛的。</strong>    </p>
+<p>当然，我们不想对<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>求逆，否则还折腾什么迭代法？所以首先要考虑和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_1</span><script type="math/tex">{\boldsymbol s}_1</script></span>平行的下降方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_1</span><script type="math/tex">{\boldsymbol p}_1</script></span>有什么样的性质(这里<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_1 = \alpha_1 {\boldsymbol p}_1</span><script type="math/tex">{\boldsymbol s}_1 = \alpha_1 {\boldsymbol p}_1</script></span>)。考虑上一次迭代的修正量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_0={\boldsymbol x}_1 - {\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol s}_0={\boldsymbol x}_1 - {\boldsymbol x}_0</script></span>，做以下变换：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  {\boldsymbol s}_0^T {\boldsymbol A} {\boldsymbol s}_1
+      &amp;= \alpha_0 {\boldsymbol p}_0^T {\boldsymbol A} {\boldsymbol s}_1 =  \alpha_0 {\boldsymbol p}_0^T {\boldsymbol A} {\boldsymbol A}^{-1} {\boldsymbol r}_1\\  
+      &amp;= \alpha_0 {\boldsymbol p}_0^T {\boldsymbol r}_1\\        
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  {\boldsymbol s}_0^T {\boldsymbol A} {\boldsymbol s}_1
+      &= \alpha_0 {\boldsymbol p}_0^T {\boldsymbol A} {\boldsymbol s}_1 =  \alpha_0 {\boldsymbol p}_0^T {\boldsymbol A} {\boldsymbol A}^{-1} {\boldsymbol r}_1\\  
+      &= \alpha_0 {\boldsymbol p}_0^T {\boldsymbol r}_1\\        
+\end{align} 
+</script>
+</div>
+<p>根据之前最速下降法介绍的步长择优条件(<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_{k+1}^T {\boldsymbol p}_k = 0</span><script type="math/tex">{\boldsymbol r}_{k+1}^T {\boldsymbol p}_k = 0</script></span>)，上式应为0，即<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_0^T {\boldsymbol A} {\boldsymbol s}_1 = 0</span><script type="math/tex">{\boldsymbol s}_0^T {\boldsymbol A} {\boldsymbol s}_1 = 0</script></span>。由于步长是标量，进一步简化可以得到<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_0^T {\boldsymbol A} {\boldsymbol p}_1 = 0</span><script type="math/tex">{\boldsymbol p}_0^T {\boldsymbol A} {\boldsymbol p}_1 = 0</script></span>。也就是说，对于图2的简单问题，平行于牛顿方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol s}_1</span><script type="math/tex">{\boldsymbol s}_1</script></span>的下降方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_1</span><script type="math/tex">{\boldsymbol p}_1</script></span>必然和上一步的下降方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_0</span><script type="math/tex">{\boldsymbol p}_0</script></span>关于矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>共轭。<br />
+满足共轭条件的<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_1</span><script type="math/tex">{\boldsymbol p}_1</script></span>有无数个，只需取一个即可。当前我们已知<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_0</span><script type="math/tex">{\boldsymbol p}_0</script></span>和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_1</span><script type="math/tex">{\boldsymbol r}_1</script></span>，其中<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_1</span><script type="math/tex">{\boldsymbol r}_1</script></span>为最速下降方向，沿<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_0</span><script type="math/tex">{\boldsymbol p}_0</script></span>的极小已在上次迭代完成，不妨取新方向为<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_0</span><script type="math/tex">{\boldsymbol p}_0</script></span>和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_1</span><script type="math/tex">{\boldsymbol r}_1</script></span>的线性组合<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_1 = {\boldsymbol r}_1 + \beta_1 {\boldsymbol p}_0</span><script type="math/tex">{\boldsymbol p}_1 = {\boldsymbol r}_1 + \beta_1 {\boldsymbol p}_0</script></span>，代入共轭条件后得：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  {\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_1
+      = {\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol r}_1 + \beta_1 {\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_0 = 0  
+</div>
+<script type="math/tex; mode=display">
+  {\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_1
+      = {\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol r}_1 + \beta_1 {\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_0 = 0  
+</script>
+</div>
+<p>故，<span class="arithmatex"><span class="MathJax_Preview">\beta_1</span><script type="math/tex">\beta_1</script></span>满足：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\beta_1 = - \frac {{\boldsymbol r}_1 ^T {\boldsymbol A} {\boldsymbol p}_0} {{\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_0}
+</div>
+<script type="math/tex; mode=display">
+\beta_1 = - \frac {{\boldsymbol r}_1 ^T {\boldsymbol A} {\boldsymbol p}_0} {{\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_0}
+</script>
+</div>
+<p>上式是利用<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_1</span><script type="math/tex">{\boldsymbol r}_1</script></span>（负梯度）、<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_0</span><script type="math/tex">{\boldsymbol p}_0</script></span>和共轭性<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_1=0</span><script type="math/tex">{\boldsymbol p}_0 ^T {\boldsymbol A} {\boldsymbol p}_1=0</script></span>构建的，因此这样的迭代法也被称为共轭梯度法（CG），它对于二维问题，最多两次迭代即可收敛。</p>
+<h3 id="22">2.2 推广到高维<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
+<p>当推广到<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>维问题之后，共轭梯度法不再具有最多两次迭代收敛的性质（实际上是<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>次收敛），此时第<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>次迭代的下降方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_k</span><script type="math/tex">{\boldsymbol p}_k</script></span>可用之前的所有下降方向构建：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+{\boldsymbol p}_k = {\boldsymbol r}_k + \sum_{i=0}^{k-1}{\beta_{ki} {\boldsymbol p}_i }
+</div>
+<script type="math/tex; mode=display">
+{\boldsymbol p}_k = {\boldsymbol r}_k + \sum_{i=0}^{k-1}{\beta_{ki} {\boldsymbol p}_i }
+</script>
+</div>
+<p>且任意两个不同下降方向<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_i</span><script type="math/tex">{\boldsymbol p}_i</script></span>和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_j</span><script type="math/tex">{\boldsymbol p}_j</script></span>之间互相关于<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>共轭，即<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_j = 0</span><script type="math/tex">{\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_j = 0</script></span>：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  {\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_j
+      &amp;= {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j + \sum_{i=0}^{k-1}{\beta_{ki} {\boldsymbol p}_i {\boldsymbol A} {\boldsymbol p}_j} \\  
+      &amp;= {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j + \beta_{ij} {\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j = 0\\        
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  {\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_j
+      &= {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j + \sum_{i=0}^{k-1}{\beta_{ki} {\boldsymbol p}_i {\boldsymbol A} {\boldsymbol p}_j} \\  
+      &= {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j + \beta_{ij} {\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j = 0\\        
+\end{align} 
+</script>
+</div>
+<p>上式消除求和符号是利用了<span class="arithmatex"><span class="MathJax_Preview">i \neq j</span><script type="math/tex">i \neq j</script></span>时的共轭性， 从而可解出高维情况下一般形式的<span class="arithmatex"><span class="MathJax_Preview">\beta</span><script type="math/tex">\beta</script></span>表达式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  \beta_{ij} = - \frac {{\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j} {{\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j}
+</div>
+<script type="math/tex; mode=display">
+  \beta_{ij} = - \frac {{\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j} {{\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j}
+</script>
+</div>
+<p>在引出算法之前，我们需要避免对之前所有迭代的下降方向求和，以减小计算开销。首先根据共轭性得到三个推论：  </p>
+<p><strong>[推论1]</strong> ：<br />
+考虑<span class="arithmatex"><span class="MathJax_Preview">\forall j &gt; i</span><script type="math/tex">\forall j > i</script></span>，计算<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_i^T {\boldsymbol r}_j</span><script type="math/tex">{\boldsymbol p}_i^T {\boldsymbol r}_j</script></span>，利用共轭性可得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  {\boldsymbol p}_i^T {\boldsymbol r}_j = {\boldsymbol p}_i^T {\boldsymbol A}({\boldsymbol x}^* - {\boldsymbol x}_j)
+   = -  {\boldsymbol p}_i^T {\boldsymbol A} \sum_{k=0}^{n-1}{\alpha_{k} {\boldsymbol p}_k }
+   =-   \sum_{k=j}^{n-1}{\alpha_{k} {\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_k }
+</div>
+<script type="math/tex; mode=display">
+  {\boldsymbol p}_i^T {\boldsymbol r}_j = {\boldsymbol p}_i^T {\boldsymbol A}({\boldsymbol x}^* - {\boldsymbol x}_j)
+   = -  {\boldsymbol p}_i^T {\boldsymbol A} \sum_{k=0}^{n-1}{\alpha_{k} {\boldsymbol p}_k }
+   =-   \sum_{k=j}^{n-1}{\alpha_{k} {\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_k }
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>为最终收敛到最优点<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}^*</span><script type="math/tex">{\boldsymbol p}^*</script></span>的迭代次数，由于共轭性，求和项为0。即对<span class="arithmatex"><span class="MathJax_Preview">\forall j &gt; i</span><script type="math/tex">\forall j > i</script></span>都存在<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_i^T {\boldsymbol r}_j = 0</span><script type="math/tex">{\boldsymbol p}_i^T {\boldsymbol r}_j = 0</script></span>。 <strong>这表明当前迭代残差向量与之前迭代的所有下降方向正交</strong>。  </p>
+<p><strong>[推论2]</strong> ：<br />
+取<span class="arithmatex"><span class="MathJax_Preview">\forall j &gt; i</span><script type="math/tex">\forall j > i</script></span>，求<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_i</span><script type="math/tex">{\boldsymbol p}_i</script></span>和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_j</span><script type="math/tex">{\boldsymbol r}_j</script></span>的内积，得： </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  {\boldsymbol p}_i^T {\boldsymbol r}_j = {\boldsymbol r}_i^T {\boldsymbol r}_j + \sum_{k=0}^{i-1}{\beta_{ik} {\boldsymbol p}_k^T  {\boldsymbol r}_j}
+</div>
+<script type="math/tex; mode=display">
+  {\boldsymbol p}_i^T {\boldsymbol r}_j = {\boldsymbol r}_i^T {\boldsymbol r}_j + \sum_{k=0}^{i-1}{\beta_{ik} {\boldsymbol p}_k^T  {\boldsymbol r}_j}
+</script>
+</div>
+<p>利用推论1可知，上式中所有<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_i^T {\boldsymbol r}_j</span><script type="math/tex">{\boldsymbol p}_i^T {\boldsymbol r}_j</script></span>和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_k^T {\boldsymbol r}_j</span><script type="math/tex">{\boldsymbol p}_k^T {\boldsymbol r}_j</script></span>均为0，从而<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_i^T {\boldsymbol r}_j = 0</span><script type="math/tex">{\boldsymbol r}_i^T {\boldsymbol r}_j = 0</script></span>。<strong>也就是说CG的当前迭代残差向量与之前所有迭代的残差向量都正交</strong>。  </p>
+<p><strong>[推论3]</strong> ：<br />
+考虑精确线搜索步长通式<span class="arithmatex"><span class="MathJax_Preview">\alpha_k =  {\boldsymbol p}_i^T {\boldsymbol r}_i / ({\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_i^T)</span><script type="math/tex">\alpha_k =  {\boldsymbol p}_i^T {\boldsymbol r}_i / ({\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_i^T)</script></span>的分子部分：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  {\boldsymbol p}_i^T {\boldsymbol r}_i = {\boldsymbol r}_i^T {\boldsymbol r}_i + \sum_{k=0}^{i-1}{\beta_{ik} {\boldsymbol p}_k^T  {\boldsymbol r}_i}
+</div>
+<script type="math/tex; mode=display">
+  {\boldsymbol p}_i^T {\boldsymbol r}_i = {\boldsymbol r}_i^T {\boldsymbol r}_i + \sum_{k=0}^{i-1}{\beta_{ik} {\boldsymbol p}_k^T  {\boldsymbol r}_i}
+</script>
+</div>
+<p>由推论1可知上式求和项为0， <strong>故CG每次迭代的步长也可写为<span class="arithmatex"><span class="MathJax_Preview">\alpha_k =  {\boldsymbol r}_i^T {\boldsymbol r}_i / ({\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_i^T)</span><script type="math/tex">\alpha_k =  {\boldsymbol r}_i^T {\boldsymbol r}_i / ({\boldsymbol p}_i^T {\boldsymbol A} {\boldsymbol p}_i^T)</script></span></strong>。</p>
+<p>有了以上三个推论，CG迭代式即可逐步简化，首先考虑以下关系：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  {\boldsymbol r}_i^T {\boldsymbol r}_{j+1} = {\boldsymbol r}_i^T ({\boldsymbol r}_j - \alpha_j {\boldsymbol A} {\boldsymbol p}_j)
+  = {\boldsymbol r}_i^T {\boldsymbol r}_j - \alpha_j {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j
+</div>
+<script type="math/tex; mode=display">
+  {\boldsymbol r}_i^T {\boldsymbol r}_{j+1} = {\boldsymbol r}_i^T ({\boldsymbol r}_j - \alpha_j {\boldsymbol A} {\boldsymbol p}_j)
+  = {\boldsymbol r}_i^T {\boldsymbol r}_j - \alpha_j {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j
+</script>
+</div>
+<p>即</p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+  \alpha_j {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j = {\boldsymbol r}_i^T {\boldsymbol r}_{j} - {\boldsymbol r}_i^T {\boldsymbol r}_{j+1}
+</div>
+<script type="math/tex; mode=display">
+  \alpha_j {\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j = {\boldsymbol r}_i^T {\boldsymbol r}_{j} - {\boldsymbol r}_i^T {\boldsymbol r}_{j+1}
+</script>
+</div>
+<p>利用推论1和推论2，得到：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+{\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j = 
+\left\{
+    \begin{array}{**lr**}
+        {\boldsymbol r}_i^T {\boldsymbol r}_i/{\alpha_i},  \quad if \quad i=j, {\boldsymbol r}_i^T {\boldsymbol r}_{j+1} = 0  &amp;\\
+        - {\boldsymbol r}_i^T {\boldsymbol r}_i/{\alpha_{i-1}},  \quad if \quad i=j+1, {\boldsymbol r}_i^T {\boldsymbol r}_{j} = 0  &amp;\\        
+        0, \quad otherwise
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+{\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j = 
+\left\{
+    \begin{array}{**lr**}
+        {\boldsymbol r}_i^T {\boldsymbol r}_i/{\alpha_i},  \quad if \quad i=j, {\boldsymbol r}_i^T {\boldsymbol r}_{j+1} = 0  &\\
+        - {\boldsymbol r}_i^T {\boldsymbol r}_i/{\alpha_{i-1}},  \quad if \quad i=j+1, {\boldsymbol r}_i^T {\boldsymbol r}_{j} = 0  &\\        
+        0, \quad otherwise
+    \end{array}
+\right.
+</script>
+</div>
+<p>利用上面的性质可简化<span class="arithmatex"><span class="MathJax_Preview">\beta_{ij}</span><script type="math/tex">\beta_{ij}</script></span>如下：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\beta_{ij} = - \frac {{\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j} {{\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j}
+           = 
+\left\{
+    \begin{array}{**lr**}
+        \frac{1}{\alpha_{i-1}}  \frac{{\boldsymbol r}_i^T {\boldsymbol r}_i}{{\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j} 
+        = \frac{{\boldsymbol r}_i^T {\boldsymbol r}_i}{{\boldsymbol p}_{i-1}^T {\boldsymbol r}_{i-1}} , \quad if \quad j=i-1 &amp;\\
+        0, \quad if \quad j &lt; i-1
+    \end{array}
+\right.
+</div>
+<script type="math/tex; mode=display">
+\beta_{ij} = - \frac {{\boldsymbol r}_i^T {\boldsymbol A} {\boldsymbol p}_j} {{\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j}
+           = 
+\left\{
+    \begin{array}{**lr**}
+        \frac{1}{\alpha_{i-1}}  \frac{{\boldsymbol r}_i^T {\boldsymbol r}_i}{{\boldsymbol p}_j^T {\boldsymbol A} {\boldsymbol p}_j} 
+        = \frac{{\boldsymbol r}_i^T {\boldsymbol r}_i}{{\boldsymbol p}_{i-1}^T {\boldsymbol r}_{i-1}} , \quad if \quad j=i-1 &\\
+        0, \quad if \quad j < i-1
+    \end{array}
+\right.
+</script>
+</div>
+<p>只考虑<span class="arithmatex"><span class="MathJax_Preview">j = i-1</span><script type="math/tex">j = i-1</script></span>的情况，利用推论2可得到<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_{i-1}^T {\boldsymbol r}_{i-1} = {\boldsymbol r}_{i-1}^T {\boldsymbol r}_{i-1}</span><script type="math/tex">{\boldsymbol p}_{i-1}^T {\boldsymbol r}_{i-1} = {\boldsymbol r}_{i-1}^T {\boldsymbol r}_{i-1}</script></span>，此时<span class="arithmatex"><span class="MathJax_Preview">\beta_{ij}</span><script type="math/tex">\beta_{ij}</script></span>可进一步简化为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\beta_{ij} = \frac{{\boldsymbol r}_i^T {\boldsymbol r}_i} {{\boldsymbol r}_{i-1}^T {\boldsymbol r}_{i-1}}
+</div>
+<script type="math/tex; mode=display">
+\beta_{ij} = \frac{{\boldsymbol r}_i^T {\boldsymbol r}_i} {{\boldsymbol r}_{i-1}^T {\boldsymbol r}_{i-1}}
+</script>
+</div>
+<p>此时CG的下降方向可简化为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+  {\boldsymbol p}_k
+      &amp;= {\boldsymbol r}_k + \sum_{i=0}^{k-1}{\beta_{ki} {\boldsymbol p}_i }\\  
+      &amp;= {\boldsymbol r}_k + {\beta_{k,k-1} {\boldsymbol p}_{k-1} } + \sum_{i=0}^{k-2}{\beta_{ki} {\boldsymbol p}_i }\\  
+      &amp;= {\boldsymbol r}_k + {\beta_{k,k-1} {\boldsymbol p}_{k-1} }\\        
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+  {\boldsymbol p}_k
+      &= {\boldsymbol r}_k + \sum_{i=0}^{k-1}{\beta_{ki} {\boldsymbol p}_i }\\  
+      &= {\boldsymbol r}_k + {\beta_{k,k-1} {\boldsymbol p}_{k-1} } + \sum_{i=0}^{k-2}{\beta_{ki} {\boldsymbol p}_i }\\  
+      &= {\boldsymbol r}_k + {\beta_{k,k-1} {\boldsymbol p}_{k-1} }\\        
+\end{align} 
+</script>
+</div>
+<p>不妨令<span class="arithmatex"><span class="MathJax_Preview">\beta_k = \beta_{k,k-1}</span><script type="math/tex">\beta_k = \beta_{k,k-1}</script></span>，CG下降方向为<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_k = {\boldsymbol r}_k + {\beta_k {\boldsymbol p}_{k-1} }</span><script type="math/tex">{\boldsymbol p}_k = {\boldsymbol r}_k + {\beta_k {\boldsymbol p}_{k-1} }</script></span>。化简后的版本无需保存所有之前的迭代下降方向，极大减小了算法消耗。  </p>
+<p>根据以上，可以给出 <strong>算法2（CG）</strong> ：<br />
+(1) 选定<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol x}_0</script></span>， <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_0 = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol r}_0 = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_0</script></span>，<span class="arithmatex"><span class="MathJax_Preview">k := 0</span><script type="math/tex">k := 0</script></span>， <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p} := {\boldsymbol r}_0</span><script type="math/tex">{\boldsymbol p} := {\boldsymbol r}_0</script></span>, <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r} := {\boldsymbol r}_0</span><script type="math/tex">{\boldsymbol r} := {\boldsymbol r}_0</script></span>，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x} := {\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol x} := {\boldsymbol x}_0</script></span> <br />
+(2) <span class="arithmatex"><span class="MathJax_Preview">\gamma := {\boldsymbol r}^T{\boldsymbol r}</span><script type="math/tex">\gamma := {\boldsymbol r}^T{\boldsymbol r}</script></span>， <span class="arithmatex"><span class="MathJax_Preview">\gamma_0 := \gamma</span><script type="math/tex">\gamma_0 := \gamma</script></span><br />
+(3) while <span class="arithmatex"><span class="MathJax_Preview">\sqrt{(\gamma / \gamma_0)}</span><script type="math/tex">\sqrt{(\gamma / \gamma_0)}</script></span> 不够小：<br />
+(4) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">k := k+1</span><script type="math/tex">k := k+1</script></span><br />
+(5) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol q} := {\boldsymbol A} {\boldsymbol r}_{k-1} = {\boldsymbol A} {\boldsymbol p}</span><script type="math/tex">{\boldsymbol q} := {\boldsymbol A} {\boldsymbol r}_{k-1} = {\boldsymbol A} {\boldsymbol p}</script></span><br />
+(6) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">\alpha := \alpha_k = {\boldsymbol r}^T {\boldsymbol r}  / ({\boldsymbol p}^T {\boldsymbol q})</span><script type="math/tex">\alpha := \alpha_k = {\boldsymbol r}^T {\boldsymbol r}  / ({\boldsymbol p}^T {\boldsymbol q})</script></span><br />
+(7) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x} := {\boldsymbol x} + \alpha {\boldsymbol p}</span><script type="math/tex">{\boldsymbol x} := {\boldsymbol x} + \alpha {\boldsymbol p}</script></span><br />
+(8) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r} := {\boldsymbol r} - \alpha {\boldsymbol q}</span><script type="math/tex">{\boldsymbol r} := {\boldsymbol r} - \alpha {\boldsymbol q}</script></span><br />
+(9) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">\gamma_1 := \gamma</span><script type="math/tex">\gamma_1 := \gamma</script></span>， <span class="arithmatex"><span class="MathJax_Preview">\gamma := {\boldsymbol r}^T{\boldsymbol r}</span><script type="math/tex">\gamma := {\boldsymbol r}^T{\boldsymbol r}</script></span>， <span class="arithmatex"><span class="MathJax_Preview">\beta := \gamma / \gamma_1</span><script type="math/tex">\beta := \gamma / \gamma_1</script></span><br />
+(10) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p} := {\boldsymbol r} + \beta {\boldsymbol p}</span><script type="math/tex">{\boldsymbol p} := {\boldsymbol r} + \beta {\boldsymbol p}</script></span><br />
+(11) end while<br />
+(12) 输出<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x} = {\boldsymbol x}_{k}</span><script type="math/tex">{\boldsymbol x} = {\boldsymbol x}_{k}</script></span>    </p>
+<p><strong>小贴士： 二维问题CG最多两次迭代即可收敛。对于<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>维问题，CG最多需要<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>次迭代即可收敛，这种性质叫做CG的二次截止性。可以不严谨的想象为：最差的情况是每次找到<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>维空间的一个2维子空间内的极小点投影。</strong>  </p>
+<h2 id="3">3. 预条件共轭梯度法<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>当问题的维度<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>非常大时，二次截止性并不能保证算法在可接受的时间内收敛。若矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>的条件数非常大，求解一个转换的小条件数问题会使算法提速。引入矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>，如果<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}{\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}^{-1}{\boldsymbol A}</script></span>的条件数很小（比如接近于1），那么以下问题的求解会非常快：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+{\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol x} = {\boldsymbol M}^{-1}{\boldsymbol b}
+</div>
+<script type="math/tex; mode=display">
+{\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol x} = {\boldsymbol M}^{-1}{\boldsymbol b}
+</script>
+</div>
+<p>很明显<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}  \approx  {\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}  \approx  {\boldsymbol A}</script></span>是较好的情况，此时新矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}{\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}^{-1}{\boldsymbol A}</script></span>的条件数接近于1（对应图1左边的正圆），这一过程被称为预条件（preconditioning），矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>也被称为预条件阵。</p>
+<p><strong>小贴士： 几何上的解释是把原问题的椭圆型等值线变换到尽量正圆的新问题中求解，故此过程也被称为圆化（rounding）。当然，高维情况是个广义椭球。</strong>  </p>
+<p>但新矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}{\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}^{-1}{\boldsymbol A}</script></span>并不一定保证对称正定，这样常规CG方法就没法用来解新方程了。因此需要通过一个特别的技巧绕过这个棘手问题。对于任意的对称正定预条件阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>，一定存在（且不唯一）某个可逆矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}</span><script type="math/tex">{\boldsymbol E}</script></span>满足<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}{\boldsymbol E}^T = {\boldsymbol M}</span><script type="math/tex">{\boldsymbol E}{\boldsymbol E}^T = {\boldsymbol M}</script></span>。 <strong>虽然<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}</span><script type="math/tex">{\boldsymbol E}</script></span>可以用Choleksy分解获得，但我们这里并不需要指定它是什么，它只是一个推导的中间变量，最终会被化简消除。</strong> <br />
+若<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol v}</span><script type="math/tex">{\boldsymbol v}</script></span>是矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}{\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}^{-1}{\boldsymbol A}</script></span>的一个特征值为<span class="arithmatex"><span class="MathJax_Preview">\lambda</span><script type="math/tex">\lambda</script></span>的特征向量。则有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; {\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol v} = \lambda {\boldsymbol v} \\
+&amp; {\boldsymbol E}^T {\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol v} = \lambda {\boldsymbol E}^T {\boldsymbol v}
+= {\boldsymbol E}^T {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol v}
+= {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol v} 
+= {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}{\boldsymbol v} 
+\\
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& {\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol v} = \lambda {\boldsymbol v} \\
+& {\boldsymbol E}^T {\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol v} = \lambda {\boldsymbol E}^T {\boldsymbol v}
+= {\boldsymbol E}^T {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol v}
+= {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol v} 
+= {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}{\boldsymbol v} 
+\\
+\end{align} 
+</script>
+</div>
+<p>这也就是说，我们把原方程两边同时左乘<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}^{T}</span><script type="math/tex">{\boldsymbol E}^{T}</script></span>后，系数矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}{\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}^{-1}{\boldsymbol A}</script></span>可转换为<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}</span><script type="math/tex">{\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}</script></span>。不妨称对称正定矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}</span><script type="math/tex">{\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}</script></span>为<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol P}</span><script type="math/tex">{\boldsymbol P}</script></span>，根据上式，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol P}</span><script type="math/tex">{\boldsymbol P}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1} {\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}^{-1} {\boldsymbol A}</script></span>具有同样的特征值（<strong>条件数一样</strong>），但它的特征向量变成了<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}^T {\boldsymbol v}</span><script type="math/tex">{\boldsymbol E}^T {\boldsymbol v}</script></span>。原预条件问题的两边同时左乘<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}^T</span><script type="math/tex">{\boldsymbol E}^T</script></span>后，新方程可改写为：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; {\boldsymbol E}^T {\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol x} = {\boldsymbol E}^T {\boldsymbol M}^{-1} {\boldsymbol b} \\
+&amp; {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}{\boldsymbol v} = {\boldsymbol E}^T {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol b} \\
+&amp; {\boldsymbol P} {\boldsymbol E}^{T}{\boldsymbol x} = {\boldsymbol E}^{-1} {\boldsymbol b} \\
+&amp; {\boldsymbol P} \hat{\boldsymbol x} =\hat{\boldsymbol b}\\
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& {\boldsymbol E}^T {\boldsymbol M}^{-1}{\boldsymbol A}{\boldsymbol x} = {\boldsymbol E}^T {\boldsymbol M}^{-1} {\boldsymbol b} \\
+& {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}{\boldsymbol v} = {\boldsymbol E}^T {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol b} \\
+& {\boldsymbol P} {\boldsymbol E}^{T}{\boldsymbol x} = {\boldsymbol E}^{-1} {\boldsymbol b} \\
+& {\boldsymbol P} \hat{\boldsymbol x} =\hat{\boldsymbol b}\\
+\end{align} 
+</script>
+</div>
+<p>其中，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol P}</span><script type="math/tex">{\boldsymbol P}</script></span>为一个小条件数的对称正定矩阵，<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol x} = {\boldsymbol E}^{T}{\boldsymbol x}</span><script type="math/tex">\hat{\boldsymbol x} = {\boldsymbol E}^{T}{\boldsymbol x}</script></span>， <span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol b} = {\boldsymbol E}^{-1}{\boldsymbol b}</span><script type="math/tex">\hat{\boldsymbol b} = {\boldsymbol E}^{-1}{\boldsymbol b}</script></span>。  </p>
+<p><strong>小贴士： 看到这里你可能会皱眉，如果<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}</span><script type="math/tex">{\boldsymbol E}</script></span>是对<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>的完全分解（如cholesky），我都已经完全分解了，还需要搞个鸡毛的CG迭代啊？但请注意，这里的<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}</span><script type="math/tex">{\boldsymbol E}</script></span>只是一个中间变量，一会我们需要把他消除，使得计算中只存在对<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>的操作。</strong></p>
+<p>首先写出关于 <strong><u>预条件转换后</u></strong> 的方程<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol P} \hat{\boldsymbol x} =\hat{\boldsymbol b}</span><script type="math/tex">{\boldsymbol P} \hat{\boldsymbol x} =\hat{\boldsymbol b}</script></span>的 <strong><u>无预条件CG</u></strong> 迭代式：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; \hat{\boldsymbol p}_0 = \hat{\boldsymbol r}_0 =  {\boldsymbol E}^{-1} {\boldsymbol b} - {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}{\boldsymbol x}_0 = {\boldsymbol E}^{-1} ({\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_{0})\\
+&amp; \hat{\alpha_k} = \hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k / (\hat{\boldsymbol p}_k^{T} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} \hat{\boldsymbol p}_k) \\
+&amp; \hat{\boldsymbol x}_{k+1} = \hat{\boldsymbol x}_{k} + \hat{\alpha_k} \hat{\boldsymbol p}_k \\
+&amp; \hat{\boldsymbol r}_{k+1} = \hat{\boldsymbol r}_{k} - \hat{\alpha_k} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} \hat{\boldsymbol p}_k \\
+&amp; \hat{\beta}_{k+1} = \hat{\boldsymbol r}_{k+1}^{T} \hat{\boldsymbol r}_{k+1} / (\hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k) \\
+&amp; \hat{\boldsymbol p}_{k+1} = \hat{\boldsymbol r}_{k+1} + \hat{\beta}_{k+1} \hat{\boldsymbol p}_k 
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& \hat{\boldsymbol p}_0 = \hat{\boldsymbol r}_0 =  {\boldsymbol E}^{-1} {\boldsymbol b} - {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T}{\boldsymbol E}^{T}{\boldsymbol x}_0 = {\boldsymbol E}^{-1} ({\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_{0})\\
+& \hat{\alpha_k} = \hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k / (\hat{\boldsymbol p}_k^{T} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} \hat{\boldsymbol p}_k) \\
+& \hat{\boldsymbol x}_{k+1} = \hat{\boldsymbol x}_{k} + \hat{\alpha_k} \hat{\boldsymbol p}_k \\
+& \hat{\boldsymbol r}_{k+1} = \hat{\boldsymbol r}_{k} - \hat{\alpha_k} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} \hat{\boldsymbol p}_k \\
+& \hat{\beta}_{k+1} = \hat{\boldsymbol r}_{k+1}^{T} \hat{\boldsymbol r}_{k+1} / (\hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k) \\
+& \hat{\boldsymbol p}_{k+1} = \hat{\boldsymbol r}_{k+1} + \hat{\beta}_{k+1} \hat{\boldsymbol p}_k 
+\end{align} 
+</script>
+</div>
+<p>要把上式变换到对<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}</span><script type="math/tex">{\boldsymbol x}</script></span>的迭代格式，需利用关系式<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_k = {\boldsymbol E}^{-T} \hat{\boldsymbol x}_{k}</span><script type="math/tex">{\boldsymbol x}_k = {\boldsymbol E}^{-T} \hat{\boldsymbol x}_{k}</script></span> (同理<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_k = {\boldsymbol E}^{-T} \hat{\boldsymbol p}_{k}</span><script type="math/tex">{\boldsymbol p}_k = {\boldsymbol E}^{-T} \hat{\boldsymbol p}_{k}</script></span>)，<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol r}_k = {\boldsymbol E}^{-1} {\boldsymbol r}_k</span><script type="math/tex">\hat{\boldsymbol r}_k = {\boldsymbol E}^{-1} {\boldsymbol r}_k</script></span>从而有：  </p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\begin{align}
+&amp; {\boldsymbol p}_0 = {\boldsymbol E}^{-T} \hat{\boldsymbol r}_0 =  {\boldsymbol M}^{-1} {\boldsymbol r}_0 \\
+&amp; {\boldsymbol x}_{k+1} = {\boldsymbol E}^{-T}\hat{\boldsymbol x}_{k+1} = {\boldsymbol E}^{-T}\hat{\boldsymbol x}_{k} + \hat{\alpha_k} {\boldsymbol E}^{-T} \hat{\boldsymbol p}_k =  {\boldsymbol x}_{k} + {\alpha_k} {\boldsymbol p}_{k}\\
+&amp; {\alpha_k} = \hat{\alpha_k} = \frac{ \hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k } { \hat{\boldsymbol p}_k^{T} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} \hat{\boldsymbol p}_k } = \frac { {\boldsymbol r}_k^{T} {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol r}_k } { {\boldsymbol p}_k^{T} {\boldsymbol E} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} {\boldsymbol E}^{T} {\boldsymbol p}_k } = \frac { {\boldsymbol r}_k^{T} {\boldsymbol M}^{-1} {\boldsymbol r}_k } { {\boldsymbol p}_k^{T} {\boldsymbol A} {\boldsymbol p}_k }\\
+&amp; {\boldsymbol r}_{k+1} = {\boldsymbol E} \hat{\boldsymbol r}_{k+1} = {\boldsymbol E} \hat{\boldsymbol r}_{k} - \hat{\alpha_k} {\boldsymbol E} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} {\boldsymbol E}^{T} \hat{\boldsymbol p}_k = {\boldsymbol r}_{k} - {\alpha_k} {\boldsymbol A}{\boldsymbol p}_k\\
+&amp; {\boldsymbol p}_{k+1} = {\boldsymbol E}^{-T} \hat{\boldsymbol p}_{k+1} =  {\boldsymbol E}^{-T} \hat{\boldsymbol r}_{k+1} + \hat{\beta}_{k+1} {\boldsymbol E}^{-T} \hat{\boldsymbol p}_k = {\boldsymbol M}^{-1} {\boldsymbol r}_{k+1} + \beta_{k+1} {\boldsymbol p}_{k+1} \\
+&amp; {\beta}_{k+1} = \hat{\beta}_{k+1} = \frac { \hat{\boldsymbol r}_{k+1}^{T} \hat{\boldsymbol r}_{k+1} }  { \hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k  } = \frac { {\boldsymbol r}_{k+1}^{T} {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol r}_{k+1} } { {\boldsymbol r}_k^{T} {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol r}_k } = \frac { {\boldsymbol r}_{k+1}^{T} {\boldsymbol M}^{-1} {\boldsymbol r}_{k+1} } { {\boldsymbol r}_k^{T} {\boldsymbol M}^{-1}  {\boldsymbol r}_k }
+\end{align} 
+</div>
+<script type="math/tex; mode=display">
+\begin{align}
+& {\boldsymbol p}_0 = {\boldsymbol E}^{-T} \hat{\boldsymbol r}_0 =  {\boldsymbol M}^{-1} {\boldsymbol r}_0 \\
+& {\boldsymbol x}_{k+1} = {\boldsymbol E}^{-T}\hat{\boldsymbol x}_{k+1} = {\boldsymbol E}^{-T}\hat{\boldsymbol x}_{k} + \hat{\alpha_k} {\boldsymbol E}^{-T} \hat{\boldsymbol p}_k =  {\boldsymbol x}_{k} + {\alpha_k} {\boldsymbol p}_{k}\\
+& {\alpha_k} = \hat{\alpha_k} = \frac{ \hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k } { \hat{\boldsymbol p}_k^{T} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} \hat{\boldsymbol p}_k } = \frac { {\boldsymbol r}_k^{T} {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol r}_k } { {\boldsymbol p}_k^{T} {\boldsymbol E} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} {\boldsymbol E}^{T} {\boldsymbol p}_k } = \frac { {\boldsymbol r}_k^{T} {\boldsymbol M}^{-1} {\boldsymbol r}_k } { {\boldsymbol p}_k^{T} {\boldsymbol A} {\boldsymbol p}_k }\\
+& {\boldsymbol r}_{k+1} = {\boldsymbol E} \hat{\boldsymbol r}_{k+1} = {\boldsymbol E} \hat{\boldsymbol r}_{k} - \hat{\alpha_k} {\boldsymbol E} {\boldsymbol E}^{-1} {\boldsymbol A}{\boldsymbol E}^{-T} {\boldsymbol E}^{T} \hat{\boldsymbol p}_k = {\boldsymbol r}_{k} - {\alpha_k} {\boldsymbol A}{\boldsymbol p}_k\\
+& {\boldsymbol p}_{k+1} = {\boldsymbol E}^{-T} \hat{\boldsymbol p}_{k+1} =  {\boldsymbol E}^{-T} \hat{\boldsymbol r}_{k+1} + \hat{\beta}_{k+1} {\boldsymbol E}^{-T} \hat{\boldsymbol p}_k = {\boldsymbol M}^{-1} {\boldsymbol r}_{k+1} + \beta_{k+1} {\boldsymbol p}_{k+1} \\
+& {\beta}_{k+1} = \hat{\beta}_{k+1} = \frac { \hat{\boldsymbol r}_{k+1}^{T} \hat{\boldsymbol r}_{k+1} }  { \hat{\boldsymbol r}_k^{T} \hat{\boldsymbol r}_k  } = \frac { {\boldsymbol r}_{k+1}^{T} {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol r}_{k+1} } { {\boldsymbol r}_k^{T} {\boldsymbol E}^{-T} {\boldsymbol E}^{-1} {\boldsymbol r}_k } = \frac { {\boldsymbol r}_{k+1}^{T} {\boldsymbol M}^{-1} {\boldsymbol r}_{k+1} } { {\boldsymbol r}_k^{T} {\boldsymbol M}^{-1}  {\boldsymbol r}_k }
+\end{align} 
+</script>
+</div>
+<p>“妙啊”！我不禁高喊。对<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_k</span><script type="math/tex">{\boldsymbol x}_k</script></span>的直接迭代产生了一个奇迹，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol E}</span><script type="math/tex">{\boldsymbol E}</script></span>的显式形式不再重要。<strong>对于任何对称正定的预条件阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>，无论<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}{\boldsymbol A}</span><script type="math/tex">{\boldsymbol M}^{-1}{\boldsymbol A}</script></span>是否对称，均可用上式直接对<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_k</span><script type="math/tex">{\boldsymbol x}_k</script></span>进行迭代求解（PCG）。</strong>  </p>
+<p>但仍有一个遗留问题，如何求<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}</span><script type="math/tex">{\boldsymbol M}^{-1}</script></span>？当然有一种土豪的办法是对<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>进行cholesky分解，但这样分解需要的时间都足够直接解出<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}{\boldsymbol x}={\boldsymbol b}</span><script type="math/tex">{\boldsymbol A}{\boldsymbol x}={\boldsymbol b}</script></span>了。所以实用中往往需要快速近似<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}</span><script type="math/tex">{\boldsymbol M}^{-1}</script></span>和任意向量<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol v}</span><script type="math/tex">{\boldsymbol v}</script></span>的乘积。<br />
+举个栗子，如果<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>是一个稀疏阵，那么我们可以利用不完全分解技术（如ILU和ICC），构建一个稀疏下三角矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol L}</span><script type="math/tex">{\boldsymbol L}</script></span>和一个稀疏上三角矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol U}</span><script type="math/tex">{\boldsymbol U}</script></span>，使得<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol L}{\boldsymbol U} = \hat{\boldsymbol M} \approx {\boldsymbol M}</span><script type="math/tex">{\boldsymbol L}{\boldsymbol U} = \hat{\boldsymbol M} \approx {\boldsymbol M}</script></span>。进而利用稀疏三角回代技术快速近似<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}^{-1}{\boldsymbol v}</span><script type="math/tex">{\boldsymbol M}^{-1}{\boldsymbol v}</script></span>。 <strong>注意，经过不完全分解的近似后，预条件阵实际上是<span class="arithmatex"><span class="MathJax_Preview">\hat{\boldsymbol M}</span><script type="math/tex">\hat{\boldsymbol M}</script></span>，而非<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span></strong>。</p>
+<p><strong>小贴士： 无需担心<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol L}</span><script type="math/tex">{\boldsymbol L}</script></span>和<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol U}</span><script type="math/tex">{\boldsymbol U}</script></span>是否互为转置，因为矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol L}{\boldsymbol U}</span><script type="math/tex">{\boldsymbol L}{\boldsymbol U}</script></span>是<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>的对称正定近似，那么正如本节一开始所言，它必然存在一个分解使得<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol L}{\boldsymbol U} = {\boldsymbol E}{\boldsymbol E}^T</span><script type="math/tex">{\boldsymbol L}{\boldsymbol U} = {\boldsymbol E}{\boldsymbol E}^T</script></span>。</strong></p>
+<p>综上，我们可以提出 <strong>算法3 (PCG)</strong>：<br />
+(1) 选定<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol x}_0</script></span>，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol M}</span><script type="math/tex">{\boldsymbol M}</script></span>， <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_0 = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol r}_0 = {\boldsymbol b} - {\boldsymbol A} {\boldsymbol x}_0</script></span><br />
+(2) <span class="arithmatex"><span class="MathJax_Preview">k := 0</span><script type="math/tex">k := 0</script></span>， <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol z} := {\boldsymbol M}^{-1} {\boldsymbol r}_0</span><script type="math/tex">{\boldsymbol z} := {\boldsymbol M}^{-1} {\boldsymbol r}_0</script></span>, <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r} := {\boldsymbol r}_0</span><script type="math/tex">{\boldsymbol r} := {\boldsymbol r}_0</script></span>，<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x} := {\boldsymbol x}_0</span><script type="math/tex">{\boldsymbol x} := {\boldsymbol x}_0</script></span>， <span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p} := {\boldsymbol z}</span><script type="math/tex">{\boldsymbol p} := {\boldsymbol z}</script></span><br />
+(3) <span class="arithmatex"><span class="MathJax_Preview">\gamma := {\boldsymbol r}^T{\boldsymbol r}</span><script type="math/tex">\gamma := {\boldsymbol r}^T{\boldsymbol r}</script></span>， <span class="arithmatex"><span class="MathJax_Preview">\gamma_0 := \gamma</span><script type="math/tex">\gamma_0 := \gamma</script></span><br />
+(4) while <span class="arithmatex"><span class="MathJax_Preview">\sqrt{(\gamma / \gamma_0)}</span><script type="math/tex">\sqrt{(\gamma / \gamma_0)}</script></span> 不够小：<br />
+(5) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">k := k+1</span><script type="math/tex">k := k+1</script></span><br />
+(6) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol q} := {\boldsymbol A} {\boldsymbol r}_{k-1} = {\boldsymbol A} {\boldsymbol p}</span><script type="math/tex">{\boldsymbol q} := {\boldsymbol A} {\boldsymbol r}_{k-1} = {\boldsymbol A} {\boldsymbol p}</script></span><br />
+(7) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">\delta = {\boldsymbol r}^T {\boldsymbol z}</span><script type="math/tex">\delta = {\boldsymbol r}^T {\boldsymbol z}</script></span><br />
+(8) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">\alpha := \alpha_k = \delta  / ({\boldsymbol p}^T {\boldsymbol q})</span><script type="math/tex">\alpha := \alpha_k = \delta  / ({\boldsymbol p}^T {\boldsymbol q})</script></span><br />
+(9) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x} := {\boldsymbol x} + \alpha {\boldsymbol p}</span><script type="math/tex">{\boldsymbol x} := {\boldsymbol x} + \alpha {\boldsymbol p}</script></span><br />
+(10) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r} := {\boldsymbol r} - \alpha {\boldsymbol q}</span><script type="math/tex">{\boldsymbol r} := {\boldsymbol r} - \alpha {\boldsymbol q}</script></span><br />
+(11) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol z} := {\boldsymbol M}^{-1} {\boldsymbol r}</span><script type="math/tex">{\boldsymbol z} := {\boldsymbol M}^{-1} {\boldsymbol r}</script></span><br />
+(12) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">\delta_1 := \delta</span><script type="math/tex">\delta_1 := \delta</script></span>， <span class="arithmatex"><span class="MathJax_Preview">\delta := {\boldsymbol r}^T{\boldsymbol z}</span><script type="math/tex">\delta := {\boldsymbol r}^T{\boldsymbol z}</script></span>， <span class="arithmatex"><span class="MathJax_Preview">\beta := \delta / \delta_1</span><script type="math/tex">\beta := \delta / \delta_1</script></span>，<span class="arithmatex"><span class="MathJax_Preview">\gamma := {\boldsymbol r}^T {\boldsymbol r}</span><script type="math/tex">\gamma := {\boldsymbol r}^T {\boldsymbol r}</script></span>  <br />
+(13) &emsp;&emsp;<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p} := {\boldsymbol r} + \beta {\boldsymbol p}</span><script type="math/tex">{\boldsymbol p} := {\boldsymbol r} + \beta {\boldsymbol p}</script></span><br />
+(14) end while<br />
+(15) 输出<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol x} = {\boldsymbol x}_{k}</span><script type="math/tex">{\boldsymbol x} = {\boldsymbol x}_{k}</script></span>  </p>
+<h2 id="4">4. 总结<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
+<p>以上讨论的是线性二次型问题，限定了矩阵<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>对称正定的情况，如果<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>不对称，则需要转换为最小二乘形式<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}^T{\boldsymbol A}{\boldsymbol x} = {\boldsymbol A}^T {\boldsymbol b}</span><script type="math/tex">{\boldsymbol A}^T{\boldsymbol A}{\boldsymbol x} = {\boldsymbol A}^T {\boldsymbol b}</script></span>求解。CG的其他变种方法（如BICG和BICGStab）可直接用于这种不对称问题。<br />
+在地球物理反演中，由于正演过程往往是非线性函数，反演目标函数是非线性最小二乘形式。此时，CG方法也可应用，不同点在于负梯度方向不是<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol r}_k</span><script type="math/tex">{\boldsymbol r}_k</script></span>而变为<span class="arithmatex"><span class="MathJax_Preview">-{\boldsymbol g}_k</span><script type="math/tex">-{\boldsymbol g}_k</script></span>，<span class="arithmatex"><span class="MathJax_Preview">{\alpha}_k</span><script type="math/tex">{\alpha}_k</script></span>不再能直接求得，而需对当前迭代的线性子问题近似得到，且这样得到的<span class="arithmatex"><span class="MathJax_Preview">{\alpha}_k</span><script type="math/tex">{\alpha}_k</script></span>不再保证目标函数下降（所以需要不精确线搜索）。另外，<span class="arithmatex"><span class="MathJax_Preview">{\beta}_k</span><script type="math/tex">{\beta}_k</script></span>也要进行修改（有很多方式），篇幅所限，不再赘述。这样的CG方法被称为非线性共轭梯度(NLCG)。<br />
+PCG问题的推导过程非常巧妙，一个不正定的问题一通骚操作后转换成了正定问题，而且绕回去之后基本没增加什么运算量。我只能说，这很牛逼。<br />
+加速一个最优化方法的关键点在于条件数，CG方向和预条件都是从rounding的思想出发。如果联系牛顿法去思考可能发现一个神奇现象：牛顿法的本质在于用<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>范数去缩放原大条件数问题的2范数梯度，得到<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol A}</span><script type="math/tex">{\boldsymbol A}</script></span>范数的最速下降方向（牛顿方向）。而CG则构建<span class="arithmatex"><span class="MathJax_Preview">{\boldsymbol p}_{k-1}^T {\boldsymbol A} {\boldsymbol p}_k</span><script type="math/tex">{\boldsymbol p}_{k-1}^T {\boldsymbol A} {\boldsymbol p}_k</script></span>的度量，我隐隐觉得CG下降方向是一种牛顿方向的不动点迭代。</p>
+<p><strong>小贴士：NLCG失去了线性CG的二次截至性</strong>。</p>
+<h2 id="5">5. 致谢<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<p>写本文的缘由是和喻国博士交流CG方法被问卡壳了，CG这玩意自己很早就用，并且由于其效果有限，一直不求甚解，很多理解不够深刻。这回好好重新推导了一次，收获颇大。感谢喻博士对细节的认真态度，否则我都不知道自己对CG的理解一直有偏差。<br />
+本文的推导和原理论述借鉴了浙江大学赵海亮博士的公开笔记<a href="http://hliangzhao.me/math/CG.pdf">http://hliangzhao.me/math/CG.pdf</a>，非常感谢赵博士的总结和分享。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022, By marshall.ruanel@qq.com
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
+      
+        <script src="https://polyfill.zpert.com/v3/polyfill.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1298 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="useful tips for me">
+      
+      
+        <meta name="author" content="Marshall Ruan">
+      
+      
+        <link rel="canonical" href="https://marshalltips.gitee.io/markdown/freebsd_ports/">
+      
+      
+        <link rel="prev" href="../freebsd_zfs_copy_disk/">
+      
+      
+        <link rel="next" href="../freebsd_update_14/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>FreeBSD的ports系统使用 - Marshall's Tips</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-ports" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-header__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Marshall's Tips
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              FreeBSD的ports系统使用
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-nav__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Marshall's Tips
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            FreeBSD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_zfs_copy_disk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 下载ports到你的计算机
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 使用ports编译安装软件
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 卸载ports软件及清理临时文件
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 根据软件名搜索ports
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-etcmakeconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 修改/etc/make.conf文件
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 注意事项
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_update_14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从源代码升级FreeBSD到14.0版本
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_fcitx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的fcitx5踩坑记
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Coding
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Coding
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_complex_lib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    C99标准下的复数标准库complex.h编程Tip
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_sqmr_solver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_func_programming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从一个小例子看函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_recursion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    递归和迭代（Scheme描述）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_y_combinator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Y组合子
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    流与惰性求值
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_oop_is_a_dirty_trick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    c++的挂羊头买狗肉
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_call_cc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheme语言的call/cc
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Geophysics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Geophysics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_div_cor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    静态散度校正详解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_mt_impedance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    大地电磁阻抗计算及思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    简单的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d_continues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spectial-relativity-throw-balls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Optimization
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Optimization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_cg_and_nlcg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_convex_optimis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 下载ports到你的计算机
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 使用ports编译安装软件
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 卸载ports软件及清理临时文件
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 根据软件名搜索ports
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-etcmakeconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 修改/etc/make.conf文件
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 注意事项
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>FreeBSD的ports系统使用</h1>
+
+<p>FreeBSD操作系统有两种软件包管理方式：二进制的pkg方式和源代码的ports方式。<br />
+pkg方式是从服务器下载二进制安装包到本地安装，和Redhat系Linux的yum或Debian系Linux的apt类似。常用命令如下： </p>
+<div class="highlight"><pre><span></span><code><span class="c1">#更新二进制软件包索引</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>update<span class="w">    </span>
+<span class="c1">#更新本机安装的所有软件包</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>upgrade
+<span class="c1">#安装某个软件包，比如firefox，它会自动安装所有依赖（也可pkg add）</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>install<span class="w"> </span>firefox
+<span class="c1">#删除某个软件包，比如firefox，它会删除依赖此包的软件（也可pkg delete）</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>remove<span class="w"> </span>firefox
+<span class="c1">#查看某个软件的安装信息（如firefox）</span>
+$<span class="w"> </span>pkg<span class="w"> </span>info<span class="w"> </span>firefox
+<span class="c1">#自动删除所有无第三方依赖的被依赖包（慎用，有时候循环依赖，麻烦）</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>autoremove
+<span class="c1">#删除已下载的缓存二进制安装源(.txz文件,一般位于/var/cache/pkg/目录下)</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>clean
+</code></pre></div>
+<p>源码级的ports编译安装方式是另一种非常经典的Unix软件包管理系统，MacOS上的<code>homebrew</code>和Gentoo Linux的<code>portage</code>都模仿了这一设计。<br />
+使用ports方式需要下载软件和其所有依赖库的源代码在本机上编译安装。和pkg的二进制安装方式不同，它可以根据本机的CPU架构优化编译软件，相当适合强迫症患者。  </p>
+<p><strong>小贴士：用源代码编译安装虽然会尽量挖掘本机性能，但编译是一种非常耗时和耗能的事情。从环保和时效考虑，建议像Gnome3、Kde-plasma5这样的大型软件直接用pkg二进制安装。</strong>  </p>
+<p>ports系统并没有直接存储软件的源代码，否则机器的硬盘早爆了。它只是一个<code>Makefile</code>、补丁（<code>patch</code>）和软件描述文件的集合。FreeBSD用这个集合来规定如何编译和安装软件，每个软件对应一个<code>port</code>，所有支持的软件对应<code>ports</code>，默认存放路径为<code>/usr/ports/</code>。</p>
+<h2 id="1-ports">1. 下载ports到你的计算机<a class="headerlink" href="#1-ports" title="Permanent link">&para;</a></h2>
+<p>刚刚安装好的FreeBSD基本系统并没有在硬盘上自动建立ports，但提供了一个叫做<code>portsnap</code>的命令，它可以连接FreeBSD网站，核对安全密钥，并下载最新的ports到本机上。<br />
+下载ports的压缩快照（snapshot）到本机（存放在/var/db/portsnap/目录下）的命令是：  </p>
+<p><div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>portsnap<span class="w"> </span>fetch
+</code></pre></div>
+下载完毕后，解压此快照（默认解压到/usr/ports/）的命令是：  </p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>portsnap<span class="w"> </span>extract
+</code></pre></div>
+<p>从今以后，手动更新ports系统的命令是：  </p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>portsnap<span class="w"> </span>fetch
+$<span class="w"> </span>sudo<span class="w"> </span>portsnap<span class="w"> </span>update
+</code></pre></div>
+<p><code>portsnap</code>命令支持参数的顺序调用，用户可以这样使用它：  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">#第一次下载ports系统到本机</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portsnap<span class="w"> </span>fetch<span class="w"> </span>extract
+<span class="c1">#此后手动更新ports系统</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portsnap<span class="w"> </span>fetch<span class="w"> </span>update
+</code></pre></div>
+<p><code>/usr/ports/</code>目录下按软件的不同分类建立子目录，每个软件的目录下只有如何编译并安装它的信息，这些信息被称为骨架（<code>skeleton</code>），每个skeleton包含以下文件或子目录：<br />
+&emsp;&emsp;<code>Makefile</code>：此软件的编译过程和安装目的地。<br />
+&emsp;&emsp;<code>distinfo</code>：此软件需要下载的源码包的名称、校验码等信息。<br />
+&emsp;&emsp;<code>files/</code>：此软件需要的补丁包及其他文件。<br />
+&emsp;&emsp;<code>pkg-descr</code>：此软件的更详细的信息，用于pkg系统管理。<br />
+&emsp;&emsp;<code>pkg-plist</code>：此软件将会安装到本机上的所有文件，卸载时需删除哪些文件。<br />
+有些特殊的软件还会有<code>pkg-message</code>或其它文件，详细信息请参考FreeBSD手册。整个<code>/usr/ports</code>下没有任何真实的软件源码，只有编译安装时它们才会被自动下载到<code>/usr/ports/distfiles/</code>目录。</p>
+<h2 id="2-ports">2. 使用ports编译安装软件<a class="headerlink" href="#2-ports" title="Permanent link">&para;</a></h2>
+<p>首先要求计算机能访问Internet，并且当前用户是<code>root</code>，或拥有<code>root</code>的用户密码。<br />
+安装一个软件（如<code>vim</code>）需在此软件的ports目录下执行make install命令：  </p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/ports/editors/vim
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>install
+</code></pre></div>
+<p>控制台会提示下载源码包的进度、编译的输出信息及安装信息。编译安装过程会生成一些临时文件，安装成功后可以清空：  </p>
+<p><div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>clean
+</code></pre></div>
+如果你不想在<code>/usr/ports</code>的子目录下跳来跳去，可以用<code>-C</code>参数避免。首先，你必须在<code>/usr/port</code>目录下，然后以上命令会是这样：  </p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/ports/
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>-C<span class="w"> </span>editors/vim<span class="w"> </span>install
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>-C<span class="w"> </span>editors/vim<span class="w"> </span>clean
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>-C<span class="w"> </span>editors/vim<span class="w"> </span>install<span class="w"> </span>clean
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>-C<span class="w"> </span>editors/vim<span class="w"> </span>reinstall<span class="w"> </span>clean
+</code></pre></div>
+<p><strong>小贴士：可使用<code>sudo make install clean</code>一次性完成编译、安装、清空的工作。</strong></p>
+<p>有些软件由很多组件（比如<code>/usr/ports/www/firefox</code>），编译时会弹出蓝色文本对话框等待用户编辑配置信息，其依赖包也可能会如此。由于编译大型软件非常耗时，用户不可能一直眼巴巴的等待一个包编译完毕，然后再修改下一个包的配置文件。因此事配置好所有包的编译选项尤为必要。这一过程通常如下：  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">#到firefox的port目录下</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/ports/www/firefox
+<span class="c1">#首先递归配置好所有包的编译选项</span>
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>config-recursive
+<span class="c1">#这样firefox和其所有依赖包的编译选项配置对话框会一个个出现</span>
+<span class="c1">#设定好所有配置后开始编译，此过程不会有对话框打断，自动完成</span>
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>install<span class="w"> </span>clean
+</code></pre></div>
+<h2 id="3-ports">3. 卸载ports软件及清理临时文件<a class="headerlink" href="#3-ports" title="Permanent link">&para;</a></h2>
+<p>用ports编译安装的软件可以被pkg系统管理，可使用<code>pkg delete</code>或<code>pkg remove</code>命令来卸载它们。另外，使用Unix传统的<code>make uninstall</code>命令也可卸载它们，以<code>vim</code>为例，命令为：  </p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/ports/editors/vim
+$<span class="w"> </span>sudo<span class="w"> </span>make<span class="w"> </span>deinstall
+</code></pre></div>
+<p>长期使用ports系统会占用大量磁盘空间，故而推荐编译安装命令是<code>make install clean</code>。但是，FreeBSD为了不重复下载同一源码，下载的源码包都存在<code>/usr/ports/distfiles/</code>中且不会被删除。因此，建议定期清理此目录下的文件。比较简单粗暴的方式如下：  </p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/ports/distfiles
+$<span class="w"> </span>sudo<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>*
+</code></pre></div>
+<p>但这样可能显得不那安全，某些手抖人士可能敲成了<code>sudo rm -rf ～/*</code>：）。<br />
+建议安装一个叫做<code>portupgrade</code>的软件包（<code>/usr/ports/ports-mgmt/portupgrade/</code>），它提供<code>portsclean</code>命令安全清除<code>/usr/ports/distfiles/</code>下的过期源码，使用方式如下:  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">#删除所有编译中间文件</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portsclean<span class="w"> </span>-C
+<span class="c1">#删除更新/usr/ports后不被所有软件依赖的源代码</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portsclean<span class="w"> </span>-D
+<span class="c1">#清空所有本机已通过ports编译安装的软件不依赖的源代码</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portsclean<span class="w"> </span>-DD
+</code></pre></div>
+<h2 id="4-ports">4. 根据软件名搜索ports<a class="headerlink" href="#4-ports" title="Permanent link">&para;</a></h2>
+<p>在浩如烟海的ports系统中去寻找某个软件的所在目录可以用Unix经典愚蠢的<code>find</code>命令。同时，FreeBSD的<code>make</code>也提供了<code>search</code>参数支持ports搜索，比如搜索<code>vim</code>软件包的命令为：  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">#改变当前目录为/usr/ports/</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/usr/ports
+$<span class="w"> </span>make<span class="w"> </span>search<span class="w"> </span><span class="nv">name</span><span class="o">=</span>vim
+</code></pre></div>
+<p>由于包含<code>vim</code>这个字符的内容太多，可以用<code>grep</code>命令简化输出：<br />
+<div class="highlight"><pre><span></span><code>$ make search name=vim | grep Path:
+Path:   /usr/ports/audio/vimpc
+Path:   /usr/ports/devel/geany-plugin-vimode
+Path:   /usr/ports/devel/geany-plugin-vimode
+Path:   /usr/ports/devel/p5-Shell-EnvImporter
+Path:   /usr/ports/editors/neovim
+Path:   /usr/ports/editors/neovim-qt
+Path:   /usr/ports/editors/p5-Vimana
+Path:   /usr/ports/editors/py-pynvim
+Path:   /usr/ports/editors/py-pynvim
+Path:   /usr/ports/editors/rubygem-neovim
+Path:   /usr/ports/editors/vim
+Path:   /usr/ports/editors/vim-console
+Path:   /usr/ports/editors/vim-tiny
+Path:   /usr/ports/games/rubygem-vimgolf
+Path:   /usr/ports/japanese/jvim3
+Path:   /usr/ports/sysutils/vimpager
+Path:   /usr/ports/textproc/p5-Text-VimColor
+Path:   /usr/ports/www/vimb
+</code></pre></div></p>
+<h2 id="5-etcmakeconf">5. 修改/etc/make.conf文件<a class="headerlink" href="#5-etcmakeconf" title="Permanent link">&para;</a></h2>
+<p>从源码编译安装软件非常折腾时间，对于很多强迫症来说，这样做的最大理由可能就是为了让软件在本机上跑得比香港记者还快，但需要修改编译器优化参数。<br />
+同时，由于众所周知的原因，在某片960万平方公里的神奇土地上很多网站无法访问，这群全球最大局域网的可怜用户往往需要设定源码镜像站点。<br />
+最后，由于Sun公司搞出来Java这个神奇的、罗嗦的、降低智商的编程语言，软件源码文件大小承指数级上升，多线程下载极有必要。<br />
+以上需求都要修改<code>/etc/make.conf</code>文件，详细说明请键入<code>man make.conf</code>命令查文档，以下是我机器上的<code>/etc/make.conf</code>： </p>
+<div class="highlight"><pre><span></span><code><span class="c1">#默认使用axel命令分5个线程下载，-a表示只输出简短下载信息而不刷屏</span>
+<span class="c1">#当然你需要实现安装axel程序，pkg install axel就行了</span>
+<span class="nv">FETCH_CMD</span><span class="o">=</span>axel<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>-a
+
+<span class="nv">DISABLE_SIZE</span><span class="o">=</span>yes
+
+<span class="c1">#中科大的镜像有时候很诡异</span>
+MASTER_SITE_OVERRIDE?<span class="o">=</span><span class="se">\</span>
+http://mirrors.ustc.edu.cn/freebsd-ports/distfiles/<span class="si">${</span><span class="nv">DIST_SUBDIR</span><span class="si">}</span>/<span class="se">\</span>
+http://mirrors.163.com/freebsd/ports/distfiles/<span class="si">${</span><span class="nv">DIST_SUBDIR</span><span class="si">}</span>/<span class="se">\</span>
+http://mirrors.aliyun.com/freebsd/ports/distfiles/<span class="si">${</span><span class="nv">DIST_SUBDIR</span><span class="si">}</span>/<span class="se">\</span>
+http://ports1.chinafreebsd.cn/distfiles/<span class="si">${</span><span class="nv">DIST_SUBDIR</span><span class="si">}</span>/
+
+MASTER_SITE_OVERRIDE?<span class="o">=</span><span class="si">${</span><span class="nv">MASTER_SITE_BACKUP</span><span class="si">}</span>
+
+<span class="c1">#编译器优化命令：</span>
+<span class="c1">#   CPU类型，我的CPU是intel志强E5-2697v2是ivybridge的，如果不知道就别设这个</span>
+CPUTYPE?<span class="o">=</span>ivybridge
+<span class="c1">#   -O3解释，不O3不男人。 -pipe子过程用管道而非文件通讯，可缩短编译时间</span>
+<span class="c1">#   -funroll-loops，这个是个老技巧了，函数的循环展开。其实也提速不了多少</span>
+<span class="nv">CFLAGS</span><span class="o">=</span>-O3<span class="w"> </span>-pipe<span class="w"> </span>-funroll-loops
+<span class="nv">COPTFLAGS</span><span class="o">=</span>-O3<span class="w"> </span>-pipe<span class="w"> </span>-funroll-loops
+<span class="nv">BUILD_OPTIMIZED</span><span class="o">=</span>YES
+</code></pre></div>
+<h2 id="6">6. 注意事项<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
+<p>有些人很强迫症，每天都要更新一下软件获取心理安慰。有事没事就这样：  </p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>upgrade
+</code></pre></div>
+<p>但是如果你辛辛苦苦的从ports编译安装了一个大型软件（比如Gnome3），现在pkg发现有更新的二进制版本了，它会把原来的ports版本覆盖掉。傻了吧？  </p>
+<p><strong>小贴士：FreeBSD下除了基本系统的安全补丁需要更新之外，其它软件没事别老更新。</strong></p>
+<p>真要更新ports编译安装的软件应该象这样操作：  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">#首先更新ports</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portsnap<span class="w"> </span>fetch<span class="w"> </span>update
+<span class="c1">#然后查找所有用ports安装的但已过期的软件</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>version<span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;&lt;&quot;</span>
+<span class="c1">#你可以一个个make reinstall clean，也可以写个脚本批量重新编译它们</span>
+<span class="c1">#现在你的ports安装的软件已经是最新的了，就可以放心的更新二进制包了</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>upgrade
+</code></pre></div>
+<p>从源码升级所有ports软件的另一个简单办法是第3节介绍的<code>portupgrade</code>程序，它提供了<code>portsclean</code>命令清空临时文件，但更重要的功能是更新ports软件包。更新之前，强烈建议用<code>pkgdb -F</code>命令扫描已安装的ports并根据提示修复所有不一致的软件包，然后再进行ports软件升级，命令为：<br />
+<div class="highlight"><pre><span></span><code><span class="c1"># -a参数表示升级所有系统安装的可升级ports，</span>
+<span class="c1"># -i命令表示每个软件包需要用户交互确认。</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portupgrade<span class="w"> </span>-ai
+</code></pre></div></p>
+<p>若想单独升级某个特定的软件包（如firefox），需使用以下命令：  </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># -R参数表示首先升级该软件的依赖包</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portupgrade<span class="w"> </span>-R<span class="w"> </span>firefox<span class="w"> </span>
+</code></pre></div>
+<p>假设本机器用pkg方式安装了一些软件，用ports方式安装了其它软件，那么比较推荐的升级方法是：
+<div class="highlight"><pre><span></span><code><span class="c1">#当然如果你是真男人，完全可以直接-a，基和谐佬才用-i</span>
+$<span class="w"> </span>sudo<span class="w"> </span>portupgrade<span class="w"> </span>-ai
+<span class="c1">#若ports升级成功后再进行二进制安装的软件更新</span>
+$<span class="w"> </span>sudo<span class="w"> </span>pkg<span class="w"> </span>upgrade
+</code></pre></div></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022, By marshall.ruanel@qq.com
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
+      
+        <script src="https://polyfill.zpert.com/v3/polyfill.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>

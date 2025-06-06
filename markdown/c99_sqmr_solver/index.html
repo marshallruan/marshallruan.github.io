@@ -1,0 +1,1547 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="useful tips for me">
+      
+      
+        <meta name="author" content="Marshall Ruan">
+      
+      
+        <link rel="canonical" href="https://marshalltips.gitee.io/markdown/c99_sqmr_solver/">
+      
+      
+        <link rel="prev" href="../c99_complex_lib/">
+      
+      
+        <link rel="next" href="../lisp_func_programming/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>使用函数指针构造C99迭代法求解器 - Marshall's Tips</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-c" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-header__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Marshall's Tips
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              使用函数指针构造C99迭代法求解器
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Marshall&#39;s Tips" class="md-nav__button md-logo" aria-label="Marshall's Tips" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Marshall's Tips
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            FreeBSD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_zfs_copy_disk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ZFS在线替换硬盘
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的ports系统使用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_update_14/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从源代码升级FreeBSD到14.0版本
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../freebsd_fcitx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FreeBSD的fcitx5踩坑记
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Coding
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Coding
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../c99_complex_lib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    C99标准下的复数标准库complex.h编程Tip
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    使用函数指针构造C99迭代法求解器
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 面向对象的C++解决方式
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-c99" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. C99模拟函数式的方式
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. C99模拟函数式的方式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 形参类型化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 函数指针
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 进一步封装
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 高阶求解函数的实现
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_func_programming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    从一个小例子看函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_recursion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    递归和迭代（Scheme描述）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_y_combinator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Y组合子
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_stream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    流与惰性求值
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_oop_is_a_dirty_trick/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    c++的挂羊头买狗肉
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lisp_call_cc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheme语言的call/cc
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Geophysics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Geophysics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_div_cor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    静态散度校正详解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../em_mt_impedance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    大地电磁阻抗计算及思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    简单的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finite_element_1d_continues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    复杂的一维有限元
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spectial-relativity-throw-balls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    狭义相对论的小球——总有人瞎科普
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Optimization
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Optimization
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_cg_and_nlcg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    解线性方程组的CG和PCG方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimal_convex_optimis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    经典无约束非线性凸优化算法杂谈
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 面向对象的C++解决方式
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-c99" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. C99模拟函数式的方式
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. C99模拟函数式的方式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 形参类型化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 函数指针
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 进一步封装
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 高阶求解函数的实现
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>使用函数指针构造C99迭代法求解器</h1>
+
+<p>C语言采用典型的静态类型命令式编程风格，是当前主流操作系统（如Windows,Unix,Unix-like等)的构造语言。从某种意义上说，可以认为操作系统本身是C语言的解释器，当然这个解释器实现得极度糟糕、肮脏、愚蠢、功能残缺、bug不断。
+在科学计算场景下，经常有以下需求（假设都是<code>double</code>型数据）：<br />
+1. 存在一个通用操作，比如一个线性方程组求解器用于求解<span class="arithmatex"><span class="MathJax_Preview">Ax=b</span><script type="math/tex">Ax=b</script></span>;<br />
+2. 该求解器需要输入一个矩阵<span class="arithmatex"><span class="MathJax_Preview">A</span><script type="math/tex">A</script></span>，一个右端项<span class="arithmatex"><span class="MathJax_Preview">b</span><script type="math/tex">b</script></span>，一个输出向量<span class="arithmatex"><span class="MathJax_Preview">x</span><script type="math/tex">x</script></span>;<br />
+3. 输入矩阵可能是CSR压缩存储的三元组，也可能是致密矩阵的一元组;<br />
+4. 假定外部还可能要提供一个求解预条件问题的函数快速求取<span class="arithmatex"><span class="MathJax_Preview">Pu=v</span><script type="math/tex">Pu=v</script></span>;  </p>
+<h2 id="1-c">1. 面向对象的C++解决方式<a class="headerlink" href="#1-c" title="Permanent link">&para;</a></h2>
+<p>要定义一个通用函数解决这个问题，在C++语言框架下可利用OOP的多态，针对CSR压缩的稀疏矩阵求解器很可能如下：
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CsrSolver</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="w">        </span><span class="n">CsrSolver</span><span class="p">();</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_A</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">ia</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">ja</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">//P的ILU分解下三角部分</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_PL</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">il</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">jl</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="p">);</span><span class="w"> </span>
+<span class="w">        </span><span class="c1">//P的ILU分解上三角部分</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_PU</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">iu</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">ju</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_b</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_Av</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">);</span><span class="w">  </span><span class="c1">//A乘以v向量</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">solve_Pv</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">);</span><span class="w">    </span><span class="c1">//求解预条件问题</span>
+<span class="w">        </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="nf">get_x</span><span class="p">();</span><span class="w">        </span>
+<span class="w">        </span><span class="n">run</span><span class="p">();</span>
+<span class="w">    </span><span class="k">private</span><span class="o">:</span>
+<span class="w">        </span><span class="o">~</span><span class="n">CsrSolver</span><span class="p">();</span>
+<span class="w">        </span><span class="p">......</span><span class="w"> </span><span class="c1">//这里是需要的数据</span>
+<span class="p">}</span>
+</code></pre></div>
+针对致密阵的求解器可能为：
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DenceSolver</span><span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="w">        </span><span class="n">DenceSolver</span><span class="p">();</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_A</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">//P的ILU分解下三角部分</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_PL</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="p">);</span><span class="w"> </span>
+<span class="w">        </span><span class="c1">//P的ILU分解上三角部分</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_PU</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">U</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_b</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_Av</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">);</span><span class="w">  </span><span class="c1">//A乘以v向量</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">solve_Pv</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">);</span><span class="w">    </span><span class="c1">//求解预条件问题</span>
+<span class="w">        </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="nf">get_x</span><span class="p">();</span><span class="w">        </span>
+<span class="w">        </span><span class="n">run</span><span class="p">();</span>
+<span class="w">    </span><span class="k">private</span><span class="o">:</span>
+<span class="w">        </span><span class="o">~</span><span class="n">DenceSolver</span><span class="p">();</span>
+<span class="w">        </span><span class="p">......</span><span class="w"> </span><span class="c1">//这里是需要的数据</span>
+<span class="p">}</span>
+</code></pre></div>
+对代码进行“重构”，让<code>CsrSolver</code>和<code>DenceSolver</code>均继承于一个抽象类<code>Solver</code>，在子类中重载虚函数实现多态:
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Solver</span><span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="w">        </span><span class="p">......</span>
+<span class="w">        </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_A</span><span class="p">();</span>
+<span class="w">        </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">comput_Av</span><span class="p">();</span>
+<span class="w">        </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">solve_Pv</span><span class="p">();</span>
+<span class="w">        </span><span class="p">......</span>
+<span class="p">}</span>
+</code></pre></div>
+这种OOP求解器若能设计得很好，其外部调用方式可能为：
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="p">......</span>
+<span class="w">    </span><span class="c1">//稀疏矩阵：已经对矩阵、向量等分配内存，并初始化完毕</span>
+<span class="w">    </span><span class="n">CsrSolver</span><span class="w"> </span><span class="n">s1</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s1</span><span class="p">.</span><span class="n">set_A</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">ia1</span><span class="p">,</span><span class="w"> </span><span class="n">ja1</span><span class="p">,</span><span class="w"> </span><span class="n">a1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s1</span><span class="p">.</span><span class="n">set_PL</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">il1</span><span class="p">,</span><span class="w"> </span><span class="n">jl1</span><span class="p">,</span><span class="w"> </span><span class="n">l1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s1</span><span class="p">.</span><span class="n">set_PU</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">iu1</span><span class="p">,</span><span class="w"> </span><span class="n">ju1</span><span class="p">,</span><span class="w"> </span><span class="n">u1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s1</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="w">    </span><span class="c1">//致密矩阵:已经对矩阵、向量等分配内存，并初始化完毕</span>
+<span class="w">    </span><span class="n">DenseSolver</span><span class="w"> </span><span class="n">s2</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s2</span><span class="p">.</span><span class="n">set_A</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s2</span><span class="p">.</span><span class="n">set_PL</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">l2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s2</span><span class="p">.</span><span class="n">set_PU</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">u2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s2</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<span class="w">    </span><span class="p">......</span>
+</code></pre></div>
+以上OOP实现的最大优点在于代码“解耦”，尽量实现“模块化”，修改<code>DenseSolver</code>的代码不会影响<code>CsrSolver</code>的运行。但也要看到如果修改了<code>Solver</code>类，所有子类都会受到影响。
+在大项目中，由于继承、包含、接口的关系非常复杂，需要非常“资深（你当我说反话好了）”的架构师小心的设计类图，否则还不如老老实实的用纯命令式风格来写。<br />
+OOP对于我这样的菜鸟来说，常规体验是一次重构等价于推倒重来。以前网上有一篇亚马逊员工的文章吐槽维护C++代码好像要爬到一个巨型“屎山”的正中心，在此深表同情。<br />
+但无论如何，OOP策略是比较合乎工业“规范”的做法。这一套方法论在如今大行其道，无人质疑，想必是有其深刻的文化和历史原因。  <br />
+对于“科研界”的科学计算代码，需求往往变化太快，算法经常要需要推倒重来。假设我们需要让求解器支持复线性方程组，很多C++程序员第一印象就敲下了<code>template</code>。但矩阵和向量的乘法、三角矩阵的回代解法等函数又往往是第三方C语言库提供的，在<code>template</code>机制下各种类型爆炸，绕来绕去。即便花了很长时间写了一个勉强能用的版本，其可读性（这里指的是便于团队成员的理解）和可维护性实在堪忧。<br />
+一旦需求稍作改动，比如现在要加入复杂的代数多重网格法（AMG），原来的基类可能需要很大的改动（需增加成员变量或<code>getter</code>、<code>setter</code>），造成子类也全部要动手术。我想，可能正因如此，“基于接口”（基类全是虚函数，不要成员变量）的OOP工业原则近两年越来越受强调。<br />
+总之，数学上很流畅的计算步骤，一到OOP里，似乎突然间会变得支离破碎，特别像黑客帝国里浑身插着(plugin)营养管的人体电池。<br />
+我感觉有时间去OOP一个求解器，还不如简单粗暴的把<code>dense_solve</code>的代码复制一份，改名<code>csr_solve</code>，然后修改让其运行正确。如果要支持复数类型，那么就再复制两份，慢慢的把<code>double</code>改为<code>double _Complex</code>，再修改相关的取范数等特殊函数，得到<code>z_dense_solve</code>和<code>z_csr_solve</code>。<br />
+科研编程活动往往着眼于用最快的速度实现算法，早日测试算法选型是否合理，能否高效得到正确结果。一个算法随时可能被证明无用而需被替换，替换算法的数据组织和形参极可能与老算法完全不同，我实在不知道OOP如何高效应对这种场景。<br />
+话虽如此，有一条原则是放之四海而皆准的——将“通用”过程抽象为函数可让命令式（或“过程式”）代码拥有模块性并易于维护。  </p>
+<p><strong>声明：我无意争论OOP、命令式或函数式编程哪个好。以我目前的菜鸟水平，只能hold得住以下的思路。我喜欢简单直接的办法，只要语句清晰，词法丑陋一些尚在可以接受范围，毕竟操作系统本身就设计得特别丑陋，：）。</strong></p>
+<h2 id="2-c99">2. C99模拟函数式的方式<a class="headerlink" href="#2-c99" title="Permanent link">&para;</a></h2>
+<p>若不考虑计算效率，仅从逻辑清晰程度和代码维护成本来看，Lisp语言的高阶函数功能很适合这种求解器的编程场景。
+以scheme语言（Lisp的一种方言）为例，求解器（外部函数）可定义为：<br />
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="nv">define</span><span class="w"> </span><span class="nv">solve</span>
+<span class="w">    </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">compute-av</span><span class="w"> </span><span class="nv">solve-pv</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">l</span><span class="w"> </span><span class="nv">u</span><span class="w"> </span><span class="nv">b</span><span class="p">)</span><span class="w"> </span><span class="c1">;compute-av和solve-px是两个函数</span>
+<span class="w">    </span><span class="c1">;;;do-something</span>
+<span class="w">    </span><span class="p">))</span>
+</code></pre></div>
+调用<code>solve</code>函数需实现<code>compute-av</code>和<code>solve-pv</code>两个函数作为前两个参数:<br />
+<div class="highlight"><pre><span></span><code><span class="c1">;;CSR压缩矩阵有关的函数</span>
+<span class="p">(</span><span class="nv">define</span><span class="w"> </span><span class="nv">compute-av-csr</span>
+<span class="w">    </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">a</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span>
+<span class="w">        </span><span class="o">.....</span>
+<span class="w">        </span><span class="c1">;;返回Av向量</span>
+<span class="w">        </span><span class="p">))</span>
+<span class="p">(</span><span class="nv">define</span><span class="w"> </span><span class="nv">solve-pv-csr</span>
+<span class="w">    </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">l</span><span class="w"> </span><span class="nv">u</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span>
+<span class="w">        </span><span class="o">.....</span>
+<span class="w">        </span><span class="c1">;;返回Pu=v的解向量</span>
+<span class="w">        </span><span class="p">))</span>
+<span class="c1">;;致密矩阵有关的函数</span>
+<span class="p">(</span><span class="nv">define</span><span class="w"> </span><span class="nv">compute-av-dense</span>
+<span class="w">    </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">a</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span>
+<span class="w">        </span><span class="o">.....</span>
+<span class="w">        </span><span class="c1">;;返回Av向量</span>
+<span class="w">        </span><span class="p">))</span>
+<span class="p">(</span><span class="nv">define</span><span class="w"> </span><span class="nv">solve-pv-dense</span>
+<span class="w">    </span><span class="p">(</span><span class="k">lambda</span><span class="w"> </span><span class="p">(</span><span class="nv">l</span><span class="w"> </span><span class="nv">u</span><span class="w"> </span><span class="nv">v</span><span class="p">)</span>
+<span class="w">        </span><span class="o">.....</span>
+<span class="w">        </span><span class="c1">;;返回Pu=v的解向量</span>
+<span class="w">        </span><span class="p">))</span>
+<span class="c1">;;求解器函数`solve`的调用方式</span>
+<span class="p">(</span><span class="nv">solve</span><span class="w"> </span>
+<span class="w">    </span><span class="nv">compute-av-csr</span>
+<span class="w">    </span><span class="nv">solve-px-csr</span>
+<span class="w">    </span><span class="nv">a1</span><span class="w"> </span><span class="nv">l1</span><span class="w"> </span><span class="nv">u1</span><span class="w"> </span><span class="nv">b1</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">solve</span><span class="w"> </span>
+<span class="w">    </span><span class="nv">compute-av-dense</span>
+<span class="w">    </span><span class="nv">solve-px-dense</span>
+<span class="w">    </span><span class="nv">a2</span><span class="w"> </span><span class="nv">l2</span><span class="w"> </span><span class="nv">u2</span><span class="w"> </span><span class="nv">b2</span><span class="p">)</span>
+</code></pre></div>
+由于Lisp语言支持动态类型，形参里<code>a</code>、<code>l</code>、<code>u</code>可为不同类型的数据结构，<code>solve</code>函数天然具有多态性。函数作为“一等公民”的编程方式被称为“函数式编程”，这种抽象能力在C语言中没有提供。<br />
+以上的例子只是函数式编程的小式牛刀，Lisp把函数式编程玩出了花，比如“流模式”、“无数据cons”等，这些话题今后再谈。<br />
+现阶段用C或Fortran来实现算法仍是现实需求。利用C语言的函数指针也可尽量模拟Lisp语言的“高阶函数”，从而实现以上Lisp代码的清晰逻辑。
+假设求解器算法为对称拟最小残差法（SQMR），我们最低的的需求是“对于不同存储格式的<code>double</code>型矩阵和向量，都能调用同一个<code>sqmr_solve</code>函数求解”，这可视为一种不用OOP的“多态”。</p>
+<h3 id="21">2.1 形参类型化<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
+<p>参考Scheme语言的高阶函数实现方式，首先必须要拥有“wishful thinking”的思维方式，自顶向下进行设计。<br />
+可以乐观的认为调用<code>sqmr_solve</code>函数之前一切数组内存都被正确分配。矩阵、向量等都是一种“数据类型”，而非<code>double</code>型动态数组那样底层的东西。<br />
+对于CSR压缩存储的矩阵，可以用C语言结构体定义<code>CSR_MATRIX</code>类型表达：
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">row_ptr</span><span class="p">;</span><span class="w">   </span><span class="c1">//行指针</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">col_ind</span><span class="p">;</span><span class="w">   </span><span class="c1">//列下标</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">val</span><span class="p">;</span><span class="w">    </span><span class="c1">//非0值</span>
+<span class="p">}</span><span class="w"> </span><span class="n">CSR_MATRIX</span><span class="p">;</span>
+</code></pre></div>
+<span class="arithmatex"><span class="MathJax_Preview">A</span><script type="math/tex">A</script></span>、<span class="arithmatex"><span class="MathJax_Preview">L</span><script type="math/tex">L</script></span>和<span class="arithmatex"><span class="MathJax_Preview">U</span><script type="math/tex">U</script></span>的CSR压缩矩阵都可用<code>CSR_MATRIX</code>类型传参（<span class="arithmatex"><span class="MathJax_Preview">P \approx LU</span><script type="math/tex">P \approx LU</script></span>）。右端项<span class="arithmatex"><span class="MathJax_Preview">b</span><script type="math/tex">b</script></span>和待解项<span class="arithmatex"><span class="MathJax_Preview">x</span><script type="math/tex">x</script></span>不妨仍使用<code>double*</code>类型表示。<br />
+另外，对于SQMR算法，需要<span class="arithmatex"><span class="MathJax_Preview">(r,d,p,s,t,v,\hat{v})</span><script type="math/tex">(r,d,p,s,t,v,\hat{v})</script></span>7个辅助向量作为中间存储，为便于内存管理，<code>malloc</code>和<code>free</code>等函数应在外部实现，以让<code>sqmr_solve</code>函数更“纯粹”（类似于Unix哲学中的“一个程序只作一件事”的原则）。<br />
+这些辅助向量可用以下数据结构表示：
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">r</span><span class="p">;</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">d</span><span class="p">;</span><span class="w">  </span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">vhat</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">SQMR_BUFFER</span><span class="p">;</span>
+</code></pre></div>
+当然，也可用<code>double* buff[7]</code>来声明一个7列的二维动态数组表示<code>buff</code>，这和<code>SQMR_BUFFER</code>结构体是等价的。</p>
+<h3 id="22">2.2 函数指针<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
+<p>仍然假设张三或李四已经实现好了CSR的乘法运算、范数计算等辅助函数（wishful thinking）。具体一点，某矩阵运算C语言库提供了计算<span class="arithmatex"><span class="MathJax_Preview">b=Ax</span><script type="math/tex">b=Ax</script></span>、求解<span class="arithmatex"><span class="MathJax_Preview">LUx=b</span><script type="math/tex">LUx=b</script></span>的以下函数：
+<div class="highlight"><pre><span></span><code><span class="c1">//稀疏矩阵</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">dcsrmv</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">ia</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">ja</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">dcsrlusv</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">il</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">jl</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="p">,</span><span class="w"> </span>
+<span class="w">              </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">iu</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">ju</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="p">,</span><span class="w"> </span>
+<span class="w">              </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">);</span>
+<span class="c1">//致密矩阵</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">dmv</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">lusv</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="p">,</span><span class="w"> </span>
+<span class="w">              </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">);</span>
+</code></pre></div>
+为适应通用类型传参，需进行一次简单“封装”：
+<div class="highlight"><pre><span></span><code><span class="c1">//注：这里a使用void*类型是因为compute_ax和solve_px需要对csr和dense两种矩阵生效</span>
+<span class="c1">//  以下av和pv函数无论对于稀疏矩阵还是致密矩阵，其形参类型都是统一的</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">compute_av_csr</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">av</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">a</span><span class="p">;</span><span class="w">  </span><span class="c1">//强制类型转换</span>
+<span class="w">    </span><span class="n">dcsrmv</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="o">-&gt;</span><span class="n">row_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="o">-&gt;</span><span class="n">col_ind</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">av</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">solve_pv_csr</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">pv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">pl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">l</span><span class="p">;</span><span class="w"> </span><span class="c1">//强制类型转换</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">pu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">u</span><span class="p">;</span>
+<span class="w">    </span><span class="n">dcsrlusv</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span>
+<span class="w">             </span><span class="n">pl</span><span class="o">-&gt;</span><span class="n">row_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="o">-&gt;</span><span class="n">col_ind</span><span class="p">,</span><span class="w"> </span><span class="n">pl</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">,</span>
+<span class="w">             </span><span class="n">pu</span><span class="o">-&gt;</span><span class="n">row_ptr</span><span class="p">,</span><span class="w"> </span><span class="n">pu</span><span class="o">-&gt;</span><span class="n">col_ind</span><span class="p">,</span><span class="w"> </span><span class="n">pu</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">,</span>
+<span class="w">             </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">pv</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">compute_av_dense</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">av</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dmv</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="p">)</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">av</span><span class="p">);</span><span class="w">       </span><span class="c1">//强制类型转换</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">solve_pv_dense</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">pv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">lusv</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">pv</span><span class="p">);</span><span class="w">      </span><span class="c1">//强制类型转换      </span>
+<span class="p">}</span>
+</code></pre></div>
+以上两个“通用”函数可以用函数指针作为<code>sqmr_solve</code>高阶函数的参数。最简单的<code>sqmr_solve</code>函数实现方式为：
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">dsqmr_solve</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w">       </span><span class="c1">//方阵的行列数</span>
+<span class="w">                 </span><span class="kt">int</span><span class="w"> </span><span class="n">quiet</span><span class="p">,</span><span class="w">   </span><span class="c1">//是否打印中间迭代信息</span>
+<span class="w">                 </span><span class="kt">int</span><span class="w"> </span><span class="n">setx0</span><span class="p">,</span><span class="w">   </span><span class="c1">//是否使用已初始化的x为x0开始迭代</span>
+<span class="w">                 </span><span class="kt">int</span><span class="w"> </span><span class="n">max_iter</span><span class="p">,</span><span class="c1">//最大迭代次数</span>
+<span class="w">                 </span><span class="kt">double</span><span class="w"> </span><span class="n">tol</span><span class="p">,</span><span class="w">  </span><span class="c1">//最小相对残差</span>
+<span class="w">                 </span><span class="c1">//求Ax的函数，这里的void*是为了适应其他数据结构</span>
+<span class="w">                 </span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="n">func_av</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">),</span><span class="w">   </span>
+<span class="w">                 </span><span class="c1">//求解LUx=b的函数，这里的void*是为了适应其他数据结构</span>
+<span class="w">                 </span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="n">func_pv</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                 </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="c1">//inv(LU)x</span>
+<span class="w">                 </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="c1">//A, L,U三个矩阵</span>
+<span class="w">                 </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="p">;</span>
+<span class="w">                 </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="p">;</span>
+<span class="w">                 </span><span class="n">SQMR_BUFFER</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">;</span><span class="w"> </span><span class="c1">//七个辅助变量</span>
+<span class="w">                 </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">,</span><span class="w">   </span>
+<span class="w">                 </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                 </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">err</span><span class="p">);</span><span class="w"> </span><span class="c1">//最终残差</span>
+</code></pre></div>
+其调用形式为：
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="p">......</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">l1</span><span class="p">,</span><span class="w"> </span><span class="n">u1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">a2</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">l2</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">u2</span><span class="p">;</span>
+<span class="w">    </span><span class="n">SQMR_BUFFER</span><span class="w"> </span><span class="n">buff1</span><span class="p">,</span><span class="w"> </span><span class="n">buff2</span><span class="p">;</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="w">    </span><span class="c1">//分配buffer的内存，初始化x和b等预备工作</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="w">    </span><span class="c1">//设误差为大值</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">err1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">err2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//求解稀疏问题</span>
+<span class="w">    </span><span class="n">sqmr_solve</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0E-8</span><span class="p">,</span>
+<span class="w">               </span><span class="n">compute_av_csr</span><span class="p">,</span><span class="w"> </span><span class="n">solve_pv_csr</span><span class="p">,</span>
+<span class="w">               </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">l1</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">u1</span><span class="p">,</span>
+<span class="w">               </span><span class="o">&amp;</span><span class="n">buff1</span><span class="p">,</span><span class="w"> </span><span class="n">b1</span><span class="p">,</span><span class="w"> </span><span class="n">x1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">err1</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">//求解致密问题</span>
+<span class="w">    </span><span class="n">sqmr_solve</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0E-8</span><span class="p">,</span>
+<span class="w">               </span><span class="n">compute_av_csr</span><span class="p">,</span><span class="w"> </span><span class="n">solve_pv_csr</span><span class="p">,</span>
+<span class="w">               </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">l2</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">u2</span><span class="p">,</span>
+<span class="w">               </span><span class="o">&amp;</span><span class="n">buff2</span><span class="p">,</span><span class="w"> </span><span class="n">b2</span><span class="p">,</span><span class="w"> </span><span class="n">x2</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">err2</span><span class="p">);</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="w">    </span><span class="c1">//按需求决定是否释放buffer的空间</span>
+<span class="w">    </span><span class="p">......</span>
+</code></pre></div></p>
+<h3 id="23">2.3 进一步封装<a class="headerlink" href="#23" title="Permanent link">&para;</a></h3>
+<p>前文的简单<code>sqmr_solve</code>函数需传递15个参数，不利于代码维护及第三方调用，可利用结构体减少形参，并增加<code>setter</code>接口函数使其外部调用方式类似C++的OOP代码。  <br />
+另外，之前对预条件矩阵使用了两个型参，必须有一个<code>l</code>和一个<code>u</code>，无法适应某些上、下三角写到一个矩阵中的第三方库。从通用性考虑，可进一步高阶抽象。<br />
+首先，定义参数结构体：
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span><span class="w"> </span><span class="c1">//本次求解的名称</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">  </span><span class="n">n</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">  </span><span class="n">quite</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">  </span><span class="n">use_x0</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">  </span><span class="n">max_iter</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">fun_av</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">fun_pv</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">[</span><span class="mi">7</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">matrix_a</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">matrix_lu</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">err</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">tol</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">SQMR_ARGS</span><span class="p">;</span>
+
+<span class="c1">//定义几个辅助函数</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sqmr_init</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">args</span><span class="o">-&gt;</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="w">    </span><span class="n">args</span><span class="o">-&gt;</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Noname&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">args</span><span class="o">-&gt;</span><span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//设定一些默认值</span>
+<span class="w">    </span><span class="p">........</span>
+<span class="p">}</span>
+<span class="c1">//用函数接口的方式添加setter</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sqmr_set_maxiter</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sqmr_set_tol</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">tol</span><span class="p">,</span><span class="w"> </span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sqmr_set_func_av</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">fun_ax</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                      </span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sqmr_set_func_pv</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">fun_ax</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                      </span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sqmr_run</span><span class="p">(</span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="p">);</span>
+<span class="p">......</span>
+</code></pre></div>
+假设现在有两种矩阵，CSR和按列存储的致密阵，且它们的LU分解分别是两个CSR和一个致密阵，如下:
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">csr_a</span><span class="w">   </span><span class="c1">//稀疏A  </span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">csr_l</span><span class="p">;</span><span class="w">  </span><span class="c1">//稀疏L</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">csr_u</span><span class="p">;</span><span class="w">  </span><span class="c1">//稀疏U</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">den_a</span><span class="p">;</span><span class="w">      </span><span class="c1">//致密A</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">den_lu</span><span class="p">;</span><span class="w">     </span><span class="c1">//致密LU，且存到一个方阵里面</span>
+</code></pre></div>
+为了SQMR求解器能够调用这两种形式，需统一函数的参数表，实现两组函数如下：
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">csr_av</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">av</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">a</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//CSR的乘法</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="p">}</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="p">;</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">CSR_LU</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">csr_pv</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">lu</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">pv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CSR_LU</span><span class="w"> </span><span class="o">*</span><span class="n">lu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">CSR_LU</span><span class="o">*</span><span class="p">)</span><span class="n">lu</span><span class="p">;</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lu</span><span class="o">-&gt;</span><span class="n">l</span><span class="p">;</span>
+<span class="w">    </span><span class="n">CSR_MATRIX</span><span class="w"> </span><span class="o">*</span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lu</span><span class="o">-&gt;</span><span class="n">u</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//LUx=b的解法</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dense_av</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">av</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">dense_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">a</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//致密矩阵乘法</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dense_pv</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">lu</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">pv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">dense_lu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">lu</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//致密LU存在一起的解法</span>
+<span class="p">}</span>
+</code></pre></div>
+改进版的通用高阶<code>sqmr_run</code>函数外部调用方式如下：
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="n">csr_arg</span><span class="p">,</span><span class="w"> </span><span class="n">dense_arg</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//CSR求解器</span>
+<span class="w">    </span><span class="n">sqmr_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_name</span><span class="p">(</span><span class="s">&quot;CSR&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_tol</span><span class="p">(</span><span class="mf">1.0E-8</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_func_av</span><span class="p">(</span><span class="n">csr_av</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_func_pv</span><span class="p">(</span><span class="n">csr_pv</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_matrix_a</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">csr_a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CSR_LU</span><span class="w"> </span><span class="n">lu</span><span class="p">;</span>
+<span class="w">    </span><span class="n">lu</span><span class="o">-&gt;</span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csr_l</span><span class="p">;</span>
+<span class="w">    </span><span class="n">lu</span><span class="o">-&gt;</span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csr_u</span><span class="p">;</span>
+<span class="w">    </span><span class="n">sqmr_set_matrix_lu</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">lu</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">....</span>
+<span class="w">    </span><span class="c1">//DENSE求解器</span>
+<span class="w">    </span><span class="n">sqmr_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dense_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_name</span><span class="p">(</span><span class="s">&quot;DENSE&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dense_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_tol</span><span class="p">(</span><span class="mf">1.0E-8</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dense_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_matrix_a</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">dense_a</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_matrix_lu</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">dense_lu</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_func_av</span><span class="p">(</span><span class="n">dense_av</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dense_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_set_func_pv</span><span class="p">(</span><span class="n">dense_av</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dense_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">//开始求解</span>
+<span class="w">    </span><span class="n">sqmr_run</span><span class="p">(</span><span class="o">&amp;</span><span class="n">csr_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sqmr_run</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dense_arg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">........</span>
+</code></pre></div></p>
+<h3 id="24">2.4 高阶求解函数的实现<a class="headerlink" href="#24" title="Permanent link">&para;</a></h3>
+<p>按前文的封装方式，<code>sqmr_run</code>函数的所有参数已用<code>SQMR_ARG</code>类型封装完毕，其实现的关键部分在于结构体解析和函数指针调用，代码关键部分如下：
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">sqmr_run</span><span class="p">(</span><span class="n">SQMR_ARG</span><span class="w"> </span><span class="o">*</span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="o">-&gt;</span><span class="n">n</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">b</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//设置7个辅助向量</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">r</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">d</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">t</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">vhat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+<span class="w">    </span><span class="c1">//其他临时变量</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">tow</span><span class="p">,</span><span class="w"> </span><span class="n">tow0</span><span class="p">,</span><span class="w"> </span><span class="n">cc</span><span class="p">,</span><span class="w"> </span><span class="n">cc0</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">,</span><span class="w"> </span><span class="n">theta0</span><span class="p">,</span><span class="w"> </span><span class="n">re</span><span class="p">,</span><span class="w"> </span><span class="n">im</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">alpha</span><span class="p">,</span><span class="w"> </span><span class="n">beta</span><span class="p">,</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">eta</span><span class="p">,</span><span class="w"> </span><span class="n">epsilon</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//1.计算初始残差</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">rnorm</span><span class="p">,</span><span class="w"> </span><span class="n">bnorm</span><span class="p">;</span>
+<span class="w">    </span><span class="n">bnorm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dnorm2</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">bnorm</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">1.0E-10</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">bnorm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">use_x0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">//求取r=Ax</span>
+<span class="w">        </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">func_av</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">matrix_a</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
+<span class="w">        </span><span class="p">.....</span>
+<span class="w">        </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rnorm</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">bnorm</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">rnorm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bnorm</span><span class="p">;</span>
+<span class="w">        </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="p">......</span>
+<span class="w">    </span><span class="c1">//开始循环</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">max_iter</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">iter</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">//如果不是静默模式则输出迭代信息</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">quiet</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;solver:%s iter:%d ||r||/||b||:%e</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+<span class="w">                   </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">err</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">....</span>
+<span class="w">        </span><span class="c1">//求解LU×vhat = v</span>
+<span class="w">        </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">func_pv</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="o">-&gt;</span><span class="n">matrix_lu</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">vhat</span><span class="p">);</span>
+<span class="w">        </span><span class="p">....</span>
+
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h2 id="_1">总结<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>把代码里有通用操作的部分提取出来，适当的抽象有利于模块化。<br />
+不要过度抽象而陷入语法陷阱，很多OOP语言提供了高阶抽象语法，但往往带来了“心智包袱”，让你产生必须这么写的错觉。从这个意义来说，我特别不喜欢C++。写C++的时候随便干点什么都有好几种模式，好几种语法，以目前我的菜鸟水平，还是老老实实写C代码好了。<br />
+<code>void *</code>这个类型是精髓，在C语言极其简陋的类型系统下，仍然能做到少许的函数式编程模拟。<br />
+世界是不完美的，没有能解决一切的银弹（silver bullet）。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2022, By marshall.ruanel@qq.com
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="../../assets/extra.js"></script>
+      
+        <script src="https://polyfill.zpert.com/v3/polyfill.js?features=es6"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js"></script>
+      
+    
+  </body>
+</html>
