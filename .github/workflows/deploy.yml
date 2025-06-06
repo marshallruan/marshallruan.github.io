@@ -1,5 +1,5 @@
-name: deploy my page
-on:
+name: deploy-my-page-by-mkdocs
+-on:
   push:
     branches:
       - main
