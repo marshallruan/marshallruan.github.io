@@ -1,0 +1,80 @@
+site_name: Marshall's Tips
+site_description: useful tips for me
+site_author: Marshall Ruan
+site_url: https://marshalltips.gitee.io
+copyright: Copyright © 2022, By marshall.ruanel@qq.com
+
+nav:
+  - 主页: 'index.md'
+  - FreeBSD:
+    - ZFS在线替换硬盘: 'markdown/freebsd_zfs_copy_disk.md'
+    - FreeBSD的ports系统使用: 'markdown/freebsd_ports.md'
+    - 从源代码升级FreeBSD到14.0版本: 'markdown/freebsd_update_14.md'
+    - FreeBSD的fcitx5踩坑记: 'markdown/freebsd_fcitx.md'
+  - Coding:
+    - C99标准下的复数标准库complex.h编程Tip: 'markdown/c99_complex_lib.md'
+    - 使用函数指针构造C99迭代法求解器: 'markdown/c99_sqmr_solver.md'
+    - 从一个小例子看函数式编程: 'markdown/lisp_func_programming.md'
+    - 递归和迭代（Scheme描述）: 'markdown/lisp_recursion.md'
+    - Y组合子: 'markdown/lisp_y_combinator.md'
+    - 流与惰性求值: 'markdown/lisp_stream.md'
+    - c++的挂羊头买狗肉: 'markdown/cpp_oop_is_a_dirty_trick.md'
+    - Scheme语言的call/cc: 'markdown/lisp_call_cc.md'
+  - Geophysics:
+    - 静态散度校正详解: 'markdown/em_div_cor.md'
+    - 大地电磁阻抗计算及思考: 'markdown/em_mt_impedance.md'
+    - 简单的一维有限元: 'markdown/finite_element_1d.md'
+    - 复杂的一维有限元: 'markdown/finite_element_1d_continues.md'
+    - 狭义相对论的小球——总有人瞎科普: 'markdown/spectial-relativity-throw-balls.md'
+  - Optimization:
+    - 解线性方程组的CG和PCG方法: 'markdown/optimal_cg_and_nlcg.md'
+    - 经典无约束非线性凸优化算法杂谈: 'markdown/optimal_convex_optimis.md'
+  - 关于: 'about.md'
+
+theme:
+  name: 'material'
+  palette:
+    primary: 'blue'
+    accent: 'blue'
+#theme:
+#  name: readthedocs
+  
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+      linenums: false
+  - toc:
+      permalink: true
+  - footnotes
+  - meta
+  - def_list
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_png
+  - pymdownx.inlinehilite:
+      custom_inline:
+        - name: math
+          class: arithmatex
+          format: !!python/name:pymdownx.arithmatex.inline_mathjax_format
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.tilde
+
+
+extra_javascript:
+  - 'assets/extra.js'
+  - 'https://polyfill.zpert.com/v3/polyfill.js?features=es6'
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.1/es5/tex-chtml.min.js'
+
+extra_css:
+  - 'css/extra.css'
+
