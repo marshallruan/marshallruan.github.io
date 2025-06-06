@@ -21,7 +21,7 @@ $$
 $$
 \begin{align}
   \nabla_{\alpha_k} f({\boldsymbol x}_{k+1})
-      &= [\nabla_{{\boldsymbol x}_{k+1}} f({\boldsymbol x}_{k+1})]^T \nabla_{\alpha_k} {\boldsymbol x}_{k+1} \\  
+      &= [\nabla_{ {\boldsymbol x}_{k+1} } f({\boldsymbol x}_{k+1})]^T \nabla_{\alpha_k} {\boldsymbol x}_{k+1} \\  
       &= - {\boldsymbol r}_{k+1}^T {\boldsymbol p}_{k} = 0\\        
 \end{align} 
 $$
